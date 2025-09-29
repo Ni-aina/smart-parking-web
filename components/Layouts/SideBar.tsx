@@ -27,7 +27,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
-const SideBar = () => {
+const SideBarLayout = () => {
     const [isOpenSettings, setIsOpenSettings] = useState(false);
     const handleOpenSettings = () => setIsOpenSettings(prev => !prev);
 
@@ -125,4 +125,4 @@ const SideBar = () => {
     )
 }
 
-export default SideBar;
+export default SideBarLayout;

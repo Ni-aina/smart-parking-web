@@ -1,4 +1,4 @@
-import SideBar from "@/components/Layouts/SideBar";
+import SideBarLyout from "@/components/Layouts/SideBar";
 import {
     SidebarProvider,
     SidebarTrigger
@@ -7,7 +7,7 @@ import {
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     return (
         <SidebarProvider>
-            <SideBar />
+            <SideBarLyout />
             <main className="p-5">
                 <SidebarTrigger className="text-white cursor-pointer 
                 hover:text-white hover:bg-transparent hover:opacity-80" />
