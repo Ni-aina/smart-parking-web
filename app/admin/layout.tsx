@@ -1,10 +1,18 @@
+"use client";
+
 import SideBarLyout from "@/components/Layouts/SideBar";
 import {
     SidebarProvider,
     SidebarTrigger
 } from "@/components/ui/sidebar";
+import { useAuthContext } from "@/context/AuthContext";
+import { redirect } from "next/navigation";
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
+    const { user } = useAuthContext();
+
+    if (!user) return redirect("/auth/sign-in");
+
     return (
         <SidebarProvider>
             <SideBarLyout />
