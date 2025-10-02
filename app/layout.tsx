@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthContextProvider } from "@/context/AuthContext";
+import ReactQueryProvider from "@/context/ReactQueryProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,6 +24,7 @@ const RootLayout = ({
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
+  
   return (
     <html lang="en">
       <body
@@ -34,7 +36,9 @@ const RootLayout = ({
         `}
       >
         <AuthContextProvider>
-          {children}
+          <ReactQueryProvider>
+            {children}
+          </ReactQueryProvider>
         </AuthContextProvider>
       </body>
     </html>

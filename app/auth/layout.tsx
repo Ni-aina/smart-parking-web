@@ -5,16 +5,15 @@ import { redirect } from "next/navigation";
 import { ReactNode } from "react";
 
 const AuthLayout = ({ children }: { children: ReactNode }) => {
-    
     const { user } = useAuthContext();
 
     if (user) return redirect("/admin/dashboard");
 
     return (
         <>
-            { children }
+            {children}
         </>
     )
 }
- 
+
 export default AuthLayout;

@@ -1,0 +1,37 @@
+"use client";
+
+import { useAuthContext } from "@/context/AuthContext";
+import useCurrentProfile from "@/hooks/useCurrentProfile";
+import { Loader } from "lucide-react";
+import { ReactNode } from "react";
+import Loading from "./ui/loading";
+
+const OwnerProtected = ({ children }: { children: ReactNode }) => {
+
+    const {
+        currentProfile,
+        isPending
+    } = useCurrentProfile();
+
+    if (isPending) return <Loading />
+
+    const authorization = currentProfile?.roles.includes("owner") || false;
+
+    if (!authorization) return (
+        <div className="flex justify-center items-center w-full h-full 
+            text-xs text-center bg-slate-950 text-white/80"
+        >
+            Access denied: Unauthorized role based
+        </div>
+    )
+
+    return (
+        <>
+            {
+                children
+            }
+        </>
+    )
+}
+
+export default OwnerProtected;

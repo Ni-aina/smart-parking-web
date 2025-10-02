@@ -1,32 +1,43 @@
 "use client";
 
+import Loading from "@/components/ui/loading";
 import { supabase } from "@/lib/supabase";
 import { Session } from "@supabase/supabase-js";
-import { 
+import {
     createContext,
-    ReactNode, 
-    useContext, 
-    useEffect, 
-    useState 
+    ReactNode,
+    useContext,
+    useEffect,
+    useState
 } from "react";
 
 const AuthContext = createContext<Session | null>(null);
 
 export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     const [session, setSession] = useState<Session | null>(null);
+    const [isPending, setIsPending] = useState(true);
 
     useEffect(() => {
-        supabase.auth.getSession().then(data => {
-            const { data: { session } } = data;
+
+        (async function () {
+            setIsPending(true);
+            const { data: { session } } = await supabase.auth.getSession();
             setSession(session);
-        })
+            setIsPending(false);
+        })()
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
             setSession(session);
         })
-        
-        return ()=> subscription.unsubscribe();
+
+        return () => subscription.unsubscribe();
     }, [])
+
+    if (isPending) return (
+        <div className="w-full h-screen">
+            <Loading />
+        </div>
+    )
 
     return (
         <AuthContext.Provider

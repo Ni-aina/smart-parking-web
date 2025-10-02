@@ -7,12 +7,13 @@ import {
 } from "@/components/ui/sidebar";
 import { useAuthContext } from "@/context/AuthContext";
 import { redirect } from "next/navigation";
+import { ReactNode } from "react";
 
-const AdminLayout = ({ children }: { children: React.ReactNode }) => {
+const AdminLayout = ({ children }: { children: ReactNode }) => {
     const { user } = useAuthContext();
-
+    
     if (!user) return redirect("/auth/sign-in");
-
+    
     return (
         <SidebarProvider>
             <SideBarLyout />
