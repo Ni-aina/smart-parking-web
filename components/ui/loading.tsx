@@ -6,6 +6,7 @@ const Loading = () => {
             <Loader
                 size={24}
                 color="white"
+                className="animate-spin"
             />
         </div>
     )

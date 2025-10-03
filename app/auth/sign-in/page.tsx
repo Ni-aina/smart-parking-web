@@ -25,9 +25,9 @@ const SignIn = () => {
         if (!email || !password) return;
         try {
             setIsPending(true);
+            setError("");
             const { session } = await logIn(email, password);
             if (!session) throw new Error();
-            setError("");
         } catch {
             setError("Failed authentication");
         } finally {
@@ -38,8 +38,8 @@ const SignIn = () => {
     return (
         <div className="grid place-items-center w-full h-screen">
             <form
-                className="flex flex-col space-y-4 w-xs lg:w-lg min-h-[70%] 
-                bg-blue-950/10 text-white rounded-xl shadow-2xl p-8"
+                className="flex flex-col space-y-4 max-w-md lg:w-lg
+                bg-blue-950/10 text-white rounded-xl shadow-2xl p-5 sm:p-8"
                 onSubmit={handleSubmit}
             >
                 <div className="flex justify-center">
@@ -80,13 +80,16 @@ const SignIn = () => {
                         </div>
                     </div>
                 </div>
-                <div className="flex justify-end items-center gap-2">
-                    <Link
-                        href={"/auth/forgot-password"}
-                        className="text-xs text-blue-300 hover:underline"
-                    >
-                        Forgot password
-                    </Link>
+                <div className="flex flex-wrap justify-center lg:justify-between items-center gap-3">
+                    <span className="text-xs text-red-400">{error}</span>
+                    <div className="flex justify-end items-center gap-2">
+                        <Link
+                            href={"/auth/forgot-password"}
+                            className="text-xs text-blue-300 hover:underline"
+                        >
+                            Forgot password
+                        </Link>
+                    </div>
                 </div>
                 <button
                     className="mt-3 flex justify-center items-center gap-3 bg-blue-950/15 w-full py-2 rounded-sm 
@@ -109,17 +112,14 @@ const SignIn = () => {
                     }
                     <h1>Login</h1>
                 </button>
-                <div className="flex flex-wrap justify-center lg:justify-between items-center gap-3">
-                    <span className="text-xs text-red-400">{error}</span>
-                    <div className="flex flex-wrap justify-center lg:justify-end items-center gap-2">
-                        <h1 className="text-sm">Don't have an account ?</h1>
-                        <Link
-                            href={"/auth/sign-up"}
-                            className="text-sm text-blue-300 hover:underline"
-                        >
-                            Create an account
-                        </Link>
-                    </div>
+                <div className="flex flex-wrap justify-center lg:justify-end items-center gap-2">
+                    <h1 className="text-sm">Don't have an account ?</h1>
+                    <Link
+                        href={"/auth/sign-up"}
+                        className="text-sm text-blue-300 hover:underline"
+                    >
+                        Create an account
+                    </Link>
                 </div>
             </form>
         </div>

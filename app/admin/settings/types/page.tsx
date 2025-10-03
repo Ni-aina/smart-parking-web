@@ -1,8 +1,10 @@
+import ClientType from "@/components/Types/Client";
+
 const TypesPage = () => {
     return (
-        <div>
-            
-        </div>
+        <>
+            <ClientType />
+        </>
     )
 }
  
