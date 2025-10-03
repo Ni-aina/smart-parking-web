@@ -63,7 +63,7 @@ const SideBarLayout = () => {
                         <h1>Smart Parking</h1>
                     </div>
                     <SidebarTrigger className="sm:hidden text-white cursor-pointer 
-                    hover:text-white hover:bg-transparent hover:opacity-80" />
+                    hover:text-white hover:bg-transparent hover:opacity-70" />
                 </div>
             </SidebarHeader>
             <OwnerProtected>
@@ -72,7 +72,7 @@ const SideBarLayout = () => {
                         <Link
                             href={"/admin/dashboard"}
                             className={`
-                            flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-80
+                            flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
                             ${pathname === "/admin/dashboard" && "bg-blue-950/30"}
                         `}
                         >
@@ -84,7 +84,7 @@ const SideBarLayout = () => {
                         <Link
                             href={"/admin/reservations"}
                             className={`
-                            flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-80
+                            flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
                             ${pathname === "/admin/reservations" && "bg-blue-950/30"}
                         `}
                         >
@@ -96,7 +96,7 @@ const SideBarLayout = () => {
                         <Link
                             href={"/admin/payments"}
                             className={`
-                            flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-80
+                            flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
                             ${pathname === "/admin/payments" && "bg-blue-950/30"}
                         `}
                         >
@@ -108,7 +108,7 @@ const SideBarLayout = () => {
                         <Link
                             href={"/admin/parking-lots"}
                             className={`
-                            flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-80
+                            flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
                             ${pathname === "/admin/parking-lots" && "bg-blue-950/30"}
                         `}
                         >
@@ -120,7 +120,7 @@ const SideBarLayout = () => {
                         <Link
                             href={"/admin/notifications"}
                             className={`
-                            flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-80
+                            flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
                             ${pathname === "/admin/notifications" && "bg-blue-950/30"}
                         `}
                         >
@@ -132,7 +132,7 @@ const SideBarLayout = () => {
                         <Link
                             href={"/admin/messages"}
                             className={`
-                            flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-80
+                            flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
                             ${pathname === "/admin/messages" && "bg-blue-950/30"}
                         `}
                         >
@@ -145,7 +145,7 @@ const SideBarLayout = () => {
                             onClick={handleOpenSettings}
                         >
                             <Settings />
-                            <div className="flex w-full justify-between items-center gap-3 hover:opacity-80">
+                            <div className="flex w-full justify-between items-center gap-3 hover:opacity-70">
                                 <h1>Settings</h1>
                                 {
                                     !isOpenSettings ?
@@ -160,7 +160,7 @@ const SideBarLayout = () => {
                                 <Link
                                     href={"/admin/settings/types"}
                                     className={`
-                                    flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-80
+                                    flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
                                     ${pathname === "/admin/settings/types" && "bg-blue-950/30"}
                                 `}
                                 >
@@ -170,7 +170,7 @@ const SideBarLayout = () => {
                                 <Link
                                     href={"/admin/settings/account"}
                                     className={`
-                                    flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-80
+                                    flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
                                     ${pathname === "/admin/settings/account" && "bg-blue-950/30"}
                                 `}
                                 >
@@ -185,7 +185,7 @@ const SideBarLayout = () => {
 
             <SidebarFooter className="bg-slate-950 text-white">
                 <button
-                    className="flex items-center space-x-3 cursor-pointer hover:opacity-80 disabled:cursor-not-allowed"
+                    className="flex items-center space-x-3 cursor-pointer hover:opacity-70 disabled:cursor-not-allowed"
                     onClick={handleSignOut}
                     disabled={isPending}
                 >
