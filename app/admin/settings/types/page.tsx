@@ -1,4 +1,4 @@
-const UsersPage = () => {
+const TypesPage = () => {
     return (
         <div>
             
@@ -6,4 +6,4 @@ const UsersPage = () => {
     )
 }
  
-export default UsersPage;
+export default TypesPage;

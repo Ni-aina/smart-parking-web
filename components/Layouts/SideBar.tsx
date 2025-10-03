@@ -21,6 +21,7 @@ import {
     MessageCircle,
     Settings,
     SquareParking,
+    TypeOutline,
     UserCircle,
     Users,
     UserStar
@@ -49,7 +50,7 @@ const SideBarLayout = () => {
     }
 
     return (
-        <Sidebar className="bg-slate-950 border-slate-900 shadow-2xl p-5">
+        <Sidebar className="bg-slate-950 border-none shadow-white/5 shadow-lg p-5">
             <SidebarHeader className="bg-slate-950 text-white">
                 <div className="flex justify-between items-center gap-3">
                     <div className="flex items-center gap-3">
@@ -157,14 +158,14 @@ const SideBarLayout = () => {
                             isOpenSettings &&
                             <div className="flex flex-col ml-5">
                                 <Link
-                                    href={"/admin/settings/users"}
+                                    href={"/admin/settings/types"}
                                     className={`
                                     flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-80
-                                    ${pathname === "/admin/settings/users" && "bg-blue-950/30"}
+                                    ${pathname === "/admin/settings/types" && "bg-blue-950/30"}
                                 `}
                                 >
-                                    <Users />
-                                    <h1>Users</h1>
+                                    <TypeOutline />
+                                    <h1>Types</h1>
                                 </Link>
                                 <Link
                                     href={"/admin/settings/account"}
