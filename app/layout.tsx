@@ -31,7 +31,7 @@ const RootLayout = ({
         className={`
           ${geistSans.variable} 
           ${geistMono.variable} 
-          bg-slate-950
+          bg-black/95
           antialiased
         `}
       >

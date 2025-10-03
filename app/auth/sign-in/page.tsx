@@ -53,7 +53,7 @@ const SignIn = () => {
                         <h1 className="text-xl italic">Smart Parking</h1>
                     </div>
                 </div>
-                <div className="mt-5 flex flex-col gap-3">
+                <div className="mt-3 flex flex-col gap-3">
                     <h1 className="text-md font-semibold">Email</h1>
                     <input
                         type="email"
@@ -89,7 +89,7 @@ const SignIn = () => {
                     </Link>
                 </div>
                 <button
-                    className="mt-5 flex justify-center items-center gap-3 bg-blue-950/50 w-full py-2 rounded-sm 
+                    className="mt-3 flex justify-center items-center gap-3 bg-blue-950/15 w-full py-2 rounded-sm 
                     cursor-pointer hover:opacity-80 
                     disabled:cursor-not-allowed disabled:opacity-80"
                     disabled={isPending}
