@@ -21,7 +21,7 @@ import {
     MessageCircle,
     Settings,
     SquareParking,
-    TypeOutline,
+    Truck,
     UserCircle,
     UserStar
 } from "lucide-react";
@@ -164,7 +164,7 @@ const SideBarLayout = () => {
                                         ${pathname === "/admin/settings/types" && "bg-blue-950/30"}
                                     `}
                                     >
-                                        <TypeOutline />
+                                        <Truck />
                                         <h1>Types</h1>
                                     </Link>
                                     <Link
