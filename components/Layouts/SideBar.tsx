@@ -70,10 +70,10 @@ const SideBarLayout = () => {
                     <SidebarContent>
                         <SidebarGroup className="p-0">
                             <Link
-                                href={"/admin/dashboard"}
+                                href={"/owner/dashboard"}
                                 className={`
                                 flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                                ${pathname === "/admin/dashboard" && "bg-blue-950/30"}
+                                ${pathname === "/owner/dashboard" && "bg-blue-950/30"}
                             `}
                             >
                                 <Home />
@@ -82,10 +82,10 @@ const SideBarLayout = () => {
                         </SidebarGroup>
                         <SidebarGroup className="p-0">
                             <Link
-                                href={"/admin/reservations"}
+                                href={"/owner/reservations"}
                                 className={`
                                 flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                                ${pathname === "/admin/reservations" && "bg-blue-950/30"}
+                                ${pathname === "/owner/reservations" && "bg-blue-950/30"}
                             `}
                             >
                                 <BookCheck />
@@ -94,10 +94,10 @@ const SideBarLayout = () => {
                         </SidebarGroup>
                         <SidebarGroup className="p-0">
                             <Link
-                                href={"/admin/payments"}
+                                href={"/owner/payments"}
                                 className={`
                                 flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                                ${pathname === "/admin/payments" && "bg-blue-950/30"}
+                                ${pathname === "/owner/payments" && "bg-blue-950/30"}
                             `}
                             >
                                 <Euro />
@@ -106,10 +106,10 @@ const SideBarLayout = () => {
                         </SidebarGroup>
                         <SidebarGroup className="p-0">
                             <Link
-                                href={"/admin/parking-lots"}
+                                href={"/owner/parking-lots"}
                                 className={`
                                 flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                                ${pathname === "/admin/parking-lots" && "bg-blue-950/30"}
+                                ${pathname === "/owner/parking-lots" && "bg-blue-950/30"}
                             `}
                             >
                                 <SquareParking />
@@ -118,10 +118,10 @@ const SideBarLayout = () => {
                         </SidebarGroup>
                         <SidebarGroup className="p-0">
                             <Link
-                                href={"/admin/notifications"}
+                                href={"/owner/notifications"}
                                 className={`
                                 flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                                ${pathname === "/admin/notifications" && "bg-blue-950/30"}
+                                ${pathname === "/owner/notifications" && "bg-blue-950/30"}
                             `}
                             >
                                 <Bell />
@@ -130,10 +130,10 @@ const SideBarLayout = () => {
                         </SidebarGroup>
                         <SidebarGroup className="p-0">
                             <Link
-                                href={"/admin/messages"}
+                                href={"/owner/messages"}
                                 className={`
                                 flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                                ${pathname === "/admin/messages" && "bg-blue-950/30"}
+                                ${pathname === "/owner/messages" && "bg-blue-950/30"}
                             `}
                             >
                                 <MessageCircle />
@@ -158,20 +158,20 @@ const SideBarLayout = () => {
                                 isOpenSettings &&
                                 <div className="flex flex-col ml-5">
                                     <Link
-                                        href={"/admin/settings/types"}
+                                        href={"/owner/settings/types"}
                                         className={`
                                         flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                                        ${pathname === "/admin/settings/types" && "bg-blue-950/30"}
+                                        ${pathname === "/owner/settings/types" && "bg-blue-950/30"}
                                     `}
                                     >
                                         <Truck />
                                         <h1>Types</h1>
                                     </Link>
                                     <Link
-                                        href={"/admin/settings/account"}
+                                        href={"/owner/settings/account"}
                                         className={`
                                         flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                                        ${pathname === "/admin/settings/account" && "bg-blue-950/30"}
+                                        ${pathname === "/owner/settings/account" && "bg-blue-950/30"}
                                     `}
                                     >
                                         <UserStar />

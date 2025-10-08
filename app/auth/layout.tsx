@@ -7,7 +7,7 @@ import { ReactNode } from "react";
 const AuthLayout = ({ children }: { children: ReactNode }) => {
     const { user } = useAuthContext();
 
-    if (user) return redirect("/admin/dashboard");
+    if (user) return redirect("/owner/dashboard");
 
     return (
         <>

@@ -24,7 +24,7 @@ export async function createType(type: FormTypeInterface): Promise<TypeInterface
     if (!newType || error) return null;
     const normalized = normalizeData(newType);
 
-    revalidatePath("/admin/settings/types");
+    revalidatePath("/owner/settings/types");
     return normalized as TypeInterface;
 }
 
@@ -45,7 +45,7 @@ export async function updateType(type: FormTypeInterface): Promise<TypeInterface
     if (!updatedType || error) return null;
     const normalized = normalizeData(updatedType);
 
-    revalidatePath("/admin/settings/types");
+    revalidatePath("/owner/settings/types");
     return normalized as TypeInterface;
 }
 
@@ -59,7 +59,7 @@ export async function deleteType(id: string) {
         .eq("id", id)
 
     if (error) return;
-    revalidatePath("/admin/settings/types");
+    revalidatePath("/owner/settings/types");
 }
 
 export async function getTypes(): Promise<TypeInterface[]> {

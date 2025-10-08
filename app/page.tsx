@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
-const RootPage = () => redirect("/admin/dashboard");
+const RootPage = () => redirect("/owner/dashboard");
 
 export default RootPage;
