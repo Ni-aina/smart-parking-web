@@ -160,9 +160,10 @@ const SideBarLayout = () => {
                                     <Link
                                         href={"/owner/settings/types"}
                                         className={`
-                                        flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                                        ${pathname === "/owner/settings/types" && "bg-blue-950/30"}
-                                    `}
+                                            flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
+                                            ${pathname === "/owner/settings/types" && "bg-blue-950/30"}
+                                        `}
+                                        prefetch
                                     >
                                         <Truck />
                                         <h1>Types</h1>
