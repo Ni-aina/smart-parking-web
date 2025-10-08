@@ -7,10 +7,16 @@ import { revalidatePath } from "next/cache";
 
 export async function createType(type: FormTypeInterface): Promise<TypeInterface | null> {
     const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
+    const {
+        id: ownerId
+    } = user;
 
     const { data: newType, error } = await supabase.from("vehicle_types")
         .insert([{
-            ...type
+            ...type,
+            owner_id: ownerId
         }])
         .select()
         .single();
@@ -58,9 +64,15 @@ export async function deleteType(id: string) {
 
 export async function getTypes(): Promise<TypeInterface[]> {
     const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return [];
+    const {
+        id: ownerId
+    } = user;
 
     const { data: types, error } = await supabase.from("vehicle_types")
         .select("*")
+        .eq("owner_id", ownerId)
         .order("created_at", {
             ascending: false
         });
