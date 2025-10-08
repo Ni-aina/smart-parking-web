@@ -1,56 +1,36 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useState } from "react";
 import Navbar from "../Navbar";
 import Table from "../Table";
 import { Modal } from "../ui/modal";
-import { FormTypeInterface, TypeInterface } from "@/types/type";
-import { createType } from "@/actions/type.action";
+import { TypeInterface } from "@/types/type";
 import { Loader2 } from "lucide-react";
-
-const initForm = {
-    type: "",
-    description: ""
-}
+import useType from "@/hooks/useType";
 
 const ClientType = ({ types }: { types: TypeInterface[] }) => {
-    const [search, setSearch] = useState("");
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isPending, setIsPending] = useState(false);
-    const [formData, setFormData] = useState<FormTypeInterface>(initForm);
 
-    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }))
-    }
+    const {
+        formData,
+        search,
+        setSearch,
+        isModalOpen,
+        setIsModalOpen,
+        isPending,
+        title,
+        headers,
+        body,
+        handleChange,
+        handleSubmit,
+        handleOnClose,
+        handleEdit,
+        handleDelete
+    } = useType({ types });
 
-    const title = "Vehicle types";
-    const headers = ["Type", "Description"];
-
-    const body = {
-        rows: types.map(item => ({
-            id: item.id,
-            type: item.type,
-            description: item.description
-        })),
-        cols: [
-            "type",
-            "description"
-        ]
-    }
-
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setIsPending(true);
-        const newType = await createType(formData);
-        setIsPending(false);
-        if (!newType) return;
-        setFormData(initForm);
-        setIsModalOpen(false);
-    }
+    const {
+        id, 
+        type,
+        description
+    } = formData;
 
     return (
         <div className="flex flex-col gap-5">
@@ -64,10 +44,12 @@ const ClientType = ({ types }: { types: TypeInterface[] }) => {
                 title={title}
                 headers={headers}
                 body={body}
+                handleEdit={handleEdit}
+                handleDelete={handleDelete}
             />
             <Modal
                 isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
+                onClose={handleOnClose}
                 title="Add vehicle type"
             >
                 <form
@@ -79,6 +61,7 @@ const ClientType = ({ types }: { types: TypeInterface[] }) => {
                         <input
                             type="text"
                             name="type"
+                            value={type}
                             onChange={handleChange}
                             required
                             className="outline-none px-4 py-2 border border-white/70 rounded-sm"
@@ -86,6 +69,7 @@ const ClientType = ({ types }: { types: TypeInterface[] }) => {
                         <label htmlFor="description">Description</label>
                         <textarea
                             name="description"
+                            value={description}
                             onChange={handleChange}
                             required
                             className="outline-none px-4 py-2 border border-white/70 rounded-sm"
@@ -94,7 +78,7 @@ const ClientType = ({ types }: { types: TypeInterface[] }) => {
                     <div className="mt-3 w-full flex justify-end gap-3">
                         <button
                             type="button"
-                            onClick={() => setIsModalOpen(false)}
+                            onClick={handleOnClose}
                             className="w-[120px] h-[40px] flex justify-center items-center 
                             bg-white/10 rounded-sm cursor-pointer hover:opacity-80"
                         >
@@ -113,7 +97,7 @@ const ClientType = ({ types }: { types: TypeInterface[] }) => {
                                     className="animate-spin"
                                 />
                             }
-                            <span>Add</span>
+                            <span>{id  ? "Update" : "Add"}</span>
                         </button>
                     </div>
                 </form>

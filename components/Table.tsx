@@ -3,14 +3,17 @@
 import { ArrowLeft, ArrowRight, Edit2, Trash2 } from "lucide-react";
 import Order from "./ui/order";
 import { useEffect, useState } from "react";
+import { Modal } from "./ui/modal";
 
 interface TabelInterface {
-    title: string,
-    headers: Array<string>,
+    title: string;
+    headers: Array<string>;
     body: {
-        rows: Array<Record<string, any>>,
+        rows: Array<Record<string, any>>;
         cols: Array<string>
-    }
+    };
+    handleEdit: (id: string) => void;
+    handleDelete: (id: string) => void;
 }
 
 const customCheckStyle = `
@@ -29,8 +32,11 @@ const customCheckStyle = `
 const Table = ({
     title,
     headers,
-    body
+    body,
+    handleEdit,
+    handleDelete
 }: TabelInterface) => {
+
     const { rows, cols } = body;
     const [selected, setSelected] = useState(rows.map(({ id }) => ({
         id,
@@ -38,6 +44,7 @@ const Table = ({
     })))
 
     const [selectedAll, setSelectedAll] = useState(false);
+    const [isConfirmId, setIsConfirmId] = useState("");
 
     const handleSeleted = (selectedId: number) => {
         setSelected(prev => prev.map(({ id, checked }) => id !== selectedId ? {
@@ -56,6 +63,11 @@ const Table = ({
             id,
             checked: checkedAll
         })))
+    }
+
+    const handleConfirm = ()=> {
+        handleDelete(isConfirmId);
+        setIsConfirmId("");
     }
 
     useEffect(() => {
@@ -141,10 +153,12 @@ const Table = ({
                                             <td className="flex justify-center gap-3 px-5 py-4">
                                                 <Edit2
                                                     size={18}
+                                                    onClick={() => handleEdit(item.id)}
                                                     className="text-blue-950 cursor-pointer hover:scale-105"
                                                 />
                                                 <Trash2
                                                     size={18}
+                                                    onClick={() => setIsConfirmId(item.id)}
                                                     className="text-red-600 cursor-pointer hover:scale-105"
                                                 />
                                             </td>
@@ -190,6 +204,35 @@ const Table = ({
                     </div>
                 </div>
             </div>
+            {
+                isConfirmId &&
+                <Modal
+                    isOpen={!!isConfirmId}
+                    onClose={() => setIsConfirmId("")}
+                    title="This action is irreversible!"
+                >
+                    <div className="flex flex-col gap-3">
+                        <p className="text-red-600 text-sm">Are you sure to proccess it?</p>
+                        <div className="mt-3 w-full flex justify-end gap-3">
+                            <button
+                                className="w-[120px] h-[40px] flex justify-center items-center 
+                                bg-white/10 rounded-sm cursor-pointer hover:opacity-80"
+                                onClick={() => setIsConfirmId("")}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="w-[120px] h-[40px] flex justify-center items-center gap-2
+                                bg-blue-950/20 rounded-sm cursor-pointer hover:opacity-80
+                                disabled:cursor-not-allowed disabled:opacity-80"
+                                onClick={handleConfirm}
+                            >
+                                Confirm
+                            </button>
+                        </div>
+                    </div>
+                </Modal>
+            }
         </>
     )
 }

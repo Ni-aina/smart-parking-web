@@ -6,6 +6,7 @@ export interface TypeInterface {
 }
 
 export interface FormTypeInterface {
+    id?: string;
     type: string;
     description: string;
 }
