@@ -1,4 +1,4 @@
-export type ProfileType = {
+export interface ProfileInterface {
     id: string,
     roles: string[],
     fullName: string,

@@ -1,7 +1,7 @@
 "use client";
 
 import Loading from "@/components/ui/loading";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase/client";
 import { Session } from "@supabase/supabase-js";
 import {
     createContext,

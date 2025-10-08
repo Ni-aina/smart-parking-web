@@ -1,8 +1,10 @@
+import { getTypes } from "@/actions/type.action";
 import ClientType from "@/components/Types/Client";
 
-const TypesPage = () => {
+const TypesPage = async () => {
+    const types = await getTypes();
 
-    return <ClientType />
+    return <ClientType types={types} />
 }
  
 export default TypesPage;

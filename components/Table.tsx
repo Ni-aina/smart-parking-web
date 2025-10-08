@@ -2,7 +2,7 @@
 
 import { ArrowLeft, ArrowRight, Edit2, Trash2 } from "lucide-react";
 import Order from "./ui/order";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface TabelInterface {
     title: string,
@@ -15,9 +15,9 @@ interface TabelInterface {
 
 const customCheckStyle = `
     appearance-none
-    bg-blue-950/40
+    bg-white/10
     w-4 h-4
-    rounded-sm
+    rounded-[5px]
     checked:before:content-['✔']
     checked:before:text-white
     checked:before:absolute
@@ -32,10 +32,11 @@ const Table = ({
     body
 }: TabelInterface) => {
     const { rows, cols } = body;
-    const [selected, setSelected] = useState(Array.from({ length: rows.length }, (_, id) => ({
+    const [selected, setSelected] = useState(rows.map(({ id }) => ({
         id,
         checked: false
     })))
+
     const [selectedAll, setSelectedAll] = useState(false);
 
     const handleSeleted = (selectedId: number) => {
@@ -56,6 +57,13 @@ const Table = ({
             checked: checkedAll
         })))
     }
+
+    useEffect(() => {
+        setSelected(rows.map(({ id }) => ({
+            id,
+            checked: false
+        })))
+    }, [rows.length])
 
     return (
         <>
@@ -103,43 +111,46 @@ const Table = ({
                         </thead>
                         <tbody className="text-white/60 text-sm">
                             {
-                                rows.map((item, index) =>
-                                    <tr
-                                        key={item.id}
-                                        className={index % 2 === 0 ? "bg-black/5" : ""}
-                                    >
-                                        <td className="pl-5 w-0.5">
-                                            <span className="relative">
-                                                <input
-                                                    type="checkbox"
-                                                    className={customCheckStyle}
-                                                    checked={selected[index].checked}
-                                                    onChange={() => handleSeleted(selected[index].id)}
+                                rows.map((item, index) => {
+                                    const checked = selected.find(_item => _item.id === item.id)?.checked || false;
+                                    return (
+                                        <tr
+                                            key={item.id}
+                                            className={index % 2 === 0 ? "bg-black/5" : ""}
+                                        >
+                                            <td className="pl-5 w-0.5">
+                                                <span className="relative">
+                                                    <input
+                                                        type="checkbox"
+                                                        className={customCheckStyle}
+                                                        checked={checked}
+                                                        onChange={() => handleSeleted(item.id)}
+                                                    />
+                                                </span>
+                                            </td>
+                                            {
+                                                cols.map(key =>
+                                                    <td
+                                                        key={key}
+                                                        className="px-5 py-4"
+                                                    >
+                                                        {item[key]}
+                                                    </td>
+                                                )
+                                            }
+                                            <td className="flex justify-center gap-3 px-5 py-4">
+                                                <Edit2
+                                                    size={18}
+                                                    className="text-blue-950 cursor-pointer hover:scale-105"
                                                 />
-                                            </span>
-                                        </td>
-                                        {
-                                            cols.map(key =>
-                                                <td
-                                                    key={key}
-                                                    className="px-5 py-4"
-                                                >
-                                                    {item[key]}
-                                                </td>
-                                            )
-                                        }
-                                        <td className="flex justify-center gap-3 px-5 py-4">
-                                            <Edit2
-                                                size={18}
-                                                className="text-blue-950 cursor-pointer hover:scale-105"
-                                            />
-                                            <Trash2
-                                                size={18}
-                                                className="text-red-600 cursor-pointer hover:scale-105"
-                                            />
-                                        </td>
-                                    </tr>
-                                )
+                                                <Trash2
+                                                    size={18}
+                                                    className="text-red-600 cursor-pointer hover:scale-105"
+                                                />
+                                            </td>
+                                        </tr>
+                                    )
+                                })
                             }
                         </tbody>
                     </table>

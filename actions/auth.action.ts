@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase/client";
 import { AuthUserInterface } from "@/types/auth";
 
 export async function logIn(email: string, password: string): 
