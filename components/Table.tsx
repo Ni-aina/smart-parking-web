@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, Edit2, Trash2 } from "lucide-react";
 import Order from "./ui/order";
 import { useEffect, useState } from "react";
 import { Modal } from "./ui/modal";
+import { customCheckStyle } from "@/lib/customChexBoxStyle";
 
 interface TabelInterface {
     title: string;
@@ -16,18 +17,7 @@ interface TabelInterface {
     handleDelete: (id: string) => void;
 }
 
-const customCheckStyle = `
-    appearance-none
-    bg-white/10
-    w-4 h-4
-    rounded-[5px]
-    checked:before:content-['✔']
-    checked:before:text-white
-    checked:before:absolute
-    checked:before:bottom-[1px]
-    checked:before:right-[1.5px]
-    cursor-pointer
-`
+
 
 const Table = ({
     title,

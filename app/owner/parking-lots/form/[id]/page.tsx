@@ -1,6 +1,8 @@
+import { getParkingById } from "@/actions/parkingLots.action";
+import { getProfiles } from "@/actions/profile.action";
+import { getTypes } from "@/actions/type.action";
 import FormParkingLots from "@/components/Parking-lots/Form";
 import HeaderBack from "@/components/ui/headerBack";
-import { isUUID } from "@/utils/isUUID";
 
 interface FormPageInterface {
     params: Promise<{ id: string }>
@@ -8,17 +10,24 @@ interface FormPageInterface {
 
 const FormPage = async ({ params }: FormPageInterface) => {
     const { id } = await params;
-    const isIdVerified = isUUID(id);
+
+    const [types, profiles, parking] = await Promise.all([
+        getTypes(),
+        getProfiles(),
+        getParkingById(id)
+    ])
 
     return (
         <div className="flex flex-col gap-5 text-white/80 lg:p-2">
             <HeaderBack
                 title="Parking lot"
-                action={isIdVerified ? "Edit" : "New"}
+                action={parking?.id ? "Edit" : "New"}
             />
             <div className="mt-3">
                 <FormParkingLots
-                    id={isIdVerified ? id : null}
+                    types={types}
+                    profiles={profiles}
+                    parking={parking}
                 />
             </div>
         </div>

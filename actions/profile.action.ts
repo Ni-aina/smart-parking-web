@@ -3,7 +3,7 @@ import { ProfileInterface } from "@/types/profile";
 import { normalizeData } from "@/utils/normalizeData";
 import { User } from "@supabase/supabase-js";
 
-export async function getCurrentProfile(user: User|null): Promise<ProfileInterface | null> {
+export async function getCurrentProfile(user: User | null): Promise<ProfileInterface | null> {
     try {
         if (!user) return null;
 
@@ -20,5 +20,22 @@ export async function getCurrentProfile(user: User|null): Promise<ProfileInterfa
         return normalized as ProfileInterface;
     } catch {
         return null;
+    }
+}
+
+export async function getProfiles(): Promise<ProfileInterface[]> {
+    try {
+        const { data: profiles, error } = await supabase.from("profiles")
+            .select("*")
+            .order("created_at", {
+                ascending: false
+            })
+
+        if (!profiles || error) throw new Error(`The profile can't be find, ${error?.message}`);
+        const normalized = profiles.map(item => normalizeData(item))
+
+        return normalized as ProfileInterface[];
+    } catch {
+        return [];
     }
 }

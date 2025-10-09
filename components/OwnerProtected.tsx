@@ -2,7 +2,7 @@
 
 import useCurrentProfile from "@/hooks/useCurrentProfile";
 import { ReactNode } from "react";
-import Loading from "./ui/loading";
+import LoadingSkeleton from "./ui/loadingSkeleton";
 
 const OwnerProtected = ({ children }: { children: ReactNode }) => {
 
@@ -11,7 +11,7 @@ const OwnerProtected = ({ children }: { children: ReactNode }) => {
         isPending
     } = useCurrentProfile();
 
-    if (isPending) return <Loading />
+    if (isPending) return <LoadingSkeleton />;
 
     const authorization = currentProfile?.roles.includes("owner") || false;
 

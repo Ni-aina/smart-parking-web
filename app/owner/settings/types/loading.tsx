@@ -1,5 +1,5 @@
-import Loading from "@/components/ui/loading";
+import LoadingSkeleton from "@/components/ui/loadingSkeleton";
 
-const LoadingPage = () => <Loading />;
+const LoadingPage = () => <LoadingSkeleton />;
  
 export default LoadingPage;
