@@ -27,7 +27,7 @@ export const Modal = ({
       >
         {
           title &&
-          <h2 className="text-lg font-semibold mb-4">
+          <h2 className="text-md font-semibold text-white uppercase mb-5">
             {title}
           </h2>
         }
