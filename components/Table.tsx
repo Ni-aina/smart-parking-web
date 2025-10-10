@@ -69,7 +69,7 @@ const Table = ({
 
     return (
         <>
-            <div className="my-5 lg:my-8 bg-black/10 rounded-md text-white/70">
+            <div className="my-5 lg:my-8 bg-black/10 rounded-md text-white/80">
                 <div className="flex justify-between items-center gap-5 p-5">
                     <h1>
                         All {title}
@@ -111,7 +111,7 @@ const Table = ({
                                 </td>
                             </tr>
                         </thead>
-                        <tbody className="text-white/60 text-sm">
+                        <tbody className="text-white/70 text-sm">
                             {
                                 rows.map((item, index) => {
                                     const checked = selected.find(_item => _item.id === item.id)?.checked || false;

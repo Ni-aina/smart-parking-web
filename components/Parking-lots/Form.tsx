@@ -16,13 +16,13 @@ import { ChangeEvent, useState } from "react";
 
 interface FormParkingLotsInterface {
     types: TypeInterface[];
-    profiles: ProfileInterface[];
+    agents: ProfileInterface[];
     parking: ParkingInterface | null
 }
 
 const FormParkingLots = ({
     types,
-    profiles,
+    agents,
     parking
 }: FormParkingLotsInterface) => {
     const [agentSearch, setAgentSearch] = useState("");
@@ -35,14 +35,14 @@ const FormParkingLots = ({
         pricePerHour: parking?.pricePerHour || ""
     })
 
-    const [agents, setAgents] = useState(profiles.map(item => ({
+    const [agentsFormated, setAgentsFormated] = useState(agents.map(item => ({
         id: item.id || "",
         name: item.fullName || "",
         urlImage: item.urlImage || "/images/default-user.png",
         checked: parking?.agents.includes(item.id) || false
     })))
 
-    const agentsFiltered = agents.filter(item =>
+    const agentsFiltered = agentsFormated.filter(item =>
         item.name.toLowerCase().includes(agentSearch.toLowerCase())
     )
 
@@ -57,7 +57,7 @@ const FormParkingLots = ({
     }
 
     const handleAgentCheckedChange = (id: string) => {
-        setAgents(prev => prev.map(item => item.id !== id ? item : {
+        setAgentsFormated(prev => prev.map(item => item.id !== id ? item : {
             ...item,
             checked: !item.checked
         }))

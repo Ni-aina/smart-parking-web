@@ -1,5 +1,5 @@
 import { getParkingById } from "@/actions/parkingLots.action";
-import { getProfiles } from "@/actions/profile.action";
+import { getAgents } from "@/actions/profile.action";
 import { getTypes } from "@/actions/type.action";
 import FormParkingLots from "@/components/Parking-lots/Form";
 import HeaderBack from "@/components/ui/headerBack";
@@ -11,9 +11,9 @@ interface FormPageInterface {
 const FormPage = async ({ params }: FormPageInterface) => {
     const { id } = await params;
 
-    const [types, profiles, parking] = await Promise.all([
+    const [types, agents, parking] = await Promise.all([
         getTypes(),
-        getProfiles(),
+        getAgents(),
         getParkingById(id)
     ])
 
@@ -26,7 +26,7 @@ const FormPage = async ({ params }: FormPageInterface) => {
             <div className="mt-3">
                 <FormParkingLots
                     types={types}
-                    profiles={profiles}
+                    agents={agents}
                     parking={parking}
                 />
             </div>

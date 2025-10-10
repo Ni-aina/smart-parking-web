@@ -23,6 +23,7 @@ import {
     SquareParking,
     Truck,
     UserCircle,
+    UserPen,
     UserStar
 } from "lucide-react";
 import Image from "next/image";
@@ -157,6 +158,16 @@ const SideBarLayout = () => {
                             {
                                 isOpenSettings &&
                                 <div className="flex flex-col ml-5">
+                                    <Link
+                                        href={"/owner/settings/agents"}
+                                        className={`
+                                            flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
+                                            ${pathname === "/owner/settings/agents" && "bg-blue-950/30"}
+                                        `}
+                                    >
+                                        <UserPen />
+                                        <h1>Agents</h1>
+                                    </Link>
                                     <Link
                                         href={"/owner/settings/types"}
                                         className={`

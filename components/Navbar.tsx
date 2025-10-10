@@ -27,7 +27,7 @@ const Navbar = ({
     }
 
     return (  
-        <div className="flex flex-wrap justify-between items-center text-white/80 gap-5">
+        <div className="flex flex-wrap justify-between items-center text-white/90 gap-5">
             <div className="flex flex-wrap items-center gap-5">
                 <h1 className="font-semibold">{title} list</h1>
                 <div className="flex items-center border border-white/30 rounded-sm px-4 py-2 gap-2">

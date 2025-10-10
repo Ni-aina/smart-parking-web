@@ -4,14 +4,13 @@ import { createClient } from "@/lib/supabase/server";
 import { FormTypeInterface, TypeInterface } from "@/types/type";
 import { normalizeData } from "@/utils/normalizeData";
 import { revalidatePath } from "next/cache";
+import { getServerAuth } from "./auth.action";
 
 export async function createType(type: FormTypeInterface): Promise<TypeInterface | null> {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return null;
     const {
-        id: ownerId
-    } = user;
+        supabase,
+        userId: ownerId
+    } = await getServerAuth();
 
     const { data: newType, error } = await supabase.from("vehicle_types")
         .insert([{
@@ -63,12 +62,10 @@ export async function deleteType(id: string) {
 }
 
 export async function getTypes(): Promise<TypeInterface[]> {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return [];
     const {
-        id: ownerId
-    } = user;
+        supabase,
+        userId: ownerId
+    } = await getServerAuth();
 
     const { data: types, error } = await supabase.from("vehicle_types")
         .select("*")
@@ -78,7 +75,7 @@ export async function getTypes(): Promise<TypeInterface[]> {
         });
 
     if (!types || error) return [];
-    const normalized = types.map(item => normalizeData(item));
+    const normalized = types.map((item: any) => normalizeData(item));
 
     return normalized as TypeInterface[];
 }
