@@ -7,18 +7,22 @@ import { TypeInterface } from "@/types/type";
 import {
     ChevronDown,
     ChevronUp,
-    Edit,
+    DollarSign,
     PlusCircle,
-    Search
+    Search,
+    XCircle
 } from "lucide-react";
 import Image from "next/image";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, DragEvent, FormEvent, useState } from "react";
+import CustomButton from "../ui/customButton";
 
 interface FormParkingLotsInterface {
     types: TypeInterface[];
     agents: ProfileInterface[];
     parking: ParkingInterface | null
 }
+
+const allowedTypes = ["image/png", "image/jpeg", "image/jpg"]
 
 const FormParkingLots = ({
     types,
@@ -46,7 +50,8 @@ const FormParkingLots = ({
         item.name.toLowerCase().includes(agentSearch.toLowerCase())
     )
 
-    const [urlImages, setUrlImages] = useState<FileList | null>(null);
+    const [images, setImages] = useState<File[]>([]);
+    const [isDragging, setIsDragging] = useState(false);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -66,7 +71,49 @@ const FormParkingLots = ({
     const handleImagesChange = (e: ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
         if (!files?.length) return;
-        setUrlImages(files);
+        const newFiles = Array.from(files);
+        const allowedFiles = newFiles.filter(f =>
+            allowedTypes.includes(f.type)
+        )
+
+        setImages(prev => {
+            const existing = new Set(prev.map(f => `${f.name}-${f.size}`));
+            const uniqueNew = allowedFiles.filter(f => !existing.has(`${f.name}-${f.size}`));
+            return [...prev, ...uniqueNew];
+        });
+    }
+
+    const handleRemoveImage = (id: number) => {
+        setImages(prev => prev?.filter((_, i) => i !== id))
+    }
+
+    const handleDrop = (e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        setIsDragging(false);
+        const files = e.dataTransfer.files;
+        if (!files.length) return;
+        const newFiles = Array.from(files);
+        const allowedFiles = newFiles.filter(f =>
+            allowedTypes.includes(f.type)
+        )
+
+        setImages(prev => {
+            const existing = new Set(prev.map(f => `${f.name}-${f.size}`));
+            const uniqueNew = allowedFiles.filter(f => !existing.has(`${f.name}-${f.size}`));
+            return [...prev, ...uniqueNew];
+        });
+    }
+
+    const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        setIsDragging(true);
+    }
+
+    const handleDragLeave = () => setIsDragging(false);
+
+    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        console.log(formData, agentsFormated, images);
     }
 
     const {
@@ -78,7 +125,7 @@ const FormParkingLots = ({
     } = formData;
 
     return (
-        <form className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             <div className="flex flex-col gap-2">
                 <label htmlFor="name">Parking name *</label>
                 <input
@@ -103,14 +150,14 @@ const FormParkingLots = ({
             </div>
             <div className="flex flex-col gap-2">
                 <label htmlFor="typeId">Vehicle type *</label>
-                <div className="relative w-full">
+                <div className="relative w-full px-4 py-2 border border-white/10 rounded-sm">
                     <select
                         name="typeId"
                         id="typeId"
                         value={typeId}
                         onChange={handleChange}
                         required
-                        className="appearance-none w-full px-4 py-2 border border-white/10 rounded-sm cursor-pointer"
+                        className="appearance-none w-11/12 truncate cursor-pointer"
                     >
                         {
                             types.map(item =>
@@ -156,7 +203,15 @@ const FormParkingLots = ({
                 </div>
             </div>
             <div className="flex flex-col gap-2">
-                <label htmlFor="price-per-hour">Price per hour</label>
+                <label htmlFor="price-per-hour" className="flex items-center gap-2">
+                    <DollarSign
+                        size={16}
+                        className="text-red-500"
+                    />
+                    <h1>
+                        Price/hour *
+                    </h1>
+                </label>
                 <div className="relative w-full">
                     <input
                         className="w-full outline-none px-4 py-2 border border-white/10 rounded-sm"
@@ -179,26 +234,31 @@ const FormParkingLots = ({
                     </div>
                 </div>
             </div>
-            <div className="col-start-1 flex flex-col gap-2">
+            <div className="lg:col-start-1 lg:min-h-80 min-h-40 flex flex-col gap-2">
                 <input
                     id="url-images"
                     className="hidden"
-                    name="urlImages"
                     type="file"
                     onChange={handleImagesChange}
+                    accept="image/png, image/jpg, image/jpeg"
                     multiple
-                    required
                 />
-                <h1>Images *</h1>
+                <h1>Images <span className="text-xs">(png, jpg, jpeg)</span></h1>
                 {
-                    urlImages ?
+                    images.length ?
                         <div
-                            className="relative flex flex-wrap gap-3 w-full h-full min-h-60 bg-black/5 rounded-xl p-5"
+                            className={`
+                                relative flex flex-wrap gap-3 w-full h-full bg-black/5 rounded-xl p-5
+                                ${isDragging && "opacity-70"}    
+                            `}
+                            onDragOver={handleDragOver}
+                            onDragLeave={handleDragLeave}
+                            onDrop={handleDrop}
                         >
                             <div className="absolute top-3 right-3">
                                 <label htmlFor="url-images">
-                                    <Edit
-                                        size={16}
+                                    <PlusCircle
+                                        size={20}
                                         className="text-red-500 cursor-pointer hover:opacity-80"
                                     />
                                 </label>
@@ -206,15 +266,23 @@ const FormParkingLots = ({
                             <div className="lg:max-h-0">
                                 <div className="flex flex-wrap gap-3">
                                     {
-                                        Array.from({ length: urlImages.length }, (_, i) =>
-                                            <Image
+                                        Array.from({ length: images.length }, (_, i) =>
+                                            <div
                                                 key={i}
-                                                src={URL.createObjectURL(urlImages[i])}
-                                                alt={urlImages[i].name}
-                                                width={100}
-                                                height={100}
-                                                className="rounded-sm"
-                                            />
+                                                className="relative w-15 h-15 rounded-sm"
+                                            >
+                                                <Image
+                                                    src={URL.createObjectURL(images[i])}
+                                                    alt={images[i].name}
+                                                    fill
+                                                    className="object-cover rounded-sm"
+                                                />
+                                                <XCircle
+                                                    size={16}
+                                                    className="absolute top-1 right-1 cursor-pointer hover:opacity-80"
+                                                    onClick={() => handleRemoveImage(i)}
+                                                />
+                                            </div>
                                         )
                                     }
                                 </div>
@@ -222,8 +290,14 @@ const FormParkingLots = ({
                         </div>
                         :
                         <div
-                            className="flex justify-center items-center 
-                            w-full h-full min-h-60 bg-black/5 rounded-xl"
+                            className={`
+                                flex justify-center items-center 
+                                w-full h-full bg-black/5 rounded-xl
+                                ${isDragging && "opacity-70"}
+                            `}
+                            onDragOver={handleDragOver}
+                            onDragLeave={handleDragLeave}
+                            onDrop={handleDrop}
                         >
 
                             <label htmlFor="url-images">
@@ -291,6 +365,12 @@ const FormParkingLots = ({
                             )
                     }
                 </div>
+            </div>
+            <div className="mb-5 lg:col-start-2 flex justify-end">
+                <CustomButton
+                    title="Add new parking"
+                    isPending={false}
+                />
             </div>
         </form>
     )

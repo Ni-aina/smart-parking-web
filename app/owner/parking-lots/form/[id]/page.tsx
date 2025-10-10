@@ -18,7 +18,7 @@ const FormPage = async ({ params }: FormPageInterface) => {
     ])
 
     return (
-        <div className="flex flex-col gap-5 text-white/80 lg:p-2">
+        <div className="flex flex-col gap-5 text-white/90 lg:p-2">
             <HeaderBack
                 title="Parking lot"
                 action={parking?.id ? "Edit" : "New"}
