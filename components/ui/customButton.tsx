@@ -1,25 +1,32 @@
 "use client";
 
-import { Loader2, Upload } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Loader2, LucideProps } from "lucide-react";
+import { ForwardRefExoticComponent, RefAttributes } from "react";
 
 interface CustomButtonInterface {
     title: string;
-    isPending: boolean;
+    isPending?: boolean;
     onClick?: ([...args]: any) => void;
-    type?: "submit" | "button"
+    type?: "submit" | "button",
+    className?: string,
+    Icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> 
+    & RefAttributes<SVGSVGElement>>
 }
 
 const CustomButton = ({
     title,
     isPending,
     onClick,
-    type = "submit"
+    type = "submit",
+    className,
+    Icon
 }: CustomButtonInterface) => {
     return (
         <button
-            className="px-4 py-2 flex justify-center items-center gap-2
+            className={cn(`px-4 py-2 flex justify-center items-center gap-2
             bg-blue-950/20 rounded-sm cursor-pointer hover:opacity-80
-            disabled:cursor-not-allowed disabled:opacity-80"
+            disabled:cursor-not-allowed disabled:opacity-80`, className)}
             disabled={isPending}
             onClick={onClick}
             type={type}
@@ -31,7 +38,7 @@ const CustomButton = ({
                     className="animate-spin"
                 />
                 :
-                <Upload
+                <Icon
                     size={16}
                 />
             }

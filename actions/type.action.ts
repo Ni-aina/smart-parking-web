@@ -5,12 +5,15 @@ import { FormTypeInterface, TypeInterface } from "@/types/type";
 import { normalizeData } from "@/utils/normalizeData";
 import { revalidatePath } from "next/cache";
 import { getServerAuth } from "./auth.action";
+import { isUUID } from "@/utils/isUUID";
 
 export async function createType(type: FormTypeInterface): Promise<TypeInterface | null> {
     const {
         supabase,
         userId: ownerId
     } = await getServerAuth();
+
+    if (!ownerId || !isUUID(ownerId)) return null;
 
     const { data: newType, error } = await supabase.from("vehicle_types")
         .insert([{
@@ -66,6 +69,8 @@ export async function getTypes(): Promise<TypeInterface[]> {
         supabase,
         userId: ownerId
     } = await getServerAuth();
+
+    if (!ownerId || !isUUID(ownerId)) return [];
 
     const { data: types, error } = await supabase.from("vehicle_types")
         .select("*")

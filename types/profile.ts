@@ -7,3 +7,10 @@ export interface ProfileInterface {
     urlImage?: string,
     createdAt?: string
 }
+
+export interface AgentsInterface {
+    id: string,
+    name: string,
+    urlImage: string,
+    checked: boolean
+}

@@ -10,11 +10,13 @@ import {
     DollarSign,
     PlusCircle,
     Search,
+    Undo2,
+    Upload,
     XCircle
 } from "lucide-react";
 import Image from "next/image";
-import { ChangeEvent, DragEvent, FormEvent, useState } from "react";
 import CustomButton from "../ui/customButton";
+import useParkingForm from "@/hooks/useParkingForm";
 
 interface FormParkingLotsInterface {
     types: TypeInterface[];
@@ -22,99 +24,34 @@ interface FormParkingLotsInterface {
     parking: ParkingInterface | null
 }
 
-const allowedTypes = ["image/png", "image/jpeg", "image/jpg"]
-
 const FormParkingLots = ({
     types,
     agents,
     parking
 }: FormParkingLotsInterface) => {
-    const [agentSearch, setAgentSearch] = useState("");
-    const [formData, setFormData] = useState({
-        id: parking?.id || "",
-        name: parking?.name || "",
-        location: parking?.location || "",
-        typeId: parking?.typeId || types.at(0)?.id || "",
-        totalSpots: parking?.totalSpots || "",
-        pricePerHour: parking?.pricePerHour || ""
+
+    const {
+        formData,
+        handleChange,
+        agentsFiltered,
+        agentSearch,
+        setAgentSearch,
+        handleAgentCheckedChange,
+        images,
+        handleImagesChange,
+        handleRemoveImage,
+        isDragging,
+        handleDrop,
+        handleDragOver,
+        handleDragLeave,
+        handleSubmit,
+        isPending,
+        handleCancel
+    } = useParkingForm({
+        agents,
+        parking,
+        types
     })
-
-    const [agentsFormated, setAgentsFormated] = useState(agents.map(item => ({
-        id: item.id || "",
-        name: item.fullName || "",
-        urlImage: item.urlImage || "/images/default-user.png",
-        checked: parking?.agents.includes(item.id) || false
-    })))
-
-    const agentsFiltered = agentsFormated.filter(item =>
-        item.name.toLowerCase().includes(agentSearch.toLowerCase())
-    )
-
-    const [images, setImages] = useState<File[]>([]);
-    const [isDragging, setIsDragging] = useState(false);
-
-    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }))
-    }
-
-    const handleAgentCheckedChange = (id: string) => {
-        setAgentsFormated(prev => prev.map(item => item.id !== id ? item : {
-            ...item,
-            checked: !item.checked
-        }))
-    }
-
-    const handleImagesChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const files = e.target.files;
-        if (!files?.length) return;
-        const newFiles = Array.from(files);
-        const allowedFiles = newFiles.filter(f =>
-            allowedTypes.includes(f.type)
-        )
-
-        setImages(prev => {
-            const existing = new Set(prev.map(f => `${f.name}-${f.size}`));
-            const uniqueNew = allowedFiles.filter(f => !existing.has(`${f.name}-${f.size}`));
-            return [...prev, ...uniqueNew];
-        });
-    }
-
-    const handleRemoveImage = (id: number) => {
-        setImages(prev => prev?.filter((_, i) => i !== id))
-    }
-
-    const handleDrop = (e: DragEvent<HTMLDivElement>) => {
-        e.preventDefault();
-        setIsDragging(false);
-        const files = e.dataTransfer.files;
-        if (!files.length) return;
-        const newFiles = Array.from(files);
-        const allowedFiles = newFiles.filter(f =>
-            allowedTypes.includes(f.type)
-        )
-
-        setImages(prev => {
-            const existing = new Set(prev.map(f => `${f.name}-${f.size}`));
-            const uniqueNew = allowedFiles.filter(f => !existing.has(`${f.name}-${f.size}`));
-            return [...prev, ...uniqueNew];
-        });
-    }
-
-    const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
-        e.preventDefault();
-        setIsDragging(true);
-    }
-
-    const handleDragLeave = () => setIsDragging(false);
-
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        console.log(formData, agentsFormated, images);
-    }
 
     const {
         name,
@@ -366,10 +303,18 @@ const FormParkingLots = ({
                     }
                 </div>
             </div>
-            <div className="mb-5 lg:col-start-2 flex justify-end">
+            <div className="mb-5 lg:col-start-2 flex gap-3 justify-end">
+                <CustomButton
+                    title="Cancel"
+                    type="button"
+                    className="bg-white/5"
+                    Icon={Undo2}
+                    onClick={handleCancel}
+                />
                 <CustomButton
                     title="Add new parking"
-                    isPending={false}
+                    isPending={isPending}
+                    Icon={Upload}
                 />
             </div>
         </form>
