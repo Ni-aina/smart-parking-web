@@ -30,7 +30,7 @@ const HeaderBack = (
                     {title}
                 </h1>
             </div>
-            <div className="flex items-center space-x-1">
+            <div className="flex items-center space-x-2">
                 {
                     action === "New" ?
                     <Plus

@@ -5,12 +5,13 @@ import Order from "./ui/order";
 import { useEffect, useState } from "react";
 import { Modal } from "./ui/modal";
 import { customCheckStyle } from "@/lib/customChexBoxStyle";
+import Image from "next/image";
 
 interface TabelInterface {
     title: string;
     headers: Array<string>;
     body: {
-        rows: Array<Record<string, any>>;
+        rows: Array<Record<string, string>>;
         cols: Array<string>
     };
     handleEdit: (id: string) => void;
@@ -36,7 +37,7 @@ const Table = ({
     const [selectedAll, setSelectedAll] = useState(false);
     const [isConfirmId, setIsConfirmId] = useState("");
 
-    const handleSeleted = (selectedId: number) => {
+    const handleSeleted = (selectedId: string) => {
         setSelected(prev => prev.map(({ id, checked }) => id !== selectedId ? {
             id,
             checked
@@ -55,7 +56,7 @@ const Table = ({
         })))
     }
 
-    const handleConfirm = ()=> {
+    const handleConfirm = () => {
         handleDelete(isConfirmId);
         setIsConfirmId("");
     }
@@ -79,19 +80,19 @@ const Table = ({
                     </h1>
                 </div>
                 <hr className="border-black/30 w-full h-0.5" />
-                <div className="w-full overflow-scroll">
+                <div className="max-w-full overflow-scroll">
                     <table className="w-full">
                         <thead className="font-semibold">
                             <tr>
                                 <td className="pl-5 w-0.5">
-                                    <span className="relative">
+                                    <div className="relative flex h-full items-center">
                                         <input
                                             type="checkbox"
                                             className={customCheckStyle}
                                             checked={selectedAll}
                                             onChange={e => handleSelectedAll(e.target.checked)}
                                         />
-                                    </span>
+                                    </div>
                                 </td>
                                 {
                                     headers.map((item, index) =>
@@ -99,14 +100,16 @@ const Table = ({
                                             key={index}
                                             className="text-start px-5 py-3"
                                         >
-                                            <span className="flex items-center gap-2">
-                                                {item}
+                                            <div className="flex items-center max-w-30 gap-2">
+                                                <h1 className="truncate">
+                                                    {item}
+                                                </h1>
                                                 <Order />
-                                            </span>
+                                            </div>
                                         </td>
                                     )
                                 }
-                                <td className="text-center px-5 py-3">
+                                <td className="text-end pr-5 py-3 lg:pr-8">
                                     Actions
                                 </td>
                             </tr>
@@ -136,21 +139,39 @@ const Table = ({
                                                         key={key}
                                                         className="px-5 py-4"
                                                     >
-                                                        {item[key]}
+                                                        {
+                                                            key.includes("urlImage") ?
+                                                                <div className="relative w-10 h-10">
+                                                                    <Image
+                                                                        src={item.urlImage}
+                                                                        alt={item.urlImage}
+                                                                        fill
+                                                                        className="object-cover rounded-full"
+                                                                    />
+                                                                </div>
+                                                                :
+                                                                <h1>
+                                                                    {
+                                                                        item[key]
+                                                                    }
+                                                                </h1>
+                                                        }
                                                     </td>
                                                 )
                                             }
-                                            <td className="flex justify-center gap-3 px-5 py-4">
-                                                <Edit2
-                                                    size={18}
-                                                    onClick={() => handleEdit(item.id)}
-                                                    className="text-blue-950 cursor-pointer hover:scale-105"
-                                                />
-                                                <Trash2
-                                                    size={18}
-                                                    onClick={() => setIsConfirmId(item.id)}
-                                                    className="text-red-600 cursor-pointer hover:scale-105"
-                                                />
+                                            <td className="pr-8 py-3 lg:pr-10">
+                                                <div className="flex h-full items-center justify-end gap-3">
+                                                    <Edit2
+                                                        size={18}
+                                                        onClick={() => handleEdit(item.id)}
+                                                        className="text-blue-950 cursor-pointer hover:scale-105"
+                                                    />
+                                                    <Trash2
+                                                        size={18}
+                                                        onClick={() => setIsConfirmId(item.id)}
+                                                        className="text-red-600 cursor-pointer hover:scale-105"
+                                                    />
+                                                </div>
                                             </td>
                                         </tr>
                                     )

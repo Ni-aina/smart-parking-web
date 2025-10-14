@@ -312,7 +312,7 @@ const FormParkingLots = ({
                     onClick={handleCancel}
                 />
                 <CustomButton
-                    title="Add new parking"
+                    title={`${parking ? "Update parking" : "Add new parking"}`}
                     isPending={isPending}
                     Icon={Upload}
                 />

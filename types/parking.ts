@@ -3,7 +3,10 @@ import { AgentsInterface } from "./profile";
 export interface ParkingInterface {
     id: string;
     ownerId: string;
-    typeId: string;
+    vehicleType: {
+        id: string;
+        type: string;
+    };
     name: string;
     location: string;
     totalSpots: number;

@@ -7,6 +7,7 @@ import { getServerAuth } from "./auth.action";
 import { isUUID } from "@/utils/isUUID";
 import { uploadFile } from "./uploadFile.action";
 import { removeFile } from "./removeFile.action";
+import { revalidatePath } from "next/cache";
 
 export async function createParkingLot(parking: ParkingFormInterface): Promise<ParkingInterface | null> {
 
@@ -71,6 +72,18 @@ export async function createParkingLot(parking: ParkingFormInterface): Promise<P
     return normalized as ParkingInterface;
 }
 
+export async function deleteParking(parkingId: string) {
+    const supabase = await createClient();
+
+    const { error } = await supabase.from("parking_lots")
+        .delete()
+        .eq("id", parkingId)
+        .single();
+
+    if (error) return;
+    revalidatePath("/owner/parking-lots");
+}
+
 export async function getParkingById(parkingId: string): Promise<ParkingInterface | null> {
     const supabase = await createClient();
 
@@ -82,4 +95,22 @@ export async function getParkingById(parkingId: string): Promise<ParkingInterfac
     if (!parking || error) return null;
     const normalized = normalizeData(parking);
     return normalized as ParkingInterface;
+}
+
+export async function getParkingLots(): Promise<ParkingInterface[]> {
+     const {
+        supabase,
+        userId
+    } = await getServerAuth();
+
+    const { data: parkings, error } = await supabase.from("parking_lots")
+        .select("*, vehicleType: type_id(id, type)")
+        .eq("owner_id", userId)
+        .order("created_at", {
+            ascending: false
+        });
+
+    if (!parkings || error) return [];
+    const normalized = parkings.map((item: any) => normalizeData(item));
+    return normalized as ParkingInterface[];
 }
