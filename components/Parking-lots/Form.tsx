@@ -17,6 +17,7 @@ import {
 import Image from "next/image";
 import CustomButton from "../ui/customButton";
 import useParkingForm from "@/hooks/useParkingForm";
+import Loading from "../ui/loading";
 
 interface FormParkingLotsInterface {
     types: TypeInterface[];
@@ -38,6 +39,7 @@ const FormParkingLots = ({
         setAgentSearch,
         handleAgentCheckedChange,
         images,
+        isImagesPending,
         handleImagesChange,
         handleRemoveImage,
         isDragging,
@@ -182,68 +184,78 @@ const FormParkingLots = ({
                 />
                 <h1>Images <span className="text-xs">(png, jpg, jpeg)</span></h1>
                 {
-                    images.length ?
+                    isImagesPending ?
                         <div
                             className={`
+                                grid place-items-center w-full h-full 
+                                bg-black/5 rounded-xl
+                            `}
+                        >
+                            <Loading />
+                        </div>
+                        :
+                        images.length ?
+                            <div
+                                className={`
                                 relative flex flex-wrap gap-3 w-full h-full bg-black/5 rounded-xl p-5
                                 ${isDragging && "opacity-70"}    
                             `}
-                            onDragOver={handleDragOver}
-                            onDragLeave={handleDragLeave}
-                            onDrop={handleDrop}
-                        >
-                            <div className="absolute top-3 right-3">
-                                <label htmlFor="url-images">
-                                    <PlusCircle
-                                        size={20}
-                                        className="text-red-500 cursor-pointer hover:opacity-80"
-                                    />
-                                </label>
-                            </div>
-                            <div className="lg:max-h-0">
-                                <div className="flex flex-wrap gap-3">
-                                    {
-                                        Array.from({ length: images.length }, (_, i) =>
-                                            <div
-                                                key={i}
-                                                className="relative w-15 h-15 rounded-sm"
-                                            >
-                                                <Image
-                                                    src={URL.createObjectURL(images[i])}
-                                                    alt={images[i].name}
-                                                    fill
-                                                    className="object-cover rounded-sm"
-                                                />
-                                                <XCircle
-                                                    size={16}
-                                                    className="absolute top-1 right-1 cursor-pointer hover:opacity-80"
-                                                    onClick={() => handleRemoveImage(i)}
-                                                />
-                                            </div>
-                                        )
-                                    }
+                                onDragOver={handleDragOver}
+                                onDragLeave={handleDragLeave}
+                                onDrop={handleDrop}
+                            >
+                                <div className="absolute top-3 right-3">
+                                    <label htmlFor="url-images">
+                                        <PlusCircle
+                                            size={20}
+                                            className="text-red-500 cursor-pointer hover:opacity-80"
+                                        />
+                                    </label>
+                                </div>
+                                <div className="lg:max-h-0">
+                                    <div className="flex flex-wrap gap-3">
+                                        {
+                                            Array.from({ length: images.length }, (_, i) =>
+                                                <div
+                                                    key={i}
+                                                    className="relative w-15 h-15 rounded-sm"
+                                                >
+                                                    <Image
+                                                        src={URL.createObjectURL(images[i])}
+                                                        alt={images[i].name}
+                                                        fill
+                                                        className="object-cover rounded-sm"
+                                                    />
+                                                    <XCircle
+                                                        size={16}
+                                                        className="absolute top-1 right-1 cursor-pointer hover:opacity-80"
+                                                        onClick={() => handleRemoveImage(i)}
+                                                    />
+                                                </div>
+                                            )
+                                        }
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        :
-                        <div
-                            className={`
+                            :
+                            <div
+                                className={`
                                 flex justify-center items-center 
                                 w-full h-full bg-black/5 rounded-xl
                                 ${isDragging && "opacity-70"}
                             `}
-                            onDragOver={handleDragOver}
-                            onDragLeave={handleDragLeave}
-                            onDrop={handleDrop}
-                        >
+                                onDragOver={handleDragOver}
+                                onDragLeave={handleDragLeave}
+                                onDrop={handleDrop}
+                            >
 
-                            <label htmlFor="url-images">
-                                <PlusCircle
-                                    size={32}
-                                    className="text-red-500 cursor-pointer hover:opacity-80"
-                                />
-                            </label>
-                        </div>
+                                <label htmlFor="url-images">
+                                    <PlusCircle
+                                        size={32}
+                                        className="text-red-500 cursor-pointer hover:opacity-80"
+                                    />
+                                </label>
+                            </div>
                 }
             </div>
             <div className="flex flex-col gap-2">
@@ -279,7 +291,7 @@ const FormParkingLots = ({
                                     className="flex justify-between items-center gap-3"
                                 >
                                     <div className="flex items-center gap-3">
-                                        <span className="mt-1 relative">
+                                        <span className="relative mt-1">
                                             <input
                                                 type="checkbox"
                                                 className={customCheckStyle}

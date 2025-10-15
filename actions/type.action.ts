@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { FormTypeInterface, TypeInterface } from "@/types/type";
 import { normalizeData } from "@/utils/normalizeData";
 import { revalidatePath } from "next/cache";
-import { getServerAuth } from "./auth.action";
+import { getServerAuth } from "./authServer.action";
 import { isUUID } from "@/utils/isUUID";
 
 export async function createType(type: FormTypeInterface): Promise<TypeInterface | null> {

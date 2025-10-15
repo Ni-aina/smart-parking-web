@@ -45,6 +45,18 @@ const Table = ({
             id,
             checked: !checked
         }))
+        if (selected.reduce((acc, curr) =>
+            curr.id !== selectedId ?
+                curr.checked ?
+                    acc + 1
+                    : acc :
+                curr.checked ?
+                    acc :
+                    acc + 1,
+            0) === rows.length) {
+            setSelectedAll(true);
+            return;
+        }
         setSelectedAll(false);
     }
 
@@ -85,13 +97,15 @@ const Table = ({
                         <thead className="font-semibold">
                             <tr>
                                 <td className="pl-5 w-0.5">
-                                    <div className="relative flex h-full items-center">
-                                        <input
-                                            type="checkbox"
-                                            className={customCheckStyle}
-                                            checked={selectedAll}
-                                            onChange={e => handleSelectedAll(e.target.checked)}
-                                        />
+                                    <div className="flex h-full items-center">
+                                        <span className="relative mt-1.5">
+                                            <input
+                                                type="checkbox"
+                                                className={customCheckStyle}
+                                                checked={selectedAll}
+                                                onChange={e => handleSelectedAll(e.target.checked)}
+                                            />
+                                        </span>
                                     </div>
                                 </td>
                                 {
@@ -124,14 +138,16 @@ const Table = ({
                                             className={index % 2 === 0 ? "bg-black/5" : ""}
                                         >
                                             <td className="pl-5 w-0.5">
-                                                <span className="relative">
-                                                    <input
-                                                        type="checkbox"
-                                                        className={customCheckStyle}
-                                                        checked={checked}
-                                                        onChange={() => handleSeleted(item.id)}
-                                                    />
-                                                </span>
+                                                <div className="flex items-center">
+                                                    <span className="relative mt-1.5">
+                                                        <input
+                                                            type="checkbox"
+                                                            className={customCheckStyle}
+                                                            checked={checked}
+                                                            onChange={() => handleSeleted(item.id)}
+                                                        />
+                                                    </span>
+                                                </div>
                                             </td>
                                             {
                                                 cols.map(key =>

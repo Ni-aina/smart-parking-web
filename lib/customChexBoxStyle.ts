@@ -6,7 +6,7 @@ export const customCheckStyle = `
     checked:before:content-['✔']
     checked:before:text-red-500
     checked:before:absolute
-    checked:before:bottom-[1.5px]
-    checked:before:right-[1.5px]
+    checked:before:top-[-1.5px]
+    checked:before:left-[1.5px]
     cursor-pointer
 `

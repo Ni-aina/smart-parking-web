@@ -1,14 +1,16 @@
 "use client";
-import { createParkingLot } from "@/actions/parkingLots.action";
+import { createParkingLot, editParkingLot } from "@/actions/parkingLots.action";
 import { ParkingInterface } from "@/types/parking";
 import { ProfileInterface } from "@/types/profile";
 import { TypeInterface } from "@/types/type";
 import { getLatLng } from "@/utils/openstreetmap";
+import { urlToFile } from "@/utils/urlToFile";
 import { useRouter } from "next/navigation";
 import {
     ChangeEvent,
     DragEvent,
     FormEvent,
+    useEffect,
     useState
 } from "react";
 
@@ -34,7 +36,7 @@ const useParkingForm = ({
         id: parking?.id || "",
         name: parking?.name || "",
         location: parking?.location || "",
-        typeId: parking?.typeId || types.at(0)?.id || "",
+        typeId: parking?.vehicleType.id || types.at(0)?.id || "",
         totalSpots: parking?.totalSpots || "",
         pricePerHour: parking?.pricePerHour || ""
     })
@@ -51,6 +53,7 @@ const useParkingForm = ({
     )
 
     const [images, setImages] = useState<File[]>([]);
+    const [isImagesPending, setIsImagesPending] = useState(true);
     const [isDragging, setIsDragging] = useState(false);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -101,7 +104,7 @@ const useParkingForm = ({
             const existing = new Set(prev.map(f => `${f.name}-${f.size}`));
             const uniqueNew = allowedFiles.filter(f => !existing.has(`${f.name}-${f.size}`));
             return [...prev, ...uniqueNew];
-        });
+        })
     }
 
     const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
@@ -116,6 +119,19 @@ const useParkingForm = ({
         try {
             setIsPending(true);
             const latLng = await getLatLng(formData.location);
+            if (parking?.id) {
+                const updatedParking = await editParkingLot({
+                    ...formData,
+                    agents: agentsFormated,
+                    images,
+                    location_lat: latLng.latitude,
+                    location_lng: latLng.longitude
+                }, parking.urlImages)
+
+                if (!updatedParking) return;
+                router.push("/owner/parking-lots");
+                return;
+            }
             const newParking = await createParkingLot({
                 ...formData,
                 agents: agentsFormated,
@@ -126,14 +142,26 @@ const useParkingForm = ({
             if (!newParking) return;
             router.push("/owner/parking-lots");
         } catch {
+
         } finally {
             setIsPending(false);
         }
     }
 
-    const handleCancel = ()=> {
+    const handleCancel = () => {
         router.back()
     }
+
+    useEffect(() => {
+        (async function () {
+            if (parking?.urlImages?.length) {
+                const files = await Promise.all(parking.urlImages.map(url => urlToFile(url)));
+                setImages(files);
+            }
+            setIsImagesPending(false);
+        })()
+    }, [parking]);
+
 
     return {
         formData,
@@ -143,6 +171,7 @@ const useParkingForm = ({
         setAgentSearch,
         handleAgentCheckedChange,
         images,
+        isImagesPending,
         handleImagesChange,
         isDragging,
         handleRemoveImage,

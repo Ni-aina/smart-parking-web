@@ -2,7 +2,7 @@ import { supabase } from "@/lib/supabase/client";
 import { ProfileInterface } from "@/types/profile";
 import { normalizeData } from "@/utils/normalizeData";
 import { User } from "@supabase/supabase-js";
-import { getServerAuth } from "./auth.action";
+import { getServerAuth } from "./authServer.action";
 
 export async function getCurrentProfile(user: User | null): Promise<ProfileInterface | null> {
     try {
