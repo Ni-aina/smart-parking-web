@@ -117,7 +117,7 @@ export async function editParkingLot(parking: ParkingFormInterface, currentUrlIm
     }
 
     const { data: updatedParking, error } = await supabase.from("parking_lots")
-        .update([{
+        .update({
             name,
             location,
             type_id,
@@ -128,7 +128,7 @@ export async function editParkingLot(parking: ParkingFormInterface, currentUrlIm
             location_lat,
             location_lng,
             owner_id: userId
-        }])
+        })
         .eq("id", id)
         .select("*")
         .single()

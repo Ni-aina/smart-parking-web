@@ -18,6 +18,7 @@ import Image from "next/image";
 import CustomButton from "../ui/customButton";
 import useParkingForm from "@/hooks/useParkingForm";
 import Loading from "../ui/loading";
+import InputNumber from "../ui/inputNumber";
 
 interface FormParkingLotsInterface {
     types: TypeInterface[];
@@ -104,7 +105,7 @@ const FormParkingLots = ({
                                     key={item.id}
                                     value={item.id}
                                 >
-                                    {item.type} ({item.description})
+                                    {item.type} {item.description?.toLowerCase()}
                                 </option>
                             )
                         }
@@ -119,27 +120,12 @@ const FormParkingLots = ({
             </div>
             <div className="flex flex-col gap-2">
                 <label htmlFor="total-spots">Total spots *</label>
-                <div className="relative w-full">
-                    <input
-                        className="w-full outline-none px-4 py-2 border border-white/10 rounded-sm"
-                        name="totalSpots"
-                        type="number"
-                        value={totalSpots}
-                        onChange={handleChange}
-                        min={0}
-                        required
-                    />
-                    <div className="pointer-events-none absolute inset-y-0 right-3 flex flex-col justify-center">
-                        <ChevronUp
-                            size={16}
-                            className="text-red-500"
-                        />
-                        <ChevronDown
-                            size={16}
-                            className="text-red-500 mt-[-5px]"
-                        />
-                    </div>
-                </div>
+                <InputNumber
+                    name="totalSpots"
+                    value={`${totalSpots}`}
+                    handleChange={handleChange}
+                    min={0}
+                />
             </div>
             <div className="flex flex-col gap-2">
                 <label htmlFor="price-per-hour" className="flex items-center gap-2">
@@ -151,27 +137,12 @@ const FormParkingLots = ({
                         Price/hour *
                     </h1>
                 </label>
-                <div className="relative w-full">
-                    <input
-                        className="w-full outline-none px-4 py-2 border border-white/10 rounded-sm"
-                        name="pricePerHour"
-                        type="number"
-                        value={pricePerHour}
-                        onChange={handleChange}
-                        min={0}
-                        required
-                    />
-                    <div className="pointer-events-none absolute inset-y-0 right-3 flex flex-col justify-center">
-                        <ChevronUp
-                            size={16}
-                            className="text-red-500"
-                        />
-                        <ChevronDown
-                            size={16}
-                            className="text-red-500 mt-[-5px]"
-                        />
-                    </div>
-                </div>
+                <InputNumber
+                    name="pricePerHour"
+                    value={`${pricePerHour}`}
+                    handleChange={handleChange}
+                    min={0}
+                />
             </div>
             <div className="lg:col-start-1 lg:min-h-80 min-h-40 flex flex-col gap-2">
                 <input

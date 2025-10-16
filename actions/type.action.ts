@@ -7,7 +7,7 @@ import { revalidatePath } from "next/cache";
 import { getServerAuth } from "./authServer.action";
 import { isUUID } from "@/utils/isUUID";
 
-export async function createType(type: FormTypeInterface): Promise<TypeInterface | null> {
+export async function createType(formType: FormTypeInterface): Promise<TypeInterface | null> {
     const {
         supabase,
         userId: ownerId
@@ -17,7 +17,11 @@ export async function createType(type: FormTypeInterface): Promise<TypeInterface
 
     const { data: newType, error } = await supabase.from("vehicle_types")
         .insert([{
-            ...type,
+            type: formType.type,
+            max_width: formType.maxWidth,
+            max_length: formType.maxLength,
+            max_height: formType.maxHeight,
+            description: formType.description,
             owner_id: ownerId
         }])
         .select()
@@ -30,16 +34,20 @@ export async function createType(type: FormTypeInterface): Promise<TypeInterface
     return normalized as TypeInterface;
 }
 
-export async function updateType(type: FormTypeInterface): Promise<TypeInterface | null> {
+export async function updateType(formType: FormTypeInterface): Promise<TypeInterface | null> {
     const supabase = await createClient();
 
-    const { id } = type;
+    const { id } = formType;
     if (!id) return null;
 
     const { data: updatedType, error } = await supabase.from("vehicle_types")
-        .update([{
-            ...type
-        }])
+        .update({
+            type: formType.type,
+            max_width: formType.maxWidth,
+            max_length: formType.maxLength,
+            max_height: formType.maxHeight,
+            description: formType.description
+        })
         .eq("id", id)
         .select()
         .single();

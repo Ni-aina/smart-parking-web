@@ -11,14 +11,17 @@ interface OptimisticTypeInterface {
 
 const initForm = {
     type: "",
-    description: ""
+    description: "",
+    maxWidth: "",
+    maxLength: "",
+    maxHeight: ""
 }
 
 const useType = ({ types }: { types: TypeInterface[] }) => {
 
     const [optimisticTypes, addOptimisticTypes] = useOptimistic(
         types,
-        (currentType: TypeInterface[], actions: OptimisticTypeInterface)=> {
+        (currentType: TypeInterface[], actions: OptimisticTypeInterface) => {
             const { type, vehicleType } = actions;
             switch (type) {
                 case "update": {
@@ -45,16 +48,22 @@ const useType = ({ types }: { types: TypeInterface[] }) => {
     const [formData, setFormData] = useState<FormTypeInterface>(initForm);
 
     const title = "Vehicle types";
-    const headers = ["Type", "Description"];
+    const headers = ["Type", "Max width", "Max length", "Max height", "Description"];
 
     const body = {
         rows: optimisticTypes.map(item => ({
             id: item.id,
             type: item.type,
+            width: `${item.maxWidth} m`,
+            length: `${item.maxLength} m`,
+            height: `${item.maxHeight} m`,
             description: item.description
         })),
         cols: [
             "type",
+            "width",
+            "length",
+            "height",
             "description"
         ]
     }
@@ -87,7 +96,7 @@ const useType = ({ types }: { types: TypeInterface[] }) => {
         }
 
         handleOnClose();
-        startTransition(()=> {
+        startTransition(() => {
             addOptimisticTypes({
                 type: "update",
                 vehicleType: formData
@@ -98,10 +107,20 @@ const useType = ({ types }: { types: TypeInterface[] }) => {
 
     const handleEdit = (id: string) => {
         const type = types.filter(item => item.id === id)
-            .map(({ id, type, description }) => ({
+            .map(({
                 id,
                 type,
-                description
+                maxWidth,
+                maxLength,
+                maxHeight,
+                description,
+            }) => ({
+                id,
+                type,
+                maxWidth,
+                maxLength,
+                maxHeight,
+                description: description || ""
             }))?.at(0);
 
         if (!type) return;
@@ -110,7 +129,7 @@ const useType = ({ types }: { types: TypeInterface[] }) => {
     }
 
     const handleDelete = (id: string) => {
-        startTransition(()=> {
+        startTransition(() => {
             addOptimisticTypes({
                 type: "delete",
                 vehicleType: {

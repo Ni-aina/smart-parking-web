@@ -6,6 +6,7 @@ import { Modal } from "../ui/modal";
 import { TypeInterface } from "@/types/type";
 import { Loader2 } from "lucide-react";
 import useType from "@/hooks/useType";
+import InputNumber from "../ui/inputNumber";
 
 const ClientType = ({ types }: { types: TypeInterface[] }) => {
 
@@ -27,8 +28,11 @@ const ClientType = ({ types }: { types: TypeInterface[] }) => {
     } = useType({ types });
 
     const {
-        id, 
+        id,
         type,
+        maxWidth,
+        maxLength,
+        maxHeight,
         description
     } = formData;
 
@@ -57,22 +61,41 @@ const ClientType = ({ types }: { types: TypeInterface[] }) => {
                     onSubmit={handleSubmit}
                 >
                     <div className="flex flex-col gap-3">
-                        <label htmlFor="type">Type</label>
+                        <label htmlFor="type">Type *</label>
                         <input
                             type="text"
                             name="type"
                             value={type}
                             onChange={handleChange}
                             required
-                            className="outline-none px-4 py-2 border border-white/70 rounded-sm"
+                            className="outline-none px-4 py-2 border border-white/10 rounded-sm" />
+                        <label htmlFor="type">Max width (m) *</label>
+                        <InputNumber
+                            name="maxWidth"
+                            value={`${maxWidth}`}
+                            handleChange={handleChange}
+                            min={0}
+                        />
+                        <label htmlFor="type">Max length (m) *</label>
+                        <InputNumber
+                            name="maxLength"
+                            value={`${maxLength}`}
+                            handleChange={handleChange}
+                            min={0}
+                        />
+                        <label htmlFor="type">Max height (m) *</label>
+                        <InputNumber
+                            name="maxHeight"
+                            value={`${maxHeight}`}
+                            handleChange={handleChange}
+                            min={0}
                         />
                         <label htmlFor="description">Description</label>
                         <textarea
                             name="description"
                             value={description}
                             onChange={handleChange}
-                            required
-                            className="outline-none px-4 py-2 border border-white/70 rounded-sm"
+                            className="outline-none px-4 py-2 border border-white/10 rounded-sm"
                         />
                     </div>
                     <div className="mt-3 w-full flex justify-end gap-3">
@@ -97,7 +120,7 @@ const ClientType = ({ types }: { types: TypeInterface[] }) => {
                                     className="animate-spin"
                                 />
                             }
-                            <span>{id  ? "Update" : "Add"}</span>
+                            <span>{id ? "Update" : "Add"}</span>
                         </button>
                     </div>
                 </form>
