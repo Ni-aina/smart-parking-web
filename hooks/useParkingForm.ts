@@ -1,5 +1,6 @@
 "use client";
 import { createParkingLot, editParkingLot } from "@/actions/parkingLots.action";
+import { SelectInterface } from "@/types/input";
 import { ParkingInterface } from "@/types/parking";
 import { ProfileInterface } from "@/types/profile";
 import { TypeInterface } from "@/types/type";
@@ -29,14 +30,25 @@ const useParkingForm = ({
 }: FormParkingLotsInterface) => {
 
     const router = useRouter();
+    const selectTypes = types.map(item => ({
+        id: item.id,
+        value: `
+            ${item.type},
+            max width: ${item.maxWidth}, 
+            max length: ${item.maxLength}
+            max height: ${item.maxHeight}
+            ${item.description && `(${item.description})`}
+        `
+    }))
 
     const [agentSearch, setAgentSearch] = useState("");
     const [isPending, setIsPending] = useState(false);
+
     const [formData, setFormData] = useState({
         id: parking?.id || "",
         name: parking?.name || "",
         location: parking?.location || "",
-        typeId: parking?.vehicleType.id || types.at(0)?.id || "",
+        typeId: parking?.vehicleType.id || selectTypes.at(0)?.id || "",
         totalSpots: parking?.totalSpots || "",
         pricePerHour: parking?.pricePerHour || ""
     })
@@ -56,7 +68,7 @@ const useParkingForm = ({
     const [isImagesPending, setIsImagesPending] = useState(true);
     const [isDragging, setIsDragging] = useState(false);
 
-    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement> | SelectInterface) => {
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
@@ -165,6 +177,7 @@ const useParkingForm = ({
 
     return {
         formData,
+        selectTypes,
         handleChange,
         agentsFiltered,
         agentSearch,

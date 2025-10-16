@@ -1,0 +1,86 @@
+import { SelectInterface } from "@/types/input";
+import { ChevronDown } from "lucide-react";
+import { useState } from "react";
+
+interface InpuSelectInterface {
+    name: string;
+    value: string;
+    data: Array<{
+        id: string;
+        value: string;
+    }>;
+    handleChange: (e: SelectInterface) => void;
+    placeholder?: string;
+}
+
+const InputSelect = ({
+    name,
+    value,
+    data,
+    handleChange,
+    placeholder
+}: InpuSelectInterface) => {
+    const [openMenu, setOpenMenu] = useState(false);
+    const handleOpenMenu = () => setOpenMenu(prev => !prev);
+    const selected = data.find((item) => item.id === value);
+
+    return (
+        <div className="relative w-full pl-4 pr-2 py-2 border border-white/10 rounded-sm">
+            <button
+                className="flex w-full justify-between items-center gap-2 cursor-pointer"
+                onClick={handleOpenMenu}
+                type="button"
+            >
+                <span className="truncate">
+                    {
+                        selected ? selected.value :
+                            <span className="text-gray-400">
+                                {placeholder}
+                            </span>
+                    }
+                </span>
+                <ChevronDown
+                    size={20}
+                    className={`
+                        transition-transform 
+                        ${openMenu ? "rotate-180" : "rotate-0"} 
+                        text-red-500`
+                    }
+                />
+            </button>
+            {
+                openMenu &&
+                <div className="absolute left-0 top-full mt-1 z-10 flex flex-col gap-2 px-2 py-2 w-full bg-black
+                    border border-white/10 rounded-md shadow-lg max-h-64 overflow-y-auto"
+                >
+                    {
+                        data.map((item) => (
+                            <button
+                                type="button"
+                                key={item.id}
+                                onClick={() => {
+                                    handleChange({
+                                        target: {
+                                            name,
+                                            value: item.id
+                                        }
+                                    });
+                                    setOpenMenu(false);
+                                }}
+                                className={`
+                                        flex items-center w-full gap-2 px-2 py-2 cursor-pointer 
+                                        hover:bg-white/5 text-white/80 rounded-sm
+                                        ${item.id === value && "bg-white/5"}
+                                    `}
+                            >
+                                {item.value}
+                            </button>
+                        ))
+                    }
+                </div>
+            }
+        </div>
+    )
+}
+
+export default InputSelect;

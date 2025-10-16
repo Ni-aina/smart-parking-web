@@ -5,8 +5,6 @@ import { ParkingInterface } from "@/types/parking";
 import { ProfileInterface } from "@/types/profile";
 import { TypeInterface } from "@/types/type";
 import {
-    ChevronDown,
-    ChevronUp,
     DollarSign,
     PlusCircle,
     Search,
@@ -19,6 +17,7 @@ import CustomButton from "../ui/customButton";
 import useParkingForm from "@/hooks/useParkingForm";
 import Loading from "../ui/loading";
 import InputNumber from "../ui/inputNumber";
+import InputSelect from "../ui/inputSelect";
 
 interface FormParkingLotsInterface {
     types: TypeInterface[];
@@ -33,6 +32,7 @@ const FormParkingLots = ({
 }: FormParkingLotsInterface) => {
 
     const {
+        selectTypes,
         formData,
         handleChange,
         agentsFiltered,
@@ -90,33 +90,12 @@ const FormParkingLots = ({
             </div>
             <div className="flex flex-col gap-2">
                 <label htmlFor="typeId">Vehicle type *</label>
-                <div className="relative w-full px-4 py-2 border border-white/10 rounded-sm">
-                    <select
-                        name="typeId"
-                        id="typeId"
-                        value={typeId}
-                        onChange={handleChange}
-                        required
-                        className="appearance-none w-11/12 truncate cursor-pointer"
-                    >
-                        {
-                            types.map(item =>
-                                <option
-                                    key={item.id}
-                                    value={item.id}
-                                >
-                                    {item.type} {item.description?.toLowerCase()}
-                                </option>
-                            )
-                        }
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                        <ChevronDown
-                            size={20}
-                            className="text-red-500"
-                        />
-                    </div>
-                </div>
+                <InputSelect
+                    name="typeId"
+                    value={typeId}
+                    handleChange={handleChange}
+                    data={selectTypes}
+                />
             </div>
             <div className="flex flex-col gap-2">
                 <label htmlFor="total-spots">Total spots *</label>
