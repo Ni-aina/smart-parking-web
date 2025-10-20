@@ -6,89 +6,134 @@ import { normalizeData } from "@/utils/normalizeData";
 import { revalidatePath } from "next/cache";
 import { getServerAuth } from "./authServer.action";
 import { isUUID } from "@/utils/isUUID";
+import { rejectTimeout } from "@/utils/rejectTimeout";
 
 export async function createType(formType: FormTypeInterface): Promise<TypeInterface | null> {
-    const {
-        supabase,
-        userId: ownerId
-    } = await getServerAuth();
+    try {
+        const request = (async () => {
+            const {
+                supabase,
+                userId: ownerId
+            } = await getServerAuth();
 
-    if (!ownerId || !isUUID(ownerId)) return null;
+            if (!ownerId || !isUUID(ownerId)) return null;
 
-    const { data: newType, error } = await supabase.from("vehicle_types")
-        .insert([{
-            type: formType.type,
-            max_width: formType.maxWidth,
-            max_length: formType.maxLength,
-            max_height: formType.maxHeight,
-            description: formType.description,
-            owner_id: ownerId
-        }])
-        .select()
-        .single();
+            const { data: newType, error } = await supabase.from("vehicle_types")
+                .insert([{
+                    type: formType.type,
+                    max_width: formType.maxWidth,
+                    max_length: formType.maxLength,
+                    max_height: formType.maxHeight,
+                    description: formType.description,
+                    owner_id: ownerId
+                }])
+                .select()
+                .single();
 
-    if (!newType || error) return null;
-    const normalized = normalizeData(newType);
+            if (!newType || error) return null;
+            const normalized = normalizeData(newType);
 
-    revalidatePath("/owner/settings/types");
-    return normalized as TypeInterface;
+            revalidatePath("/owner/settings/types");
+            return normalized as TypeInterface;
+        })()
+
+        return Promise.race([
+            request,
+            rejectTimeout()
+        ])
+    } catch (error) {
+        throw error;
+    }
 }
 
 export async function updateType(formType: FormTypeInterface): Promise<TypeInterface | null> {
-    const supabase = await createClient();
+    try {
+        const request = (async () => {
+            const supabase = await createClient();
 
-    const { id } = formType;
-    if (!id) return null;
+            const { id } = formType;
+            if (!id) return null;
 
-    const { data: updatedType, error } = await supabase.from("vehicle_types")
-        .update({
-            type: formType.type,
-            max_width: formType.maxWidth,
-            max_length: formType.maxLength,
-            max_height: formType.maxHeight,
-            description: formType.description
-        })
-        .eq("id", id)
-        .select()
-        .single();
+            const { data: updatedType, error } = await supabase.from("vehicle_types")
+                .update({
+                    type: formType.type,
+                    max_width: formType.maxWidth,
+                    max_length: formType.maxLength,
+                    max_height: formType.maxHeight,
+                    description: formType.description
+                })
+                .eq("id", id)
+                .select()
+                .single();
 
-    if (!updatedType || error) return null;
-    const normalized = normalizeData(updatedType);
+            if (!updatedType || error) return null;
+            const normalized = normalizeData(updatedType);
 
-    revalidatePath("/owner/settings/types");
-    return normalized as TypeInterface;
+            revalidatePath("/owner/settings/types");
+            return normalized as TypeInterface;
+        })()
+
+        return Promise.race([
+            request,
+            rejectTimeout()
+        ])
+    } catch (error) {
+        throw error;
+    }
 }
 
 export async function deleteType(id: string) {
-    const supabase = await createClient();
+    try {
+        const request = (async () => {
+            const supabase = await createClient();
 
-    if (!id) return;
+            if (!id) return;
 
-    const { error } = await supabase.from("vehicle_types")
-        .delete()
-        .eq("id", id)
+            const { error } = await supabase.from("vehicle_types")
+                .delete()
+                .eq("id", id)
 
-    if (error) return;
-    revalidatePath("/owner/settings/types");
+            if (error) return;
+            revalidatePath("/owner/settings/types");
+        })()
+
+        return Promise.race([
+            request,
+            rejectTimeout()
+        ])
+    } catch (error) {
+        throw error;
+    }
 }
 
 export async function getTypes(): Promise<TypeInterface[]> {
-    const {
-        supabase,
-        userId: ownerId
-    } = await getServerAuth();
+    try {
+        const request = (async () => {
+            const {
+                supabase,
+                userId: ownerId
+            } = await getServerAuth();
 
-    if (!ownerId || !isUUID(ownerId)) return [];
+            if (!ownerId || !isUUID(ownerId)) return [];
 
-    const { data: types, error } = await supabase.from("vehicle_types")
-        .select("*")
-        .eq("owner_id", ownerId)
-        .order("created_at", {
-            ascending: false
-        });
+            const { data: types, error } = await supabase.from("vehicle_types")
+                .select("*")
+                .eq("owner_id", ownerId)
+                .order("created_at", {
+                    ascending: false
+                });
 
-    if (!types || error) return [];
-    const normalized = types.map((item: any) => normalizeData(item));
+            if (!types || error) return [];
+            const normalized = types.map((item: any) => normalizeData(item));
 
-    return normalized as TypeInterface[];
+            return normalized as TypeInterface[];
+        })()
+
+        return Promise.race([
+            request,
+            rejectTimeout()
+        ])
+    } catch (error) {
+        throw error;
+    }
 }

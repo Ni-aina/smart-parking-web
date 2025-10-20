@@ -1,16 +1,37 @@
 import { supabase } from "@/lib/supabase/client";
 import { AuthUserInterface } from "@/types/auth";
+import { rejectTimeout } from "@/utils/rejectTimeout";
 
 export async function logIn(email: string, password: string):
     Promise<AuthUserInterface> {
-    const { data } = await supabase.auth.signInWithPassword({
-        email,
-        password
-    })
+    try {
+        const request = (async () => {
+            const { data } = await supabase.auth.signInWithPassword({
+                email,
+                password
+            })
 
-    return data;
+            return data;
+        })()
+        return Promise.race([
+            request,
+            rejectTimeout()
+        ])
+    } catch (error) {
+        throw error;
+    }
 }
 
 export async function logOut() {
-    await supabase.auth.signOut();
+    try {
+        const request = (async () => {
+            await supabase.auth.signOut();
+        })()
+        return Promise.race([
+            request,
+            rejectTimeout()
+        ])
+    } catch (error) {
+        throw error;
+    }
 }

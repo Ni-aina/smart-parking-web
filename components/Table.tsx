@@ -92,7 +92,7 @@ const Table = ({
                     </h1>
                 </div>
                 <hr className="border-black/30 w-full h-0.5" />
-                <div className="max-w-full overflow-scroll">
+                <div className="max-w-full max-h-[60dvh] overflow-scroll">
                     <table className="w-full">
                         <thead className="font-semibold">
                             <tr>
