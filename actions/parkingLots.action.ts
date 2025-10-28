@@ -218,7 +218,7 @@ export async function getParkingById(parkingId: string): Promise<ParkingInterfac
             const supabase = await createClient();
 
             const { data: parking, error } = await supabase.from("parking_lots")
-                .select("*, vehicleType: type_id(id, type)")
+                .select("*, lotType: type_id(id, vehicle_type)")
                 .eq("id", parkingId)
                 .single();
 
@@ -245,7 +245,7 @@ export async function getParkingLots(): Promise<ParkingInterface[]> {
             } = await getServerAuth();
 
             const { data: parkings, error } = await supabase.from("parking_lots")
-                .select("*, vehicleType: type_id(id, type)")
+                .select("*, lotType: type_id(id, vehicle_type)")
                 .eq("owner_id", userId)
                 .order("created_at", {
                     ascending: false

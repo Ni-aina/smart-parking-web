@@ -33,7 +33,7 @@ const useParkingForm = ({
     const selectTypes = types.map(item => ({
         id: item.id,
         value: `
-            ${item.type},
+            ${item.vehicleType},
             max width: ${item.maxWidth}, 
             max length: ${item.maxLength}
             max height: ${item.maxHeight}
@@ -48,7 +48,7 @@ const useParkingForm = ({
         id: parking?.id || "",
         name: parking?.name || "",
         location: parking?.location || "",
-        typeId: parking?.vehicleType.id || selectTypes.at(0)?.id || "",
+        typeId: parking?.lotType.id || selectTypes.at(0)?.id || "",
         totalSpots: parking?.totalSpots || "",
         pricePerHour: parking?.pricePerHour || ""
     })

@@ -1,6 +1,6 @@
 export interface TypeInterface {
     id: string;
-    type: string;
+    vehicleType: string;
     maxWidth: string;
     maxLength: string;
     maxHeight: string;
@@ -10,7 +10,7 @@ export interface TypeInterface {
 
 export interface FormTypeInterface {
     id?: string;
-    type: string;
+    vehicleType: string;
     maxWidth: string;
     maxLength: string;
     maxHeight: string;

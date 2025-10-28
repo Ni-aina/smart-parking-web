@@ -18,9 +18,9 @@ export async function createType(formType: FormTypeInterface): Promise<TypeInter
 
             if (!ownerId || !isUUID(ownerId)) return null;
 
-            const { data: newType, error } = await supabase.from("vehicle_types")
+            const { data: newType, error } = await supabase.from("lot_types")
                 .insert([{
-                    type: formType.type,
+                    vehicle_type: formType.vehicleType,
                     max_width: formType.maxWidth,
                     max_length: formType.maxLength,
                     max_height: formType.maxHeight,
@@ -54,9 +54,9 @@ export async function updateType(formType: FormTypeInterface): Promise<TypeInter
             const { id } = formType;
             if (!id) return null;
 
-            const { data: updatedType, error } = await supabase.from("vehicle_types")
+            const { data: updatedType, error } = await supabase.from("lot_types")
                 .update({
-                    type: formType.type,
+                    vehicle_type: formType.vehicleType,
                     max_width: formType.maxWidth,
                     max_length: formType.maxLength,
                     max_height: formType.maxHeight,
@@ -89,7 +89,7 @@ export async function deleteType(id: string) {
 
             if (!id) return;
 
-            const { error } = await supabase.from("vehicle_types")
+            const { error } = await supabase.from("lot_types")
                 .delete()
                 .eq("id", id)
 
@@ -116,7 +116,7 @@ export async function getTypes(): Promise<TypeInterface[]> {
 
             if (!ownerId || !isUUID(ownerId)) return [];
 
-            const { data: types, error } = await supabase.from("vehicle_types")
+            const { data: types, error } = await supabase.from("lot_types")
                 .select("*")
                 .eq("owner_id", ownerId)
                 .order("created_at", {

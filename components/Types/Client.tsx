@@ -29,7 +29,7 @@ const ClientType = ({ types }: { types: TypeInterface[] }) => {
 
     const {
         id,
-        type,
+        vehicleType,
         maxWidth,
         maxLength,
         maxHeight,
@@ -54,18 +54,18 @@ const ClientType = ({ types }: { types: TypeInterface[] }) => {
             <Modal
                 isOpen={isModalOpen}
                 onClose={handleOnClose}
-                title="Add vehicle type"
+                title={`${id ? "Update" : "Add"} lot type`}
             >
                 <form
                     className="flex flex-col gap-3"
                     onSubmit={handleSubmit}
                 >
                     <div className="flex flex-col gap-3">
-                        <label htmlFor="type">Type *</label>
+                        <label htmlFor="type">Vehicle type *</label>
                         <input
                             type="text"
-                            name="type"
-                            value={type}
+                            name="vehicleType"
+                            value={vehicleType}
                             onChange={handleChange}
                             required
                             className="outline-none px-4 py-2 border border-white/10 rounded-sm" />

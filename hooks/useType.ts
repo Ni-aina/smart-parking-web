@@ -10,7 +10,7 @@ interface OptimisticTypeInterface {
 }
 
 const initForm = {
-    type: "",
+    vehicleType: "",
     description: "",
     maxWidth: "",
     maxLength: "",
@@ -28,7 +28,7 @@ const useType = ({ types }: { types: TypeInterface[] }) => {
                     const updatedType = currentType.map(item => item.id !== vehicleType.id ?
                         item : {
                             ...item,
-                            type: vehicleType.type,
+                            type: vehicleType.vehicleType,
                             description: vehicleType.description
                         }
                     )
@@ -47,13 +47,13 @@ const useType = ({ types }: { types: TypeInterface[] }) => {
     const [isPending, setIsPending] = useState(false);
     const [formData, setFormData] = useState<FormTypeInterface>(initForm);
 
-    const title = "Vehicle types";
-    const headers = ["Type", "Max width", "Max length", "Max height", "Description"];
+    const title = "Lot types";
+    const headers = ["Vehicle", "Max width", "Max length", "Max height", "Description"];
 
     const body = {
         rows: optimisticTypes.map(item => ({
             id: item.id,
-            type: item.type,
+            type: item.vehicleType,
             width: `${item.maxWidth} m`,
             length: `${item.maxLength} m`,
             height: `${item.maxHeight} m`,
@@ -109,14 +109,14 @@ const useType = ({ types }: { types: TypeInterface[] }) => {
         const type = types.filter(item => item.id === id)
             .map(({
                 id,
-                type,
+                vehicleType,
                 maxWidth,
                 maxLength,
                 maxHeight,
                 description,
             }) => ({
                 id,
-                type,
+                vehicleType,
                 maxWidth,
                 maxLength,
                 maxHeight,
