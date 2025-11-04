@@ -4,6 +4,7 @@ import { normalizeData } from "@/utils/normalizeData";
 import { User } from "@supabase/supabase-js";
 import { getServerAuth } from "./authServer.action";
 import { rejectTimeout } from "@/utils/rejectTimeout";
+import { isUUID } from "@/utils/isUUID";
 
 export async function getCurrentProfile(user: User | null): Promise<ProfileInterface | null> {
     try {
@@ -16,7 +17,7 @@ export async function getCurrentProfile(user: User | null): Promise<ProfileInter
                 .eq("id", id)
                 .single();
 
-            if (!currentProfile || error) throw new Error(`The profile can't be find, ${error?.message}`);
+            if (!currentProfile || error) throw new Error(`The profile cannot be find, ${error?.message}`);
             const normalized = normalizeData(currentProfile);
 
             return normalized as ProfileInterface;
@@ -40,7 +41,7 @@ export async function getProfiles(): Promise<ProfileInterface[]> {
                     ascending: false
                 })
 
-            if (!profiles || error) throw new Error(`The profile can't be find, ${error?.message}`);
+            if (!profiles || error) throw new Error(`The profile cannot be find, ${error?.message}`);
             const normalized = profiles.map(item => normalizeData(item))
 
             return normalized as ProfileInterface[];
@@ -64,6 +65,8 @@ export async function getAgents(): Promise<ProfileInterface[]> {
                 userId: ownerId
             } = await getServerAuth();
 
+            if (!isUUID(ownerId || "")) return [];
+
             const { data: profiles, error } = await supabase.from("profiles")
                 .select("*")
                 .contains("roles", ["agent"])
@@ -72,7 +75,7 @@ export async function getAgents(): Promise<ProfileInterface[]> {
                     ascending: false
                 })
 
-            if (!profiles || error) throw new Error(`The profile can't be find, ${error?.message}`);
+            if (!profiles || error) throw new Error(`The profile cannot be find, ${error?.message}`);
             const normalized = profiles.map((item: any) => normalizeData(item))
 
             return normalized as ProfileInterface[];
