@@ -131,3 +131,9 @@
     -moz-appearance: textfield;
   }
 }
+
+*::-webkit-scrollbar {
+  width: 3px;
+  background: #222222;
+  transition: opacity 0.3s ease;
+}
