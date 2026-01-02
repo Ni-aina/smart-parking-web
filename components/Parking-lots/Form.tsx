@@ -241,14 +241,12 @@ const FormParkingLots = ({
                                     className="flex justify-between items-center gap-3"
                                 >
                                     <div className="flex items-center gap-3">
-                                        <span className="relative mt-1">
-                                            <input
-                                                type="checkbox"
-                                                className={customCheckStyle}
-                                                checked={item.checked}
-                                                onChange={() => handleAgentCheckedChange(item.id)}
-                                            />
-                                        </span>
+                                        <input
+                                            type="checkbox"
+                                            className={customCheckStyle}
+                                            checked={item.checked}
+                                            onChange={() => handleAgentCheckedChange(item.id)}
+                                        />
                                         <h1 className="capitalize">
                                             {item.name}
                                         </h1>

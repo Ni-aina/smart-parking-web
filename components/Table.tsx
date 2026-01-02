@@ -98,14 +98,12 @@ const Table = ({
                             <tr>
                                 <td className="pl-5 w-0.5">
                                     <div className="flex h-full items-center">
-                                        <span className="relative mt-1.5">
-                                            <input
-                                                type="checkbox"
-                                                className={customCheckStyle}
-                                                checked={selectedAll}
-                                                onChange={e => handleSelectedAll(e.target.checked)}
-                                            />
-                                        </span>
+                                        <input
+                                            type="checkbox"
+                                            className={customCheckStyle}
+                                            checked={selectedAll}
+                                            onChange={e => handleSelectedAll(e.target.checked)}
+                                        />
                                     </div>
                                 </td>
                                 {
@@ -139,14 +137,12 @@ const Table = ({
                                         >
                                             <td className="pl-5 w-0.5">
                                                 <div className="flex items-center">
-                                                    <span className="relative mt-1.5">
-                                                        <input
-                                                            type="checkbox"
-                                                            className={customCheckStyle}
-                                                            checked={checked}
-                                                            onChange={() => handleSeleted(item.id)}
-                                                        />
-                                                    </span>
+                                                    <input
+                                                        type="checkbox"
+                                                        className={customCheckStyle}
+                                                        checked={checked}
+                                                        onChange={() => handleSeleted(item.id)}
+                                                    />
                                                 </div>
                                             </td>
                                             {

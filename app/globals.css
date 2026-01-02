@@ -120,7 +120,7 @@
   body {
     @apply bg-background text-foreground;
   }
-  
+
   input[type="number"]::-webkit-inner-spin-button,
   input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
@@ -132,8 +132,28 @@
   }
 }
 
-*::-webkit-scrollbar {
-  width: 3px;
-  background: #222222;
-  transition: opacity 0.3s ease;
+* {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+*:hover {
+  scrollbar-color: #222 transparent;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 10px;
+}
+
+*:hover::-webkit-scrollbar-thumb {
+  background-color: #222;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background-color: #222;
 }

@@ -4,7 +4,7 @@ import { startTransition, useOptimistic, useState } from "react";
 import Navbar from "../Navbar";
 import { useRouter } from "next/navigation";
 import { ParkingInterface } from "@/types/parking";
-import Table from "../Table";
+import ParkingCards from "./ParkingCards";
 import { ProfileInterface } from "@/types/profile";
 import { deleteParking } from "@/actions/parkingLots.action";
 
@@ -29,42 +29,7 @@ const ClientParkingLots = ({
 
     const title = "Parking lots";
 
-    const headers = [
-        "Image",
-        "Name",
-        "Location",
-        "Lot Type",
-        "Total spots",
-        "Occupied sopts",
-        "Price / hour",
-        "Agents"
-    ]
-
-    const body = {
-        rows: optimisticParkings.map(item => ({
-            id: item.id,
-            urlImage: item.urlImages.at(0) || "/images/default-parking.png",
-            name: item.name,
-            location: item.location,
-            type: item.lotType.vehicle_type,
-            totalSpots: item.totalSpots + "",
-            occupiedSpots: item.occupiedSpots + "",
-            pricePerHour: item.pricePerHour + "",
-            agents: agents.filter(agent => item.agents.includes(agent.id))
-            .map(item =>item.fullName)
-            .join(", ")
-        })),
-        cols: [
-            "urlImage",
-            "name",
-            "location",
-            "type",
-            "totalSpots",
-            "occupiedSpots",
-            "pricePerHour",
-            "agents"
-        ]
-    }
+    const agentsNamesMap = Object.fromEntries(agents.map(a => [a.id, a.fullName]));
 
     const handleEdit = (id: string)=> {
         router.push(`/owner/parking-lots/form/${id}`);
@@ -85,13 +50,14 @@ const ClientParkingLots = ({
                 setSearch={setSearch}
                 onAdd={()=> router.push("/owner/parking-lots/form/new")}
             />
-            <Table
-                title={title}
-                headers={headers}
-                body={body}
-                handleEdit={handleEdit}
-                handleDelete={handleDelete}
-            />
+            <div className="mt-5 lg:mt-10">
+                <ParkingCards
+                    parkings={optimisticParkings}
+                    agentsNamesMap={agentsNamesMap}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                />
+            </div>
         </div>
     )
 }

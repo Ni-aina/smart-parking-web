@@ -50,8 +50,8 @@ const InputSelect = ({
             </button>
             {
                 openMenu &&
-                <div className="absolute left-0 top-full mt-1 z-10 flex flex-col gap-2 px-2 py-2 w-full bg-black
-                    border border-white/10 rounded-md shadow-lg max-h-64 overflow-y-auto"
+                <div className="absolute left-0 top-full mt-1 z-10 flex flex-col gap-2 px-2 py-2 w-full 
+                bg-neutral-950 border border-white/10 rounded-md shadow-lg max-h-64 overflow-y-auto"
                 >
                     {
                         data.map((item) => (
@@ -69,6 +69,7 @@ const InputSelect = ({
                                 }}
                                 className={`
                                         flex items-center w-full gap-2 px-2 py-2 cursor-pointer 
+                                        text-start text-sm
                                         hover:bg-white/5 text-white/80 rounded-sm
                                         ${item.id === value && "bg-white/5"}
                                     `}
