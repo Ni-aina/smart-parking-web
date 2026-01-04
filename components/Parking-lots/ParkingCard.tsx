@@ -31,9 +31,9 @@ const ParkingCard = ({
     onDelete
 }: ParkingCardProps) => {
     return (
-        <div className="flex flex-col bg-white/5 rounded-md p-4 text-white gap-4">
+        <div className="flex flex-col bg-white/2.5 rounded-md p-4 text-white gap-4">
             <div className="flex gap-4">
-                <div className="relative w-25 h-25 flex-shrink-0 rounded-md overflow-hidden">
+                <div className="relative w-30 h-25 flex-shrink-0 rounded-md overflow-hidden">
                     <Image
                         src={urlImage || "/images/default-parking.png"}
                         alt={name}
@@ -41,7 +41,7 @@ const ParkingCard = ({
                         className="object-cover"
                     />
                 </div>
-                <div className="flex-1 flex flex-col gap-1">
+                <div className="flex-1 flex flex-col gap-1 overflow-hidden">
                     <div className="flex justify-between items-center gap-4">
                         <h2 className="font-semibold truncate">{name}</h2>
                         <p className="text-sm text-white">{type}</p>

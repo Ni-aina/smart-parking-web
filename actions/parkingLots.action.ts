@@ -77,7 +77,7 @@ export async function createParkingLot(parking: ParkingFormInterface)
 
         return Promise.race([
             request,
-            rejectTimeout(1000 * 60)
+            rejectTimeout()
         ])
     } catch (error) {
         throw error;
@@ -163,7 +163,7 @@ export async function editParkingLot(parking: ParkingFormInterface, currentUrlIm
 
         return Promise.race([
             request,
-            rejectTimeout(1000 * 60)
+            rejectTimeout()
         ])
     } catch (error) {
         throw error;

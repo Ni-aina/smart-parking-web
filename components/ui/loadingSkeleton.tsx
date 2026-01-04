@@ -4,7 +4,7 @@ const LoadingSkeleton = () => {
     return (
         <div className="w-full h-full flex justify-center flex-col gap-5">
             <Skeleton
-                className="w-3/4 h-20 bg-black/10"
+                className="w-3/4 h-25 bg-black/10"
             />
             <Skeleton
                 className="w-full h-30 bg-black/10"

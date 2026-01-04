@@ -5,7 +5,7 @@ export interface ParkingInterface {
     ownerId: string;
     lotType: {
         id: string;
-        vehicle_type: string;
+        vehicleType: string;
     };
     name: string;
     location: string;

@@ -1,6 +1,6 @@
 import { getParkingLots } from "@/actions/parkingLots.action";
 import { getAgents } from "@/actions/profile.action";
-import ClientParkingLots from "@/components/Parking-lots/Client";
+import ClientParkingLots from "@/components/Parking-lots/ClientParkingLots";
 
 const ParkingLotsPage = async () => {
     const [parkings, agents] = await Promise.all([
