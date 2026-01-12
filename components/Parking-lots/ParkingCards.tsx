@@ -18,7 +18,7 @@ const ParkingCards = ({ parkings, agentsNamesMap, onEdit, onDelete }: ParkingCar
                     <ParkingCard
                         key={item.id}
                         id={item.id}
-                        urlImage={item.urlImages?.at(0) || "/images/default-parking.png"}
+                        urlImage={item.urlImages?.at(0) || "/images/default-parking.jpg"}
                         name={item.name}
                         location={item.location}
                         type={item.lotType?.vehicleType || "—"}

@@ -35,7 +35,7 @@ const ParkingCard = ({
             <div className="flex gap-4">
                 <div className="relative w-30 h-25 flex-shrink-0 rounded-md overflow-hidden">
                     <Image
-                        src={urlImage || "/images/default-parking.png"}
+                        src={urlImage || "/images/default-parking.jpg"}
                         alt={name}
                         fill
                         className="object-cover"

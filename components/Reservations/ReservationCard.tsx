@@ -12,7 +12,7 @@ interface Props {
 
 const ReservationCard = ({ reservation, onCancel }: Props) => {
   const start = new Date(reservation.startTime).toLocaleString();
-  const imageSrc = reservation.lot.urlImages?.[0] || '/images/default-parking.png';
+  const imageSrc = reservation.lot.urlImages?.[0] || '/images/default-parking.jpg';
 
   return (
     <div className="flex flex-col bg-white/2.5 rounded-md p-4 text-white gap-3">
