@@ -45,7 +45,7 @@ export async function POST(req: Request) {
 
                 const [
                     { error: paymentError },
-                    { error: reservationError },
+                    { error: reservationError }
                 ] = await Promise.all([
                     paymentRequest,
                     reservationRequest,
