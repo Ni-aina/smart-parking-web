@@ -30,28 +30,35 @@ export async function POST(req: Request) {
             case "payment_intent.succeeded": {
                 const intent = event.data.object;
 
-                const { data: payment, error: paymentError } = await supabaseAdmin
+                const paymentRequest = supabaseAdmin
                     .from("payments")
                     .update({
                         status: "succeeded",
-                        amount: intent.amount_received
+                        method: intent.payment_method_types[0],
                     })
                     .eq("transaction_id", intent.id)
-                    .select()
-                    .single();
 
-                if (paymentError || !payment) {
-                    break;
-                }
-
-                const { error: reservationError } = await supabaseAdmin
+                const reservationRequest = supabaseAdmin
                     .from("reservations")
                     .update({ status: "active" })
-                    .eq("id", payment.reservation_id);
+                    .eq("id", intent.metadata.reservationId);
+
+                const [
+                    { error: paymentError },
+                    { error: reservationError },
+                ] = await Promise.all([
+                    paymentRequest,
+                    reservationRequest,
+                ])
+
+                if (paymentError) {
+                    throw paymentError;
+                }
 
                 if (reservationError) {
-                    console.error("Failed to update reservation:", reservationError);
+                    throw reservationError;
                 }
+                
                 break;
             }
 
