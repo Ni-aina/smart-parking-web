@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     }
 
     const paymentIntent = await stripe.paymentIntents.create({
-      amount,
+      amount: amount * 100,
       currency: currency || "usd",
       automatic_payment_methods: { enabled: true },
       metadata: {
@@ -39,7 +39,7 @@ export async function POST(req: Request) {
       .from("payments")
       .insert({
         transaction_id: paymentIntent.id,
-        amount: amount / 100,
+        amount: amount,
         reservation_id: reservationId,
         status: "pending"
       })
