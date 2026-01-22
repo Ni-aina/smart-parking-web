@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export async function POST(req: Request) {
   try {
@@ -34,12 +35,27 @@ export async function POST(req: Request) {
       }
     })
 
+    const payment = await supabaseAdmin
+      .from("payments")
+      .insert({
+        transaction_id: paymentIntent.id,
+        amount: amount / 100,
+        reservation_id: reservationId,
+        status: "pending"
+      })
+      .select()
+      .single()
+
+    if (payment.error) {
+      throw payment.error;
+    }
+
     return NextResponse.json({
       clientSecret: paymentIntent.client_secret
     })
   } catch (error: any) {
     return NextResponse.json(
-      { error: "Failed to create payment intent" },
+      { error: error.message || "Internal Server Error" },
       { status: 500 }
     )
   }

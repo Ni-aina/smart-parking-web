@@ -29,7 +29,7 @@ export async function POST(req: Request) {
         switch (event.type) {
             case "payment_intent.succeeded": {
                 const intent = event.data.object;
-
+               
                 const paymentRequest = supabaseAdmin
                     .from("payments")
                     .update({
