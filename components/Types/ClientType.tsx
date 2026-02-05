@@ -109,7 +109,7 @@ const ClientType = ({ types }: { types: TypeInterface[] }) => {
                         </button>
                         <button
                             className="w-[120px] h-[40px] flex justify-center items-center gap-2
-                            bg-blue-950/20 rounded-sm cursor-pointer hover:opacity-80
+                            bg-blue-950/15 rounded-sm cursor-pointer hover:opacity-80
                             disabled:cursor-not-allowed disabled:opacity-80"
                             disabled={isPending}
                         >

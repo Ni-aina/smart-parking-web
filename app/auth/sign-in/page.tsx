@@ -80,7 +80,7 @@ const SignIn = () => {
                         </div>
                     </div>
                 </div>
-                <div className="flex flex-wrap justify-center lg:justify-between items-center gap-3">
+                <div className="flex flex-wrap justify-between items-center gap-3">
                     <span className="text-xs text-red-400">{error}</span>
                     <div className="flex justify-end items-center gap-2">
                         <Link

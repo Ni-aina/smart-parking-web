@@ -1,5 +1,9 @@
 import LoadingSkeleton from "@/components/ui/loadingSkeleton";
 
-const LoadingPage = () => <LoadingSkeleton />;
- 
+const LoadingPage = () => (
+    <div className="h-screen">
+        <LoadingSkeleton />
+    </div>
+)
+
 export default LoadingPage;

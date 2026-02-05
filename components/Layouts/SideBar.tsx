@@ -74,7 +74,7 @@ const SideBarLayout = () => {
                                 href={"/owner/dashboard"}
                                 className={`
                                 flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                                ${pathname === "/owner/dashboard" && "bg-blue-950/30"}
+                                ${pathname === "/owner/dashboard" && "bg-blue-950/15"}
                             `}
                             >
                                 <Home />
@@ -86,7 +86,7 @@ const SideBarLayout = () => {
                                 href={"/owner/reservations"}
                                 className={`
                                 flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                                ${pathname === "/owner/reservations" && "bg-blue-950/30"}
+                                ${pathname === "/owner/reservations" && "bg-blue-950/15"}
                             `}
                             >
                                 <BookCheck />
@@ -98,7 +98,7 @@ const SideBarLayout = () => {
                                 href={"/owner/payments"}
                                 className={`
                                 flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                                ${pathname === "/owner/payments" && "bg-blue-950/30"}
+                                ${pathname === "/owner/payments" && "bg-blue-950/15"}
                             `}
                             >
                                 <Euro />
@@ -110,7 +110,7 @@ const SideBarLayout = () => {
                                 href={"/owner/parking-lots"}
                                 className={`
                                 flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                                ${pathname === "/owner/parking-lots" && "bg-blue-950/30"}
+                                ${pathname === "/owner/parking-lots" && "bg-blue-950/15"}
                             `}
                             >
                                 <SquareParking />
@@ -122,7 +122,7 @@ const SideBarLayout = () => {
                                 href={"/owner/notifications"}
                                 className={`
                                 flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                                ${pathname === "/owner/notifications" && "bg-blue-950/30"}
+                                ${pathname === "/owner/notifications" && "bg-blue-950/15"}
                             `}
                             >
                                 <Bell />
@@ -134,7 +134,7 @@ const SideBarLayout = () => {
                                 href={"/owner/messages"}
                                 className={`
                                 flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                                ${pathname === "/owner/messages" && "bg-blue-950/30"}
+                                ${pathname === "/owner/messages" && "bg-blue-950/15"}
                             `}
                             >
                                 <MessageCircle />
@@ -162,7 +162,7 @@ const SideBarLayout = () => {
                                         href={"/owner/settings/agents"}
                                         className={`
                                             flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                                            ${pathname === "/owner/settings/agents" && "bg-blue-950/30"}
+                                            ${pathname === "/owner/settings/agents" && "bg-blue-950/15"}
                                         `}
                                     >
                                         <UserPen />
@@ -172,7 +172,7 @@ const SideBarLayout = () => {
                                         href={"/owner/settings/types"}
                                         className={`
                                             flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                                            ${pathname === "/owner/settings/types" && "bg-blue-950/30"}
+                                            ${pathname === "/owner/settings/types" && "bg-blue-950/15"}
                                         `}
                                         prefetch
                                     >
@@ -183,7 +183,7 @@ const SideBarLayout = () => {
                                         href={"/owner/settings/account"}
                                         className={`
                                         flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                                        ${pathname === "/owner/settings/account" && "bg-blue-950/30"}
+                                        ${pathname === "/owner/settings/account" && "bg-blue-950/15"}
                                     `}
                                     >
                                         <UserStar />

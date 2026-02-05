@@ -24,7 +24,9 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
                         className="absolute top-0 left-0 text-white/80 cursor-pointer 
                         hover:text-white/80 hover:bg-transparent hover:opacity-80"
                     />
-                    {children}
+                    <div className="pb-5">
+                        {children}
+                    </div>
                 </OwnerProtected>
             </main>
         </SidebarProvider>

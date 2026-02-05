@@ -37,7 +37,7 @@ const useParkingForm = ({
             max width: ${item.maxWidth}, 
             max length: ${item.maxLength}
             max height: ${item.maxHeight}
-            ${item.description && `(${item.description})`}
+            ${item.description.trim() && `(${item.description})`}
         `
     }))
 

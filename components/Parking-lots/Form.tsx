@@ -137,8 +137,8 @@ const FormParkingLots = ({
                     isImagesPending ?
                         <div
                             className={`
-                                grid place-items-center w-full h-full 
-                                bg-black/5 rounded-xl
+                                grid place-items-center w-full h-full min-h-50
+                                bg-white/5 rounded-lg
                             `}
                         >
                             <Loading />
@@ -147,7 +147,8 @@ const FormParkingLots = ({
                         images.length ?
                             <div
                                 className={`
-                                relative flex flex-wrap gap-3 w-full h-full bg-black/5 rounded-xl p-5
+                                relative flex flex-wrap gap-3 w-full h-full min-h-50 
+                                bg-white/5 rounded-lg p-5
                                 ${isDragging && "opacity-70"}    
                             `}
                                 onDragOver={handleDragOver}
@@ -191,7 +192,8 @@ const FormParkingLots = ({
                             <div
                                 className={`
                                 flex justify-center items-center 
-                                w-full h-full bg-black/5 rounded-xl
+                                w-full h-full min-h-50 
+                                bg-white/5 rounded-lg
                                 ${isDragging && "opacity-70"}
                             `}
                                 onDragOver={handleDragOver}
@@ -211,7 +213,7 @@ const FormParkingLots = ({
             <div className="flex flex-col gap-2">
                 <label htmlFor="agents">Agents *</label>
                 <div
-                    className="flex items-center gap-3 px-4 py-2 bg-black/5 rounded-md"
+                    className="flex items-center gap-3 px-4 py-2 bg-white/5 rounded-md"
                 >
                     <Search
                         size={16}
@@ -226,7 +228,7 @@ const FormParkingLots = ({
                         placeholder="Search ..."
                     />
                 </div>
-                <div className="flex flex-col gap-3 w-full max-h-80 overflow-y-scroll bg-black/5 rounded-lg p-5">
+                <div className="flex flex-col gap-3 w-full max-h-80 overflow-y-scroll bg-white/5 rounded-lg p-5">
                     {
                         !agentsFiltered.length ?
                             <div className="w-full h-40 grid place-items-center">
@@ -263,18 +265,34 @@ const FormParkingLots = ({
                     }
                 </div>
             </div>
-            <div className="mb-5 lg:col-start-2 flex gap-3 justify-end">
+            <div className="hidden lg:flex justify-end gap-3 my-5 col-start-2">
                 <CustomButton
                     title="Cancel"
                     type="button"
-                    className="bg-white/5"
+                    className="bg-white/5 w-48"
                     Icon={Undo2}
                     onClick={handleCancel}
                 />
                 <CustomButton
                     title={`${parking ? "Update parking" : "Add new parking"}`}
+                    className="w-48"
                     isPending={isPending}
                     Icon={Upload}
+                />
+            </div>
+            <div className="lg:hidden my-5 space-y-3">
+                <CustomButton
+                    title={`${parking ? "Update parking" : "Add new parking"}`}
+                    className="w-48"
+                    isPending={isPending}
+                    Icon={Upload}
+                />
+                <CustomButton
+                    title="Cancel"
+                    type="button"
+                    className="bg-white/5 w-48"
+                    Icon={Undo2}
+                    onClick={handleCancel}
                 />
             </div>
         </form>
