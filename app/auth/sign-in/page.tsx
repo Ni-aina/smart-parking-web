@@ -38,19 +38,17 @@ const SignIn = () => {
     return (
         <div className="grid place-items-center w-full h-screen">
             <form
-                className="flex flex-col space-y-4 max-w-md lg:w-lg
-                bg-blue-950/10 text-white rounded-xl shadow-2xl p-5 sm:p-8"
+                className="flex flex-col space-y-4 lg:w-md
+                bg-white/5 text-white rounded-xl shadow-2xl p-8"
                 onSubmit={handleSubmit}
             >
                 <div className="flex justify-center">
-                    <div className="flex items-center gap-3">
+                    <div className="relative w-48 h-16">
                         <Image
                             src={"/images/smart-parking.png"}
                             alt="Smart parking"
-                            width={40}
-                            height={40}
+                            fill
                         />
-                        <h1 className="text-xl italic">Smart Parking</h1>
                     </div>
                 </div>
                 <div className="mt-3 flex flex-col gap-3">
@@ -85,14 +83,15 @@ const SignIn = () => {
                     <div className="flex justify-end items-center gap-2">
                         <Link
                             href={"/auth/forgot-password"}
-                            className="text-xs text-blue-300 hover:underline"
+                            className="text-xs hover:underline"
                         >
                             Forgot password
                         </Link>
                     </div>
                 </div>
                 <button
-                    className="mt-3 flex justify-center items-center gap-3 bg-blue-950/15 w-full py-2 rounded-sm 
+                    className="mt-3 flex justify-center items-center gap-3 
+                    bg-white text-black w-full py-2 rounded-sm 
                     cursor-pointer hover:opacity-80 
                     disabled:cursor-not-allowed disabled:opacity-80"
                     disabled={isPending}
@@ -101,13 +100,13 @@ const SignIn = () => {
                         isPending ?
                             <LoaderCircle
                                 size={16}
-                                color="white"
+                                color="black"
                                 className="animate-spin"
                             />
                             :
                             <LogIn
                                 size={16}
-                                color="white"
+                                color="black"
                             />
                     }
                     <h1>Login</h1>
@@ -116,7 +115,7 @@ const SignIn = () => {
                     <h1 className="text-sm">Don't have an account ?</h1>
                     <Link
                         href={"/auth/sign-up"}
-                        className="text-sm text-blue-300 hover:underline"
+                        className="text-sm hover:underline"
                     >
                         Create an account
                     </Link>

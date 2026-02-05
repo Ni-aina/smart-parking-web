@@ -43,7 +43,7 @@ const Navbar = ({
             </div>
             <div className="flex flex-end">
                 <button
-                    className="px-5 py-2 rounded-sm bg-blue-950/15 cursor-pointer hover:opacity-80"
+                    className="px-5 py-2 rounded-sm bg-white text-neutral-900 cursor-pointer hover:opacity-80"
                     onClick={onAdd}
                 >
                     Add new {title.toLowerCase()}

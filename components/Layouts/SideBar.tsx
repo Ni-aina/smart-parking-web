@@ -53,18 +53,14 @@ const SideBarLayout = () => {
         <Sidebar className="bg-black/95 border-none shadow-white/10 shadow-sm">
             <div className="flex flex-col bg-black/95 text-white w-full h-full gap-5 lg:gap-8 p-5">
                 <SidebarHeader>
-                    <div className="flex justify-between items-center gap-3">
-                        <div className="flex items-center gap-3">
+                    <div className="flex justify-center my-5">
+                        <div className="relative w-36 h-12">
                             <Image
                                 src={"/images/smart-parking.png"}
                                 alt="Smart parking"
-                                width={40}
-                                height={40}
+                                fill
                             />
-                            <h1>Smart Parking</h1>
                         </div>
-                        <SidebarTrigger className="sm:hidden text-white cursor-pointer 
-                        hover:text-white hover:bg-transparent hover:opacity-70" />
                     </div>
                 </SidebarHeader>
                 <OwnerProtected>
@@ -74,7 +70,7 @@ const SideBarLayout = () => {
                                 href={"/owner/dashboard"}
                                 className={`
                                 flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                                ${pathname === "/owner/dashboard" && "bg-blue-950/15"}
+                                ${pathname === "/owner/dashboard" && "bg-white/5"}
                             `}
                             >
                                 <Home />
@@ -86,7 +82,7 @@ const SideBarLayout = () => {
                                 href={"/owner/reservations"}
                                 className={`
                                 flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                                ${pathname === "/owner/reservations" && "bg-blue-950/15"}
+                                ${pathname === "/owner/reservations" && "bg-white/5"}
                             `}
                             >
                                 <BookCheck />
@@ -98,7 +94,7 @@ const SideBarLayout = () => {
                                 href={"/owner/payments"}
                                 className={`
                                 flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                                ${pathname === "/owner/payments" && "bg-blue-950/15"}
+                                ${pathname === "/owner/payments" && "bg-white/5"}
                             `}
                             >
                                 <Euro />
@@ -110,7 +106,7 @@ const SideBarLayout = () => {
                                 href={"/owner/parking-lots"}
                                 className={`
                                 flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                                ${pathname === "/owner/parking-lots" && "bg-blue-950/15"}
+                                ${pathname === "/owner/parking-lots" && "bg-white/5"}
                             `}
                             >
                                 <SquareParking />
@@ -122,7 +118,7 @@ const SideBarLayout = () => {
                                 href={"/owner/notifications"}
                                 className={`
                                 flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                                ${pathname === "/owner/notifications" && "bg-blue-950/15"}
+                                ${pathname === "/owner/notifications" && "bg-white/5"}
                             `}
                             >
                                 <Bell />
@@ -134,7 +130,7 @@ const SideBarLayout = () => {
                                 href={"/owner/messages"}
                                 className={`
                                 flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                                ${pathname === "/owner/messages" && "bg-blue-950/15"}
+                                ${pathname === "/owner/messages" && "bg-white/5"}
                             `}
                             >
                                 <MessageCircle />
@@ -162,7 +158,7 @@ const SideBarLayout = () => {
                                         href={"/owner/settings/agents"}
                                         className={`
                                             flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                                            ${pathname === "/owner/settings/agents" && "bg-blue-950/15"}
+                                            ${pathname === "/owner/settings/agents" && "bg-white/5"}
                                         `}
                                     >
                                         <UserPen />
@@ -172,7 +168,7 @@ const SideBarLayout = () => {
                                         href={"/owner/settings/types"}
                                         className={`
                                             flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                                            ${pathname === "/owner/settings/types" && "bg-blue-950/15"}
+                                            ${pathname === "/owner/settings/types" && "bg-white/5"}
                                         `}
                                         prefetch
                                     >
@@ -183,7 +179,7 @@ const SideBarLayout = () => {
                                         href={"/owner/settings/account"}
                                         className={`
                                         flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                                        ${pathname === "/owner/settings/account" && "bg-blue-950/15"}
+                                        ${pathname === "/owner/settings/account" && "bg-white/5"}
                                     `}
                                     >
                                         <UserStar />

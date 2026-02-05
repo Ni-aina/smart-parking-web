@@ -269,13 +269,13 @@ const FormParkingLots = ({
                 <CustomButton
                     title="Cancel"
                     type="button"
-                    className="bg-white/5 w-48"
+                    className="bg-white/5 text-white w-48"
                     Icon={Undo2}
                     onClick={handleCancel}
                 />
                 <CustomButton
                     title={`${parking ? "Update parking" : "Add new parking"}`}
-                    className="w-48"
+                    className="w-48 text-black"
                     isPending={isPending}
                     Icon={Upload}
                 />
@@ -283,14 +283,14 @@ const FormParkingLots = ({
             <div className="lg:hidden my-5 space-y-3">
                 <CustomButton
                     title={`${parking ? "Update parking" : "Add new parking"}`}
-                    className="w-48"
+                    className="w-48 text-black"
                     isPending={isPending}
                     Icon={Upload}
                 />
                 <CustomButton
                     title="Cancel"
                     type="button"
-                    className="bg-white/5 w-48"
+                    className="bg-white/5 text-white w-48"
                     Icon={Undo2}
                     onClick={handleCancel}
                 />

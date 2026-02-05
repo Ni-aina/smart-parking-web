@@ -103,13 +103,13 @@ const ClientType = ({ types }: { types: TypeInterface[] }) => {
                             type="button"
                             onClick={handleOnClose}
                             className="w-[120px] h-[40px] flex justify-center items-center 
-                            bg-white/10 rounded-sm cursor-pointer hover:opacity-80"
+                            bg-white/5 rounded-sm cursor-pointer hover:opacity-80"
                         >
                             Cancel
                         </button>
                         <button
                             className="w-[120px] h-[40px] flex justify-center items-center gap-2
-                            bg-blue-950/15 rounded-sm cursor-pointer hover:opacity-80
+                            bg-white text-black rounded-sm cursor-pointer hover:opacity-80
                             disabled:cursor-not-allowed disabled:opacity-80"
                             disabled={isPending}
                         >

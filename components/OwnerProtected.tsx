@@ -3,6 +3,7 @@
 import useCurrentProfile from "@/hooks/useCurrentProfile";
 import { ReactNode } from "react";
 import LoadingSkeleton from "./ui/loadingSkeleton";
+import { SidebarTrigger } from "./ui/sidebar";
 
 const OwnerProtected = ({ children }: { children: ReactNode }) => {
 
@@ -16,11 +17,17 @@ const OwnerProtected = ({ children }: { children: ReactNode }) => {
     const authorization = currentProfile?.roles.includes("owner") || false;
 
     if (!authorization) return (
-        <div className="flex justify-center items-center w-full h-full 
-            text-xs text-center text-white/80"
-        >
-            Access denied: Unauthorized role based
-        </div>
+        <>
+            <SidebarTrigger
+                className="absolute top-0 left-0 text-white/80 cursor-pointer 
+                        hover:text-white/80 hover:bg-transparent hover:opacity-80"
+            />
+            <div className="flex justify-center items-center w-full h-full 
+                text-xs text-center text-white/80"
+            >
+                Access denied: Unauthorized role based
+            </div>
+        </>
     )
 
     return (
