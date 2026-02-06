@@ -23,7 +23,10 @@ export async function getReservationsForOwner()
                 .select(`
                     *,
                     driver: driver_id(*),
-                    lot: lot_id!inner(*),
+                    lot: lot_id!inner(
+                        *,
+                        lot_type:type_id(*)
+                    ),
                     vehicle: vehicle_id(*)
                 `)
                 .eq("lot.owner_id", userId)

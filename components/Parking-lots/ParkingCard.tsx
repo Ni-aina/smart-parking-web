@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import { DollarSign, Edit2, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { Skeleton } from "../ui/skeleton";
 
 interface ParkingCardProps {
     id: string;
@@ -30,15 +32,36 @@ const ParkingCard = ({
     onEdit,
     onDelete
 }: ParkingCardProps) => {
+    const [loadingImage, setLoadingImage] = useState(true);
+
     return (
         <div className="flex flex-col bg-white/2.5 rounded-md p-4 text-white gap-4">
             <div className="flex gap-4">
-                <div className="relative w-30 h-25 flex-shrink-0 rounded-md overflow-hidden">
+                {
+                    loadingImage &&
+                    <Skeleton
+                        className="flex-shrink-0 w-30 h-25 bg-white/5"
+                    />
+                }
+                <div 
+                    className={
+                        `
+                            relative flex-shrink-0 rounded-md overflow-hidden
+                            ${loadingImage ? "w-0 h-0" : "w-30 h-25"}
+                        `
+                    }   
+                >
                     <Image
                         src={urlImage || "/images/default-parking.jpg"}
                         alt={name}
                         fill
                         className="object-cover"
+                        onLoadStart={
+                            ()=> setLoadingImage(true)
+                        }
+                        onLoadingComplete={
+                            ()=> setLoadingImage(false)
+                        }
                     />
                 </div>
                 <div className="flex-1 flex flex-col gap-1 overflow-hidden">

@@ -1,18 +1,55 @@
-"use client"
+"use client";
 
-import Image from 'next/image'
-import Link from 'next/link'
-import { Calendar, User, Eye, Trash2 } from 'lucide-react'
-import { ReservationInterface } from '@/types/reservation'
+import Image from 'next/image';
+import Link from 'next/link';
+import {
+  Calendar,
+  User,
+  Eye,
+  Edit,
+  Trash2,
+  Clock,
+  CarFront
+} from 'lucide-react';
+import { ReservationInterface } from '@/types/reservation';
+import { useState } from 'react';
+import { Skeleton } from '../ui/skeleton';
+import { getDateFormat, getTimeFormat } from '@/utils/DateTimeAction';
 
 interface Props {
-  reservation: ReservationInterface
-  onCancel?: (id: string) => void
+  reservation: ReservationInterface;
+  onCancel?: (id: string) => void;
 }
 
 const ReservationCard = ({ reservation, onCancel }: Props) => {
-  const start = new Date(reservation.startTime).toLocaleString();
-  const imageSrc = reservation.lot.urlImages?.[0] || '/images/default-parking.jpg';
+  const [loadingImage, setLoadingImage] = useState(true);
+
+  const {
+    id,
+    lot: {
+      name,
+      location,
+      pricePerHour,
+      urlImages,
+      lotType: {
+        vehicleType = ""
+      }
+    },
+    vehicle: {
+      plateNumber
+    },
+    driver: {
+      fullName
+    },
+    status,
+    startTime: startTimeStr
+  } = reservation;
+
+  const dateTimeStart = new Date(startTimeStr);
+  const startDate = getDateFormat(dateTimeStart);
+  const startTime = getTimeFormat(dateTimeStart);
+
+  const imageSrc = urlImages?.[0] || '/images/default-parking.jpg';
 
   return (
     <div className="flex flex-col bg-white/2.5 rounded-md p-4 text-white gap-3">
@@ -20,16 +57,16 @@ const ReservationCard = ({ reservation, onCancel }: Props) => {
         <h1
           className={
             `text-xs font-medium capitalize p-2 rounded-full bg-white/5
-            ${reservation.status === 'active' && 'text-green-500/70' ||
-            reservation.status === 'pending' && 'text-blue-500/70' ||
-            reservation.status === 'cancelled' && 'text-red-500/70' ||
+            ${status === 'active' && 'text-green-500/70' ||
+            status === 'pending' && 'text-blue-500/70' ||
+            status === 'cancelled' && 'text-red-500/70' ||
             'text-white'
             }`
           }
         >
-          {reservation.status}
+          {status}
         </h1>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center">
           <Link
             href={`#`}
             className="text-yellow-500 hover:bg-yellow-500/10 p-2 rounded"
@@ -38,10 +75,18 @@ const ReservationCard = ({ reservation, onCancel }: Props) => {
               size={18}
             />
           </Link>
+          <Link
+            href={`#`}
+            className="text-green-500 hover:bg-yellow-500/10 p-2 rounded"
+            aria-label="View reservation details">
+            <Edit
+              size={18}
+            />
+          </Link>
           <button
             type="button"
-            onClick={() => onCancel?.(reservation.id)}
-            className="text-red-500 hover:bg-red-500/10 p-2 rounded"
+            onClick={() => onCancel?.(id)}
+            className="text-red-500 hover:bg-red-500/10 p-2 rounded cursor-pointer"
             aria-label="Cancel reservation"
           >
             <Trash2 size={18} />
@@ -49,42 +94,77 @@ const ReservationCard = ({ reservation, onCancel }: Props) => {
         </div>
       </div>
       <div className="mt-2 flex gap-4 overflow-hidden">
-        <div className="relative w-28 h-20 flex-shrink-0 rounded-md overflow-hidden bg-neutral-900">
+        {
+          loadingImage &&
+          <Skeleton
+            className="flex-shrink-0 w-28 h-20 bg-white/5"
+          />
+        }
+        <div
+          className={
+            `
+              relative flex-shrink-0 rounded-md overflow-hidden
+              ${loadingImage ? "w-0 h-0" : "w-28 h-20"}
+            `
+          }
+        >
           <Image
             src={imageSrc}
-            alt={reservation.lot.name || 'Parking Lot Image'}
+            alt={name || 'Parking Lot Image'}
             fill
             className="object-cover"
+            onLoadStart={
+              () => setLoadingImage(true)
+            }
+            onLoadingComplete={
+              () => setLoadingImage(false)
+            }
           />
         </div>
         <div className="flex flex-col gap-2 w-full">
           <div className="flex items-center justify-between gap-3">
             <h3 className="font-semibold truncate">
-              {reservation.lot.name || '—'}
+              {name || '—'}
             </h3>
             <h1 className="text-white text-end">
-              ${reservation.lot.pricePerHour || 'N/A'} / hour
+              ${pricePerHour || 'N/A'} / hour
             </h1>
           </div>
           <p className="text-sm text-white/60 truncate mt-1">
-            {reservation.lot.location || '—'}
+            {location || '—'}
           </p>
           <span className="text-sm text-white/70">
-            {reservation.lot.lotType?.vehicleType || '—'}
+            {vehicleType || '—'}
           </span>
         </div>
       </div>
       <div className="mt-2 grid grid-cols-2 gap-3 text-sm text-white/70">
-        <div className="flex items-center gap-2">
-          <User size={16} className="text-white/60" />
-          <div className="truncate">
-            {reservation.driver.fullName}
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <User size={16} className="text-white/60" />
+            <div className="truncate">
+              {fullName}
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <CarFront size={16} className="text-white/60" />
+            <div className="truncate">
+              {plateNumber}
+            </div>
           </div>
         </div>
-        <div className="flex items-center justify-end gap-2">
-          <Calendar size={16} className="text-white/60" />
-          <div className="truncate">
-            {start}
+        <div className="space-y-2">
+          <div className="flex items-center justify-end gap-2">
+            <div className="truncate">
+              {startDate}
+            </div>
+            <Calendar size={16} className="text-white/60" />
+          </div>
+          <div className="flex items-center justify-end gap-2">
+            <div className="truncate">
+              {startTime}
+            </div>
+            <Clock size={16} className="text-white/60" />
           </div>
         </div>
       </div>

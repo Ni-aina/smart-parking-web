@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import ReservationCard from './ReservationCard'
-import { ReservationInterface } from '@/types/reservation'
+import ReservationCard from './ReservationCard';
+import { ReservationInterface } from '@/types/reservation';
 
 interface ReservationCardsProps {
-    reservations: ReservationInterface[]
-    onCancel?: (id: string) => void
+    reservations: ReservationInterface[];
+    onCancel?: (id: string) => void;
 }
 
 const ReservationCards = ({ reservations, onCancel }: ReservationCardsProps) => {
