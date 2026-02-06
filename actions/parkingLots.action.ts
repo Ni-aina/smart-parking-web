@@ -236,7 +236,9 @@ export async function getParkingById(parkingId: string): Promise<ParkingInterfac
     }
 }
 
-export async function getParkingLots(): Promise<ParkingInterface[]> {
+export async function getParkingLots(
+    searchTerm?: string
+): Promise<ParkingInterface[]> {
     try {
         const request = (async () => {
             const {
@@ -244,12 +246,13 @@ export async function getParkingLots(): Promise<ParkingInterface[]> {
                 userId
             } = await getServerAuth();
 
-            const { data: parkings, error } = await supabase.from("parking_lots")
-                .select("*, lotType: type_id(id, vehicle_type)")
-                .eq("owner_id", userId)
-                .order("created_at", {
-                    ascending: false
-                });
+            const { data: parkings, error } = await supabase.rpc(
+                "get_owner_parking_lots",
+                {
+                    search_term: searchTerm,
+                    owner_id: userId
+                }
+            )
 
             if (!parkings || error) return [];
             const normalized = parkings.map((item: any) => normalizeData(item));
