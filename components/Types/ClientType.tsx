@@ -8,7 +8,13 @@ import { Loader2 } from "lucide-react";
 import useType from "@/hooks/useType";
 import InputNumber from "../ui/inputNumber";
 
-const ClientType = ({ types }: { types: TypeInterface[] }) => {
+const ClientType = ({ 
+    types,
+    count
+ }: { 
+    types: TypeInterface[],
+    count: number
+ }) => {
 
     const {
         formData,
@@ -50,6 +56,7 @@ const ClientType = ({ types }: { types: TypeInterface[] }) => {
                 body={body}
                 handleEdit={handleEdit}
                 handleDelete={handleDelete}
+                count={count}
             />
             <Modal
                 isOpen={isModalOpen}

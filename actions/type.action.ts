@@ -105,7 +105,10 @@ export async function deleteType(id: string) {
     }
 }
 
-export async function getTypes(): Promise<TypeInterface[]> {
+export async function getTypes(
+    page = 1,
+    limit = 20
+): Promise<TypeInterface[] & { count: number }> {
     try {
         const request = (async () => {
             const {
@@ -113,19 +116,32 @@ export async function getTypes(): Promise<TypeInterface[]> {
                 userId: ownerId
             } = await getServerAuth();
 
+            const from = (page - 1) * limit;
+            const to = from + (limit - 1);
+
             if (!ownerId || !isUUID(ownerId)) return [];
 
-            const { data: types, error } = await supabase.from("lot_types")
-                .select("*")
-                .eq("owner_id", ownerId)
-                .order("created_at", {
-                    ascending: false
-                });
+            const [
+                { count },
+                { data: types, error }
+            ] = await Promise.all([
+                supabase.from("lot_types")
+                    .select("*", { count: "exact" })
+                    .eq("owner_id", ownerId),
+                supabase.from("lot_types")
+                    .select("*")
+                    .eq("owner_id", ownerId)
+                    .order("created_at", {
+                        ascending: false
+                    })
+                    .range(from, to)
+            ])
 
             if (!types || error) return [];
+
             const normalized = types.map((item: any) => normalizeData(item));
 
-            return normalized as TypeInterface[];
+            return Object.assign(normalized, { count })
         })()
 
         return Promise.race([

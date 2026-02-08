@@ -16,12 +16,15 @@ import { useState } from 'react';
 import { Skeleton } from '../ui/skeleton';
 import { getDateFormat, getTimeFormat } from '@/utils/DateTimeAction';
 
-interface Props {
+interface ReservationCardProps {
   reservation: ReservationInterface;
-  onCancel?: (id: string) => void;
+  handleDelete: (id: string)=> void;
 }
 
-const ReservationCard = ({ reservation, onCancel }: Props) => {
+const ReservationCard = ({ 
+  reservation,
+  handleDelete
+ }: ReservationCardProps) => {
   const [loadingImage, setLoadingImage] = useState(true);
 
   const {
@@ -57,7 +60,7 @@ const ReservationCard = ({ reservation, onCancel }: Props) => {
         <h1
           className={
             `text-xs font-medium capitalize p-2 rounded-full bg-white/5
-            ${status === 'active' && 'text-green-500/70' ||
+              ${status === 'active' && 'text-green-500/70' ||
             status === 'pending' && 'text-blue-500/70' ||
             status === 'cancelled' && 'text-red-500/70' ||
             'text-white'
@@ -84,10 +87,11 @@ const ReservationCard = ({ reservation, onCancel }: Props) => {
             />
           </Link>
           <button
-            type="button"
-            onClick={() => onCancel?.(id)}
             className="text-red-500 hover:bg-red-500/10 p-2 rounded cursor-pointer"
-            aria-label="Cancel reservation"
+            onClick={
+              ()=> handleDelete(id)
+            }
+            type="button"
           >
             <Trash2 size={18} />
           </button>
@@ -103,9 +107,9 @@ const ReservationCard = ({ reservation, onCancel }: Props) => {
         <div
           className={
             `
-              relative flex-shrink-0 rounded-md overflow-hidden
-              ${loadingImage ? "w-0 h-0" : "w-28 h-20"}
-            `
+                relative flex-shrink-0 rounded-md overflow-hidden
+                ${loadingImage ? "w-0 h-0" : "w-28 h-20"}
+              `
           }
         >
           <Image

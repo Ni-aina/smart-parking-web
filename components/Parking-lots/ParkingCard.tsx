@@ -95,14 +95,14 @@ const ParkingCard = ({
                 </div>
                 <div className="flex items-center gap-2">
                     <Edit
-                        className="text-green-600 cursor-pointer hover:scale-105"
+                        className="text-green-500 cursor-pointer hover:scale-105"
                         onClick={() => onEdit(id)}
                         size={18}
                     />
                     <Trash2
                         size={20}
                         onClick={() => onDelete(id)}
-                        className="text-red-600 cursor-pointer hover:scale-105"
+                        className="text-red-500 cursor-pointer hover:scale-105"
                     />
                 </div>
             </div>

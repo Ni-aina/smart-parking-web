@@ -7,17 +7,22 @@ import { ParkingInterface } from "@/types/parking";
 import ParkingCards from "./ParkingCards";
 import { ProfileInterface } from "@/types/profile";
 import { deleteParking } from "@/actions/parkingLots.action";
+import Pagination from "../ui/pagination";
+import DeleteConfrim from "../ui/deleteConfirm";
 
 interface ClientParkingLotsInterface {
-    parkings: ParkingInterface[],
-    agents: ProfileInterface[]
+    parkings: ParkingInterface[];
+    agents: ProfileInterface[];
+    count: number;
 }
 
 const ClientParkingLots = ({
     parkings,
-    agents
+    agents,
+    count
 }: ClientParkingLotsInterface) => {
     const [search, setSearch] = useState("");
+    const [isConfirm, setIsConfirm] = useState("");
     const router = useRouter();
 
     const [optimisticParkings, addOptimisticParkings] = useOptimistic(
@@ -31,15 +36,17 @@ const ClientParkingLots = ({
 
     const agentsNamesMap = Object.fromEntries(agents.map(a => [a.id, a.fullName]));
 
-    const handleEdit = (id: string)=> {
+    const handleEdit = (id: string) => {
         router.push(`/owner/parking-lots/form/${id}`);
     }
 
-    const handleDelete = (id: string)=> {
-        startTransition(()=> {
-            addOptimisticParkings(id);
-            deleteParking(id);
+    const handleDelete = () => {
+        if (!isConfirm) return;
+        startTransition(() => {
+            addOptimisticParkings(isConfirm);
+            deleteParking(isConfirm);
         })
+        setIsConfirm("");
     }
 
     return (
@@ -48,16 +55,29 @@ const ClientParkingLots = ({
                 title={title}
                 search={search}
                 setSearch={setSearch}
-                onAdd={()=> router.push("/owner/parking-lots/form/new")}
+                onAdd={() => router.push("/owner/parking-lots/form/new")}
             />
             <div className="mt-5 lg:mt-10">
                 <ParkingCards
                     parkings={optimisticParkings}
                     agentsNamesMap={agentsNamesMap}
                     onEdit={handleEdit}
-                    onDelete={handleDelete}
+                    onDelete={
+                        (id: string) => setIsConfirm(id)
+                    }
                 />
             </div>
+            <Pagination
+                showPage={6}
+                count={count}
+            />
+            <DeleteConfrim
+                isOpen={!!isConfirm}
+                handleCancel={
+                    () => setIsConfirm("")
+                }
+                handleConfirm={handleDelete}
+            />
         </div>
     )
 }

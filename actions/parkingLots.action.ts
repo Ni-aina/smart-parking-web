@@ -236,8 +236,10 @@ export async function getParkingById(parkingId: string): Promise<ParkingInterfac
 }
 
 export async function getParkingLots(
+    page = 1,
+    limit = 20,
     searchTerm?: string
-): Promise<ParkingInterface[]> {
+): Promise<ParkingInterface[] & { count: number }> {
     try {
         const request = (async () => {
             const {
@@ -248,14 +250,19 @@ export async function getParkingLots(
             const { data: parkings, error } = await supabase.rpc(
                 "get_owner_parking_lots",
                 {
+                    page,
+                    limit_count: limit,
                     search_term: searchTerm,
                     owner_id: userId
                 }
             )
 
             if (!parkings || error) return [];
+
             const normalized = parkings.map((item: any) => normalizeData(item));
-            return normalized as ParkingInterface[];
+            const count = normalized.at(0).totalLots;
+
+            return Object.assign(normalized, { count });
         })()
 
         return Promise.race([

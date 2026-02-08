@@ -10,14 +10,16 @@ import InputSelect from "./ui/inputSelect";
 import { SelectInterface } from "@/types/input";
 import Pagination from "./ui/pagination";
 import { PAGINATION } from "@/lib/pagination";
+import DeleteConfrim from "./ui/deleteConfirm";
 
 interface TabelInterface {
     title: string;
     headers: Array<string>;
     body: {
         rows: Array<Record<string, string>>;
-        cols: Array<string>
+        cols: Array<string>;
     };
+    count: number;
     handleEdit: (id: string) => void;
     handleDelete: (id: string) => void;
 }
@@ -27,14 +29,15 @@ const Table = ({
     headers,
     body,
     handleEdit,
-    handleDelete
+    handleDelete,
+    count
 }: TabelInterface) => {
 
-    const [showPage, setShowPage] = useState("10")
+    const [showPage, setShowPage] = useState("10");
 
     const handlePaginationChange = (e: SelectInterface) => {
         const { value } = e.target;
-        setShowPage(value)
+        setShowPage(value);
     }
 
     const { rows, cols } = body;
@@ -45,6 +48,9 @@ const Table = ({
 
     const [selectedAll, setSelectedAll] = useState(false);
     const [isConfirmId, setIsConfirmId] = useState("");
+    const [allConfirmIds, setAllConfirmIds] = useState<Array<string>>([]);
+
+    const isSelected = selected.some(item => item.checked);
 
     const handleSeleted = (selectedId: string) => {
         setSelected(prev => prev.map(({ id, checked }) => id !== selectedId ? {
@@ -77,9 +83,19 @@ const Table = ({
         })))
     }
 
+    const handleSetAllConfirmIds = () => {
+        setAllConfirmIds(() => selected.filter(item => item.checked).map(item => item.id));
+    }
+
     const handleConfirm = () => {
-        handleDelete(isConfirmId);
-        setIsConfirmId("");
+        if (isConfirmId) {
+            handleDelete(isConfirmId);
+            setIsConfirmId("");
+        }
+        if (allConfirmIds.length) {
+            Promise.all(allConfirmIds.map(id => handleDelete(id)));
+            setAllConfirmIds([]);
+        }
     }
 
     useEffect(() => {
@@ -98,10 +114,11 @@ const Table = ({
                             All {title}
                         </h1>
                         {
-                            selected.some(item => item.checked) &&
+                            isSelected &&
                             <button
                                 className="bg-white/5 text-white/40 text-xs rounded px-3 py-1.5
-                                cursor-pointer hover:opacity-80 disabled:opacity-60 disabled:cursor-not-allowed"
+                                cursor-pointer hover:text-white/70 disabled:opacity-60 disabled:cursor-not-allowed"
+                                onClick={handleSetAllConfirmIds}
                             >
                                 Delete
                             </button>
@@ -222,37 +239,16 @@ const Table = ({
             </div>
             <Pagination
                 showPage={+showPage}
-                totalCount={480}
+                count={count}
             />
-            {
-                isConfirmId &&
-                <Modal
-                    isOpen={!!isConfirmId}
-                    onClose={() => setIsConfirmId("")}
-                    title="This action is irreversible!"
-                >
-                    <div className="flex flex-col gap-3">
-                        <p className="text-red-600 text-sm">Are you sure to proccess it?</p>
-                        <div className="mt-3 w-full flex justify-end gap-3">
-                            <button
-                                className="w-[120px] h-[40px] flex justify-center items-center 
-                                bg-white/10 rounded-sm cursor-pointer hover:opacity-80"
-                                onClick={() => setIsConfirmId("")}
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                className="w-[120px] h-[40px] flex justify-center items-center gap-2
-                                bg-blue-950/15 rounded-sm cursor-pointer hover:opacity-80
-                                disabled:cursor-not-allowed disabled:opacity-80"
-                                onClick={handleConfirm}
-                            >
-                                Confirm
-                            </button>
-                        </div>
-                    </div>
-                </Modal>
-            }
+            <DeleteConfrim
+                isOpen={!!isConfirmId || !!allConfirmIds.length}
+                handleCancel={() => {
+                    setAllConfirmIds([]);
+                    setIsConfirmId("")
+                }}
+                handleConfirm={handleConfirm}
+            />
         </>
     )
 }
