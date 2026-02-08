@@ -1,17 +1,17 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 
 export async function getServerAuth(): Promise<{
     supabase:  any,
-    userId: string|null
+    userId: string
 }> {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return {
-        supabase,
-        userId: null
-    }
+
+    if (!user?.id) return redirect("/auth/sign-out");
+
     const {
         id
     } = user;

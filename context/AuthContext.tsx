@@ -2,6 +2,7 @@
 
 import Loading from "@/components/ui/loading";
 import { supabase } from "@/lib/supabase/client";
+import checkSessionExpired from "@/utils/chekSessionExpired";
 import { Session } from "@supabase/supabase-js";
 import {
     createContext,
@@ -22,6 +23,11 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
         (async function () {
             setIsPending(true);
             const { data: { session } } = await supabase.auth.getSession();
+            const expiresAt = session?.expires_at || null;
+            if(checkSessionExpired(expiresAt)) {
+                setIsPending(false);
+                return;
+            }
             setSession(session);
             setIsPending(false);
         })()

@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { getServerAuth } from "./authServer.action";
 
 export async function uploadFile(
   file: File,
@@ -7,7 +7,7 @@ export async function uploadFile(
 ): Promise<string | null> {
   try {
     
-    const supabase = await createClient();
+    const { supabase } = await getServerAuth();
 
     const fileExt = file.name.split(".").pop();
     const fileName = `${crypto.randomUUID()}.${fileExt}`;

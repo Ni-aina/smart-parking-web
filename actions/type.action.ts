@@ -1,6 +1,5 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
 import { FormTypeInterface, TypeInterface } from "@/types/type";
 import { normalizeData } from "@/utils/normalizeData";
 import { revalidatePath } from "next/cache";
@@ -49,7 +48,7 @@ export async function createType(formType: FormTypeInterface): Promise<TypeInter
 export async function updateType(formType: FormTypeInterface): Promise<TypeInterface | null> {
     try {
         const request = (async () => {
-            const supabase = await createClient();
+            const { supabase } = await getServerAuth();
 
             const { id } = formType;
             if (!id) return null;
@@ -85,7 +84,7 @@ export async function updateType(formType: FormTypeInterface): Promise<TypeInter
 export async function deleteType(id: string) {
     try {
         const request = (async () => {
-            const supabase = await createClient();
+            const { supabase } = await getServerAuth();
 
             if (!id) return;
 

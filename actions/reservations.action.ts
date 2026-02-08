@@ -11,7 +11,7 @@ export async function getReservationsForOwner()
     try {
         const { supabase, userId } = await getServerAuth();
 
-        if (!isUUID(userId || "")) {
+        if (!isUUID(userId)) {
             throw new Error("Invalid user ID");
         }
 

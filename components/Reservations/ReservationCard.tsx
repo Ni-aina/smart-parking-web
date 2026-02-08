@@ -126,9 +126,11 @@ const ReservationCard = ({ reservation, onCancel }: Props) => {
             <h3 className="font-semibold truncate">
               {name || '—'}
             </h3>
-            <h1 className="text-white text-end">
-              ${pricePerHour || 'N/A'} / hour
-            </h1>
+            <div className="flex items-center flex-1 justify-end bg-black">
+                ${pricePerHour || 'N/A'} / hour
+              <h1 className="text-white text-center">
+              </h1>
+            </div>
           </div>
           <p className="text-sm text-white/60 truncate mt-1">
             {location || '—'}

@@ -1,11 +1,12 @@
-import { createClient } from "@/lib/supabase/server";
+import { getServerAuth } from "./authServer.action";
 
 export async function removeFile(
   filePath: string,
   bucket: string
 ): Promise<boolean> {
+  
   try {
-    const supabase = await createClient();
+    const { supabase } = await getServerAuth();
 
     const { error } = await supabase.storage
       .from(bucket)

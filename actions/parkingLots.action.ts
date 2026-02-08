@@ -1,6 +1,5 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
 import { ParkingFormInterface, ParkingInterface } from "@/types/parking";
 import { normalizeData } from "@/utils/normalizeData";
 import { getServerAuth } from "./authServer.action";
@@ -174,7 +173,7 @@ export async function deleteParking(parkingId: string) {
     try {
 
         const request = (async () => {
-            const supabase = await createClient();
+            const { supabase } = await getServerAuth();
 
             const { data: parking } = await supabase.from("parking_lots")
                 .select("id, url_images")
@@ -215,7 +214,7 @@ export async function deleteParking(parkingId: string) {
 export async function getParkingById(parkingId: string): Promise<ParkingInterface | null> {
     try {
         const request = (async () => {
-            const supabase = await createClient();
+            const { supabase } = await getServerAuth();
 
             const { data: parking, error } = await supabase.from("parking_lots")
                 .select("*, lotType: type_id(id, vehicle_type)")
