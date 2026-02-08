@@ -57,6 +57,8 @@ const Pagination = ({
         }
     }, [isPending])
 
+    if (!count) return null;
+
     return (
         <div className="flex flex-wrap justify-between items-center gap-3 text-white/60">
             <h1 className="text-sm">
