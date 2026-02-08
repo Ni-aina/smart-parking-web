@@ -123,13 +123,11 @@ const ReservationCard = ({ reservation, onCancel }: Props) => {
         </div>
         <div className="flex flex-col gap-2 w-full">
           <div className="flex items-center justify-between gap-3">
-            <h3 className="font-semibold truncate">
+            <div className="w-20 font-semibold truncate">
               {name || '—'}
-            </h3>
-            <div className="flex items-center flex-1 justify-end bg-black">
-                ${pricePerHour || 'N/A'} / hour
-              <h1 className="text-white text-center">
-              </h1>
+            </div>
+            <div className="flex-1">
+              ${pricePerHour || 'N/A'} / hour
             </div>
           </div>
           <p className="text-sm text-white/60 truncate mt-1">

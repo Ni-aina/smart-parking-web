@@ -3,7 +3,7 @@ import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 
 interface InpuSelectInterface {
-    name: string;
+    name?: string;
     value: string;
     data: Array<{
         id: string;

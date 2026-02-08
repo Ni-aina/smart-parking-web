@@ -6,6 +6,7 @@ import { ProfileInterface } from "@/types/profile";
 import { TypeInterface } from "@/types/type";
 import {
     DollarSign,
+    Loader2,
     PlusCircle,
     Search,
     Undo2,
@@ -141,7 +142,9 @@ const FormParkingLots = ({
                                 bg-white/5 rounded-lg
                             `}
                         >
-                            <Loading />
+                            <Loader2
+                                className="animate-spin"
+                            />
                         </div>
                         :
                         images.length ?

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { DollarSign, Edit2, Trash2 } from "lucide-react";
+import { DollarSign, Edit, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { Skeleton } from "../ui/skeleton";
 
@@ -43,13 +43,13 @@ const ParkingCard = ({
                         className="flex-shrink-0 w-30 h-25 bg-white/5"
                     />
                 }
-                <div 
+                <div
                     className={
                         `
                             relative flex-shrink-0 rounded-md overflow-hidden
                             ${loadingImage ? "w-0 h-0" : "w-30 h-25"}
                         `
-                    }   
+                    }
                 >
                     <Image
                         src={urlImage || "/images/default-parking.jpg"}
@@ -57,10 +57,10 @@ const ParkingCard = ({
                         fill
                         className="object-cover"
                         onLoadStart={
-                            ()=> setLoadingImage(true)
+                            () => setLoadingImage(true)
                         }
                         onLoadingComplete={
-                            ()=> setLoadingImage(false)
+                            () => setLoadingImage(false)
                         }
                     />
                 </div>
@@ -94,10 +94,10 @@ const ParkingCard = ({
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Edit2
-                        size={20}
+                    <Edit
+                        className="text-green-600 cursor-pointer hover:scale-105"
                         onClick={() => onEdit(id)}
-                        className="text-blue-950 cursor-pointer hover:scale-105"
+                        size={18}
                     />
                     <Trash2
                         size={20}

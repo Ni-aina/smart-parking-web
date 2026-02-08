@@ -8,10 +8,11 @@ interface CustomButtonInterface {
     title: string;
     isPending?: boolean;
     onClick?: ([...args]: any) => void;
-    type?: "submit" | "button",
-    className?: string,
+    type?: "submit" | "button";
+    className?: string;
     Icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> 
-    & RefAttributes<SVGSVGElement>>
+    & RefAttributes<SVGSVGElement>>;
+    disabled?: boolean;
 }
 
 const CustomButton = ({
@@ -20,14 +21,15 @@ const CustomButton = ({
     onClick,
     type = "submit",
     className,
-    Icon
+    Icon,
+    disabled = false
 }: CustomButtonInterface) => {
     return (
         <button
             className={cn(`px-4 py-2 flex justify-center items-center gap-2
             bg-white text-neutral-900 rounded-sm cursor-pointer hover:opacity-80
             disabled:cursor-not-allowed disabled:opacity-80`, className)}
-            disabled={isPending}
+            disabled={disabled || isPending}
             onClick={onClick}
             type={type}
         >

@@ -1,11 +1,15 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, Edit2, Trash2 } from "lucide-react";
+import { Edit, Trash2 } from "lucide-react";
 import Order from "./ui/order";
 import { useEffect, useState } from "react";
 import { Modal } from "./ui/modal";
 import { customCheckStyle } from "@/lib/customChexBoxStyle";
 import Image from "next/image";
+import InputSelect from "./ui/inputSelect";
+import { SelectInterface } from "@/types/input";
+import Pagination from "./ui/pagination";
+import { PAGINATION } from "@/lib/pagination";
 
 interface TabelInterface {
     title: string;
@@ -18,8 +22,6 @@ interface TabelInterface {
     handleDelete: (id: string) => void;
 }
 
-
-
 const Table = ({
     title,
     headers,
@@ -27,6 +29,13 @@ const Table = ({
     handleEdit,
     handleDelete
 }: TabelInterface) => {
+
+    const [showPage, setShowPage] = useState("10")
+
+    const handlePaginationChange = (e: SelectInterface) => {
+        const { value } = e.target;
+        setShowPage(value)
+    }
 
     const { rows, cols } = body;
     const [selected, setSelected] = useState(rows.map(({ id }) => ({
@@ -82,17 +91,35 @@ const Table = ({
 
     return (
         <>
-            <div className="my-5 lg:my-8 bg-black/10 rounded-md text-white/80">
+            <div className="my-5 lg:my-8 bg-white/5 rounded-md text-white/80">
                 <div className="flex justify-between items-center gap-5 p-5">
-                    <h1>
-                        All {title}
-                    </h1>
-                    <h1>
-                        <span className="text-violet-950">1-10</span> of 480
-                    </h1>
+                    <div className="flex items-center gap-3">
+                        <h1 className="capitalize font-semibold">
+                            All {title}
+                        </h1>
+                        {
+                            selected.some(item => item.checked) &&
+                            <button
+                                className="bg-white/5 text-white/40 text-xs rounded px-3 py-1.5
+                                cursor-pointer hover:opacity-80 disabled:opacity-60 disabled:cursor-not-allowed"
+                            >
+                                Delete
+                            </button>
+                        }
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <h1 className="hidden lg:flex">Rows per pages</h1>
+                        <div className="w-20">
+                            <InputSelect
+                                value={showPage}
+                                data={PAGINATION}
+                                handleChange={handlePaginationChange}
+                            />
+                        </div>
+                    </div>
                 </div>
                 <hr className="border-black/30 w-full h-0.5" />
-                <div className="max-w-full max-h-[60dvh] overflow-scroll">
+                <div className="mt-3 max-w-full max-h-[60dvh] overflow-scroll">
                     <table className="w-full">
                         <thead className="font-semibold">
                             <tr>
@@ -173,10 +200,10 @@ const Table = ({
                                             }
                                             <td className="pr-8 py-3 lg:pr-10">
                                                 <div className="flex h-full items-center justify-end gap-3">
-                                                    <Edit2
-                                                        size={18}
+                                                    <Edit
+                                                        className="text-green-600 cursor-pointer hover:scale-105"
                                                         onClick={() => handleEdit(item.id)}
-                                                        className="text-blue-950 cursor-pointer hover:scale-105"
+                                                        size={18}
                                                     />
                                                     <Trash2
                                                         size={18}
@@ -193,40 +220,10 @@ const Table = ({
                     </table>
                 </div>
             </div>
-            <div className="flex flex-wrap justify-between items-center gap-3 text-white/60">
-                <h1 className="text-sm">
-                    1-10 of 480
-                </h1>
-                <div className="flex items-center gap-3">
-                    <h1 className="text-sm">Rows per pages</h1>
-                    <select name="page" className="text-sm cursor-pointer">
-                        <option value="10">10</option>
-                        <option value="15">15</option>
-                        <option value="20">20</option>
-                    </select>
-                    <div className="flex items-center gap-2">
-                        <button
-                            className="p-2 bg-blue-950/15 rounded-sm cursor-pointer  
-                            hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed"
-                            disabled
-                        >
-                            <ArrowLeft
-                                size={18}
-                                className="text-white/80"
-                            />
-                        </button>
-                        <button
-                            className="p-2 bg-blue-950/15 rounded-sm cursor-pointer 
-                            hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            <ArrowRight
-                                size={18}
-                                className="text-white/80"
-                            />
-                        </button>
-                    </div>
-                </div>
-            </div>
+            <Pagination
+                showPage={+showPage}
+                totalCount={480}
+            />
             {
                 isConfirmId &&
                 <Modal
