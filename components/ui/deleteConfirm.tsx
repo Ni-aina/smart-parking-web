@@ -21,7 +21,7 @@ const DeleteConfrim = ({
             title="This action is irreversible!"
         >
             <div className="flex flex-col gap-3">
-                <p className="text-red-600 text-sm">Are you sure to proccess it?</p>
+                <p className="text-sm text-red-600">Are you sure to proccess it?</p>
                 <div className="mt-3 w-full flex justify-end gap-3">
                     <button
                         className="w-[120px] h-[40px] flex justify-center items-center 
@@ -32,7 +32,7 @@ const DeleteConfrim = ({
                     </button>
                     <button
                         className="w-[120px] h-[40px] flex justify-center items-center gap-2
-                                bg-blue-950/15 rounded-sm cursor-pointer hover:opacity-80
+                                bg-white text-black rounded-sm cursor-pointer hover:opacity-80
                                 disabled:cursor-not-allowed disabled:opacity-80"
                         onClick={handleConfirm}
                     >
