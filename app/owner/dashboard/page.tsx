@@ -1,12 +1,37 @@
+import { getTotalReservationByTime } from "@/actions/reservations.action";
 import DashboardCards from "@/components/Dashboards/DashboardCards";
 import Header from "@/components/Dashboards/Header";
+import { keyFilter } from "@/types/global";
 
-const DashboardPage = async () => {
+interface DashboardPageProps {
+    searchParams: Promise<{
+        filter: keyFilter
+    }>
+}
+
+const DashboardPage = async ({
+    searchParams
+}: DashboardPageProps) => {
+
+    const { filter = "this-year" } = await searchParams;
+
+    const [
+        {
+            count: countReservation,
+            rate: reservationRate,
+            isGrowing: reservationTrend
+        }
+    ] = await Promise.all([
+        getTotalReservationByTime(filter)
+    ])
 
     const dashboardMetrics = {
         totalReservations: {
-            value: "1234",
-            trend: { value: 12.5, isPositive: true }
+            value: `${countReservation}`,
+            trend: { 
+                value: reservationRate, 
+                isPositive: reservationTrend 
+            }
         },
         revenue: {
             value: "$4578",
@@ -32,7 +57,7 @@ const DashboardPage = async () => {
             <Header
                 handleExport={handleExport}
             />
-            <DashboardCards 
+            <DashboardCards
                 metrics={dashboardMetrics}
             />
         </>

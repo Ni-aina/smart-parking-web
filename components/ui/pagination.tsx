@@ -29,20 +29,18 @@ const Pagination = ({
     const navigateToPage = (page: number) => {
         startTransition(() => {
             toast.loading("Loading data...", { id: "pagination-loading" });
-            router.push(`${pathname}?page=${page}&limit=${showPage}`);
+            router.push(`?page=${page}&limit=${showPage}`);
             setActivePage(page);
         })
     }
 
     const handleDecreasePage = () => {
         const updatedPage = Math.max(0, activePage - 1);
-        router.push(`?page=${updatedPage}&limit=${showPage}`)
         navigateToPage(updatedPage);
     }
 
     const handleIncreasePage = () => {
         const updatedPage = Math.min(maxPage, activePage + 1);
-        router.push(`?page=${updatedPage}&limit=${showPage}`)
         navigateToPage(updatedPage);
     }
 
@@ -52,9 +50,8 @@ const Pagination = ({
     }, [showPage])
 
     useEffect(() => {
-        if (!isPending) {
+        if (isPending) return;
             toast.dismiss("pagination-loading");
-        }
     }, [isPending])
 
     if (!count) return null;

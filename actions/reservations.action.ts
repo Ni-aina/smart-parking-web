@@ -6,6 +6,8 @@ import { ReservationInterface } from "@/types/reservation";
 import { rejectTimeout } from "@/utils/rejectTimeout";
 import { isUUID } from "@/utils/isUUID";
 import { revalidatePath } from "next/cache";
+import { keyFilter } from "@/types/global";
+import { getFilterDates } from "@/lib/DateTime";
 
 export async function deleteRerservation(reservationId: string) {
     try {
@@ -26,6 +28,47 @@ export async function deleteRerservation(reservationId: string) {
             request,
             rejectTimeout()
         ])
+    } catch (error) {
+        throw error;
+    }
+}
+
+export async function getTotalReservationByTime(filter: keyFilter)
+    : Promise<{
+        count: number;
+        rate: number;
+        isGrowing: boolean;
+    }> {
+    try {
+        const { supabase, userId } = await getServerAuth();
+
+        const {
+            firstDay,
+            previousFirstDay
+        } = getFilterDates(filter);
+
+        const { count: currentCount } = await supabase.from("reservations")
+            .select("*, lot:lot_id!inner(owner_id)", { count: "exact" })
+            .eq("lot.owner_id", userId)
+            .gte("created_at", firstDay.toISOString());
+
+        const { count: previousCount } = await supabase.from("reservations")
+            .select("*, lot:lot_id!inner(owner_id)", { count: "exact" })
+            .eq("lot.owner_id", userId)
+            .gte("created_at", previousFirstDay.toISOString())
+            .lt("created_at", firstDay.toISOString());
+
+        const rate = previousCount === 0
+            ? (currentCount > 0 ? 100 : 0)
+            : ((currentCount - previousCount) / previousCount) * 100;
+
+        const isGrowing = rate > 0;
+
+        return { 
+            count: currentCount ?? 0, 
+            rate, 
+            isGrowing
+        }
     } catch (error) {
         throw error;
     }

@@ -3,16 +3,62 @@
 import useCurrentProfile from "@/hooks/useCurrentProfile";
 import CustomButton from "../ui/customButton";
 import { ArrowDown } from "lucide-react";
+import { useEffect, useState, useTransition } from "react";
+import InputSelect from "../ui/inputSelect";
+import { keyFilter } from "@/types/global";
+import { SelectInterface } from "@/types/input";
+import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 
 interface HeaderProps {
-    handleExport: ()=> void;
+    handleExport: () => void;
 }
+
+const dataFilter = [
+    {
+        id: "this-year",
+        value: "This year"
+    },
+    {
+        id: "this-month",
+        value: "This month"
+    },
+    {
+        id: "this-week",
+        value: "This week"
+    }
+]
 
 const Header = ({
     handleExport
 }: HeaderProps) => {
+    const searchParams = useSearchParams();
+    const filterParams = searchParams.get("filter") || "this-year";
     const { currentProfile } = useCurrentProfile();
     const fullName = currentProfile?.fullName || "";
+
+    const router = useRouter();
+
+    const [filter, setFilter] = useState<keyFilter>(() =>
+        dataFilter.some(item => item.id === filterParams) ?
+            filterParams as keyFilter :
+            "this-year"
+    )
+    const [isPending, startTransition] = useTransition();
+
+    const handleSetFilter = (e: SelectInterface) => {
+        const { value } = e.target;
+        startTransition(() => {
+            toast.loading("Loading data...", { id: "loading-filter" });
+            router.push(`?filter=${value}`);
+            setFilter(value);
+        })
+    }
+
+    useEffect(() => {
+        if (isPending) return;
+        toast.dismiss("loading-filter");
+    }, [isPending])
 
     return (
         <div className="flex flex-wrap justify-between gap-5">
@@ -24,7 +70,14 @@ const Header = ({
                     Measure your reservations traffic
                 </p>
             </div>
-            <div>
+            <div className="flex items-center gap-5 text-white">
+                <div>
+                    <InputSelect
+                        data={dataFilter}
+                        value={filter}
+                        handleChange={handleSetFilter}
+                    />
+                </div>
                 <CustomButton
                     Icon={ArrowDown}
                     title="Export data"
@@ -34,5 +87,5 @@ const Header = ({
         </div>
     )
 }
- 
+
 export default Header;

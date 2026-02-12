@@ -4,3 +4,5 @@ export type Status =
     | "confirmed"
     | "cancelled"
     | "completed";
+
+export type keyFilter = "this-year" | "this-month" | "this-week";
