@@ -1,4 +1,9 @@
-import { getTotalReservationByTime } from "@/actions/reservations.action";
+import {
+    getCancelledReservationsForOwnerByTime,
+    getOccupancyForOwnerByTime,
+    getTotalReservationsForOwnerByTime
+} from "@/actions/reservations.action";
+import { getRevevueForOwnerByTime } from "@/actions/transaction.action";
 import DashboardCards from "@/components/Dashboards/DashboardCards";
 import Header from "@/components/Dashboards/Header";
 import { keyFilter } from "@/types/global";
@@ -17,33 +22,60 @@ const DashboardPage = async ({
 
     const [
         {
-            count: countReservation,
+            count,
             rate: reservationRate,
             isGrowing: reservationTrend
+        },
+        {
+            revenue,
+            rate: revenueRate,
+            isGrowing: RevenueTrend
+        },
+        {
+            occupancy,
+            rate: occupancyRate,
+            isGrowing: occupancyTrend
+        },
+        {
+            count: cancelledReservation,
+            rate: rateCancelledReservation,
+            isGrowing: cancelledReservationTrend
         }
     ] = await Promise.all([
-        getTotalReservationByTime(filter)
+        getTotalReservationsForOwnerByTime(filter),
+        getRevevueForOwnerByTime(filter),
+        getOccupancyForOwnerByTime(filter),
+        getCancelledReservationsForOwnerByTime(filter)
     ])
 
     const dashboardMetrics = {
         totalReservations: {
-            value: `${countReservation}`,
-            trend: { 
-                value: reservationRate, 
-                isPositive: reservationTrend 
+            value: `${count}`,
+            trend: {
+                value: reservationRate,
+                isPositive: reservationTrend
             }
         },
         revenue: {
-            value: "$4578",
-            trend: { value: 8.3, isPositive: true }
+            value: `$${revenue}`,
+            trend: {
+                value: revenueRate,
+                isPositive: RevenueTrend
+            }
         },
-        occupancyRate: {
-            value: "78%",
-            trend: { value: 5.2, isPositive: true }
+        occupancy: {
+            value: `${occupancy}`,
+            trend: {
+                value: occupancyRate,
+                isPositive: occupancyTrend
+            }
         },
-        cancellationRate: {
-            value: "4.2%",
-            trend: { value: 1.8, isPositive: false }
+        cancelled: {
+            value: `${cancelledReservation}`,
+            trend: {
+                value: rateCancelledReservation,
+                isPositive: cancelledReservationTrend
+            }
         }
     }
 
