@@ -4,6 +4,7 @@ import {
     getTotalReservationsForOwnerByTime
 } from "@/actions/reservations.action";
 import { getRevevueForOwnerByTime } from "@/actions/transaction.action";
+import AreaChartDashboard from "@/components/Dashboards/AreaChart";
 import DashboardCards from "@/components/Dashboards/DashboardCards";
 import Header from "@/components/Dashboards/Header";
 import { keyFilter } from "@/types/global";
@@ -79,6 +80,37 @@ const DashboardPage = async ({
         }
     }
 
+    const bookingsLastWeek = [
+        {
+            name: "Sunday",
+            value: 0
+        },
+        {
+            name: "Monday",
+            value: 5
+        },
+        {
+            name: "Tuesday",
+            value: 0
+        },
+        {
+            name: "Wednesday",
+            value: 1
+        },
+        {
+            name: "Thursday",
+            value: 0
+        },
+        {
+            name: "Friday",
+            value: 3
+        },
+        {
+            name: "Saturday",
+            value: 0
+        }
+    ]
+
     const handleExport = async () => {
         "use server";
 
@@ -92,6 +124,14 @@ const DashboardPage = async ({
             <DashboardCards
                 metrics={dashboardMetrics}
             />
+            <div className="space-y-5">
+                <h1 className="text-white text-lg lg:text-3xl font-semibold">
+                    Bookings last week
+                </h1>
+                <AreaChartDashboard
+                    data={bookingsLastWeek}
+                />
+            </div>
         </>
     )
 }
