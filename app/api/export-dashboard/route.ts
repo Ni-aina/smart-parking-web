@@ -4,7 +4,11 @@ import ExcelJS from "exceljs";
 export async function POST(req: Request) {
     try {
         const data = await req.json();
-        const { summaryData, bookingsLastWeek } = data;
+        const { 
+            summaryData, 
+            bookingsLastWeek,
+            occupancyLots
+        } = data;
 
         const workbook = new ExcelJS.Workbook();
 
@@ -18,7 +22,7 @@ export async function POST(req: Request) {
             summarySheet.addRows(summaryData);
         }
 
-        const bookingsSheet = workbook.addWorksheet("BookingsLastWeek");
+        const bookingsSheet = workbook.addWorksheet("Bookings Last Week");
         if (bookingsLastWeek && bookingsLastWeek.length > 0) {
             bookingsSheet.columns = Object.keys(bookingsLastWeek[0]).map(key => ({
                 header: key,
@@ -26,6 +30,16 @@ export async function POST(req: Request) {
                 width: 15
             }))
             bookingsSheet.addRows(bookingsLastWeek);
+        }
+
+        const pieChartSheet = workbook.addWorksheet("Occupancy Lots");
+        if (occupancyLots && occupancyLots.length > 0) {
+            pieChartSheet.columns = Object.keys(occupancyLots[0]).map(key => ({
+                header: key,
+                key: key,
+                width: 15
+            }))
+            pieChartSheet.addRows(occupancyLots);
         }
 
         const buffer = await workbook.xlsx.writeBuffer();
@@ -36,10 +50,9 @@ export async function POST(req: Request) {
                 "Content-Disposition": "attachment; filename=dashboard-report.xlsx"
             }
         })
-    } catch (error) {
-        console.error("Excel generation error:", error);
+    } catch (error: any) {
         return NextResponse.json({ 
-            error: "Failed to generate Excel" 
+            error: `Failed to generate Excel file: ${error.message}` 
         }, { 
             status: 500 
         })

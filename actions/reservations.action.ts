@@ -188,10 +188,11 @@ export async function getCancelledReservationsForOwnerByTime(filter: keyFilter)
             if (currentError) throw currentError;
             if (previousError) throw previousError;
 
-            const rate = previousCount === 0
+            let rate = previousCount === 0
                 ? (currentCount > 0 ? 100 : 0)
                 : ((currentCount - previousCount) / previousCount) * 100;
 
+            rate *= -1;
             const isGrowing = rate > 0;
 
             return {
@@ -211,7 +212,7 @@ export async function getCancelledReservationsForOwnerByTime(filter: keyFilter)
 }
 
 export async function getBokingsLastWeekForOwner()
-    : Promise<{ name: string; value: number }[]> {
+    : Promise<{ day: string; booking: number }[]> {
     try {
         const { supabase, userId } = await getServerAuth();
 
@@ -230,15 +231,15 @@ export async function getBokingsLastWeekForOwner()
             if (error) throw error;
 
             const bookingsByDay = [
-                { name: "Sunday", value: 0 },
-                { name: "Monday", value: 0 },
-                { name: "Tuesday", value: 0 },
-                { name: "Wednesday", value: 0 },
-                { name: "Thursday", value: 0 },
-                { name: "Friday", value: 0 },
-                { name: "Saturday", value: 0 }
-            ].reduce((acc, day) => {
-                acc[day.name] = day.value;
+                { day: "Sunday", booking: 0 },
+                { day: "Monday", booking: 0 },
+                { day: "Tuesday", booking: 0 },
+                { day: "Wednesday", booking: 0 },
+                { day: "Thursday", booking: 0 },
+                { day: "Friday", booking: 0 },
+                { day: "Saturday", booking: 0 }
+            ].reduce((acc, value) => {
+                acc[value.day] = value.booking;
                 return acc;
             }, {} as Record<string, number>);
 
@@ -248,7 +249,7 @@ export async function getBokingsLastWeekForOwner()
                 bookingsByDay[day] = (bookingsByDay[day] || 0) + 1;
             })
 
-            return Object.entries(bookingsByDay).map(([name, value]) => ({ name, value }));
+            return Object.entries(bookingsByDay).map(([day, booking]) => ({ day, booking }));
         })()
 
         return Promise.race([

@@ -8,6 +8,8 @@ import { uploadFile } from "./uploadFile.action";
 import { removeFile } from "./removeFile.action";
 import { revalidatePath } from "next/cache";
 import { rejectTimeout } from "@/utils/rejectTimeout";
+import { keyFilter } from "@/types/global";
+import { getFilterDates } from "@/utils/DateTimeFilter";
 
 export async function createParkingLot(parking: ParkingFormInterface)
     : Promise<ParkingInterface | null> {
@@ -263,6 +265,65 @@ export async function getParkingLots(
             const count = normalized.at(0).totalLots;
 
             return Object.assign(normalized, { count });
+        })()
+
+        return Promise.race([
+            request,
+            rejectTimeout()
+        ])
+    } catch (error) {
+        throw error;
+    }
+}
+
+export async function getOccupancyLots(filter: keyFilter): Promise<{
+    occupiedSpots: number;
+    availableSpots: number;
+    totalSpots: number;
+}> {
+    try {
+        const request = (async () => {
+            const {
+                supabase,
+                userId
+            } = await getServerAuth();
+
+            const { firstDay } = getFilterDates(filter);
+
+            const [
+                {
+                    count: occupiedSpots,
+                    error: reservationsError
+                },
+                {
+                    data: lotsData,
+                    error: lotsError
+                }
+            ] = await Promise.all([
+                supabase.from("reservations")
+                    .select("lot:lot_id!inner(owner_id)", { count: "exact" })
+                    .eq("lot.owner_id", userId)
+                    .eq("status", "active")
+                    .gte("created_at", firstDay.toISOString()),
+                supabase.from("parking_lots")
+                    .select("total_spots")
+                    .eq("owner_id", userId)
+            ])
+
+            if (reservationsError) throw reservationsError;
+            if (lotsError) throw lotsError;
+
+            const totalSpots = lotsData.reduce((acc: number, item: any) => {
+                return acc + item.total_spots;
+            }, 0);
+
+            const availableSpots = totalSpots - occupiedSpots;
+
+            return { 
+                occupiedSpots, 
+                availableSpots,
+                totalSpots
+            }
         })()
 
         return Promise.race([

@@ -10,6 +10,15 @@ import { SelectInterface } from "@/types/input";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
+export type trendType = "YES" | "NO";
+
+interface summaryInterface {
+    Metric: string;
+    Value: string;
+    Growing: trendType;
+    Rate: string;
+}
+
 const dataFilter = [
     {
         id: "this-year",
@@ -25,12 +34,20 @@ const dataFilter = [
     }
 ]
 
-const handleExport = async (summaryData: any[], bookingsLastWeek: any[]) => {
-    try {       
+const handleExport = async (
+    summaryData: summaryInterface[],
+    bookingsLastWeek: HeaderProps["bookingsLastWeek"],
+    occupancyLots: HeaderProps["occupancyLots"]
+) => {
+    try {
         const res = await fetch("/api/export-dashboard", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ summaryData, bookingsLastWeek })
+            body: JSON.stringify({ 
+                summaryData, 
+                bookingsLastWeek,
+                occupancyLots 
+            })
         })
         if (!res.ok) throw new Error("Failed to export");
 
@@ -49,21 +66,16 @@ const handleExport = async (summaryData: any[], bookingsLastWeek: any[]) => {
     }
 }
 
-interface summaryInterface {
-    Metric: string;
-    Value: number | string;
-    Growing: boolean;
-    Rate: number;
-}
-
 interface HeaderProps {
     summaryData: summaryInterface[];
-    bookingsLastWeek: Array<{ name: string; value: number }>;
+    bookingsLastWeek: Array<{ Day: string; Booking: string }>;
+    occupancyLots: Array<{ Status: string; Count: string }>;
 }
 
-const Header = ({
+const HeaderDashboard = ({
     summaryData,
-    bookingsLastWeek
+    bookingsLastWeek,
+    occupancyLots
 }: HeaderProps) => {
     const searchParams = useSearchParams();
     const filterParams = searchParams.get("filter") || "this-year";
@@ -114,11 +126,15 @@ const Header = ({
                 <CustomButton
                     Icon={ArrowDown}
                     title="Export data"
-                    onClick={() => handleExport(summaryData, bookingsLastWeek)}
+                    onClick={() => handleExport(
+                        summaryData,
+                        bookingsLastWeek,
+                        occupancyLots
+                    )}
                 />
             </div>
         </div>
     )
 }
 
-export default Header;
+export default HeaderDashboard;
