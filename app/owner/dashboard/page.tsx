@@ -1,6 +1,7 @@
 import {
+    getBokingsLastWeekForOwner,
     getCancelledReservationsForOwnerByTime,
-    getOccupancyForOwnerByTime,
+    getCompletedForOwnerByTime,
     getTotalReservationsForOwnerByTime
 } from "@/actions/reservations.action";
 import { getRevevueForOwnerByTime } from "@/actions/transaction.action";
@@ -23,35 +24,37 @@ const DashboardPage = async ({
 
     const [
         {
-            count,
+            count: reservationCount,
             rate: reservationRate,
             isGrowing: reservationTrend
         },
         {
             revenue,
             rate: revenueRate,
-            isGrowing: RevenueTrend
+            isGrowing: revenueTrend
         },
         {
-            occupancy,
-            rate: occupancyRate,
-            isGrowing: occupancyTrend
+            completed: completedReservation,
+            rate: completedRate,
+            isGrowing: completedTrend
         },
         {
             count: cancelledReservation,
             rate: rateCancelledReservation,
             isGrowing: cancelledReservationTrend
-        }
+        },
+        bookingsLastWeek
     ] = await Promise.all([
         getTotalReservationsForOwnerByTime(filter),
         getRevevueForOwnerByTime(filter),
-        getOccupancyForOwnerByTime(filter),
-        getCancelledReservationsForOwnerByTime(filter)
+        getCompletedForOwnerByTime(filter),
+        getCancelledReservationsForOwnerByTime(filter),
+        getBokingsLastWeekForOwner()
     ])
 
     const dashboardMetrics = {
         totalReservations: {
-            value: `${count}`,
+            value: `${reservationCount}`,
             trend: {
                 value: reservationRate,
                 isPositive: reservationTrend
@@ -61,14 +64,14 @@ const DashboardPage = async ({
             value: `$${revenue}`,
             trend: {
                 value: revenueRate,
-                isPositive: RevenueTrend
+                isPositive: revenueTrend
             }
         },
-        occupancy: {
-            value: `${occupancy}`,
+        completed: {
+            value: `${completedReservation}`,
             trend: {
-                value: occupancyRate,
-                isPositive: occupancyTrend
+                value: completedRate,
+                isPositive: completedTrend
             }
         },
         cancelled: {
@@ -80,46 +83,38 @@ const DashboardPage = async ({
         }
     }
 
-    const bookingsLastWeek = [
+    const summaryData = [
         {
-            name: "Sunday",
-            value: 0
+            Metric: "Total Reservations",
+            Value: reservationCount,
+            Rate: reservationRate,
+            Growing: reservationTrend
         },
         {
-            name: "Monday",
-            value: 5
+            Metric: "Revenue",
+            Value: revenue,
+            Rate: revenueRate,
+            Growing: revenueTrend
         },
         {
-            name: "Tuesday",
-            value: 0
+            Metric: "Completed",
+            Value: completedReservation,
+            Rate: completedRate,
+            Growing: completedTrend
         },
         {
-            name: "Wednesday",
-            value: 1
-        },
-        {
-            name: "Thursday",
-            value: 0
-        },
-        {
-            name: "Friday",
-            value: 3
-        },
-        {
-            name: "Saturday",
-            value: 0
+            Metric: "Cancelled",
+            Value: cancelledReservation,
+            Rate: rateCancelledReservation,
+            Growing: cancelledReservationTrend
         }
     ]
-
-    const handleExport = async () => {
-        "use server";
-
-    }
 
     return (
         <>
             <Header
-                handleExport={handleExport}
+                summaryData={summaryData}
+                bookingsLastWeek={bookingsLastWeek}
             />
             <DashboardCards
                 metrics={dashboardMetrics}

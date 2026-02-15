@@ -18,7 +18,7 @@ import { getDateFormat, getTimeFormat } from '@/utils/DateTimeAction';
 
 interface ReservationCardProps {
   reservation: ReservationInterface;
-  handleDelete: (id: string)=> void;
+  handleDelete?: (id: string)=> void;
 }
 
 const ReservationCard = ({ 
@@ -86,15 +86,18 @@ const ReservationCard = ({
               size={18}
             />
           </Link>
-          <button
-            className="text-red-500 hover:bg-red-500/10 p-2 rounded cursor-pointer"
-            onClick={
-              ()=> handleDelete(id)
-            }
-            type="button"
-          >
-            <Trash2 size={18} />
-          </button>
+          {
+            handleDelete &&
+            <button
+              className="text-red-500 hover:bg-red-500/10 p-2 rounded cursor-pointer"
+              onClick={
+                ()=> handleDelete(id)
+              }
+              type="button"
+            >
+              <Trash2 size={18} />
+            </button>
+          }
         </div>
       </div>
       <div className="mt-2 flex gap-4 overflow-hidden">

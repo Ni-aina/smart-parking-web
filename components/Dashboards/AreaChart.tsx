@@ -28,7 +28,7 @@ const AreaChartDashboard = ({
             </linearGradient>
         </defs>
         <XAxis dataKey="name" />
-        <YAxis width="auto" />
+        <YAxis width="auto" allowDecimals={false} />
         <Tooltip />
         <Area
             type="monotone"

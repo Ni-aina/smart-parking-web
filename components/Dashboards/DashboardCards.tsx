@@ -18,7 +18,7 @@ interface DashboardMetrics {
             isPositive: boolean 
         }
     }
-    occupancy: {
+    completed: {
         value: string;
         trend: { 
             value: number; 
@@ -44,7 +44,7 @@ const DashboardCards = ({
     const {
         totalReservations,
         revenue,
-        occupancy,
+        completed,
         cancelled
     } = metrics
 
@@ -69,10 +69,10 @@ const DashboardCards = ({
             />
 
             <MetricCard
-                title="Occupancy"
-                value={occupancy.value}
+                title="Completed"
+                value={completed.value}
                 icon={PieChart}
-                trend={occupancy.trend}
+                trend={completed.trend}
                 iconBgColor="bg-yellow-500/10"
                 iconColor="text-yellow-500"
             />

@@ -10,10 +10,6 @@ import { SelectInterface } from "@/types/input";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
-interface HeaderProps {
-    handleExport: () => void;
-}
-
 const dataFilter = [
     {
         id: "this-year",
@@ -29,8 +25,45 @@ const dataFilter = [
     }
 ]
 
+const handleExport = async (summaryData: any[], bookingsLastWeek: any[]) => {
+    try {       
+        const res = await fetch("/api/export-dashboard", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ summaryData, bookingsLastWeek })
+        })
+        if (!res.ok) throw new Error("Failed to export");
+
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "dashboard-report.xlsx";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+    } catch (error) {
+        toast.error("Failed to export dashboard");
+    }
+}
+
+interface summaryInterface {
+    Metric: string;
+    Value: number | string;
+    Growing: boolean;
+    Rate: number;
+}
+
+interface HeaderProps {
+    summaryData: summaryInterface[];
+    bookingsLastWeek: Array<{ name: string; value: number }>;
+}
+
 const Header = ({
-    handleExport
+    summaryData,
+    bookingsLastWeek
 }: HeaderProps) => {
     const searchParams = useSearchParams();
     const filterParams = searchParams.get("filter") || "this-year";
@@ -81,7 +114,7 @@ const Header = ({
                 <CustomButton
                     Icon={ArrowDown}
                     title="Export data"
-                    onClick={handleExport}
+                    onClick={() => handleExport(summaryData, bookingsLastWeek)}
                 />
             </div>
         </div>

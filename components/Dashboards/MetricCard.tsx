@@ -24,7 +24,7 @@ const MetricCard = ({
 }: MetricCardProps) => {
     const trendColor = trend.isPositive ? "text-green-500" : "text-red-500";
     const trendBgColor = trend.isPositive ? "bg-green-500/10" : "bg-red-500/10";
-    const trendSymbol = trend.isPositive ? "+" : "-";
+    const trendSymbol = trend.isPositive ? "+" : "";
     const TrendIcon = trend.isPositive ? ArrowUpRight : ArrowDownRight;
 
     return (

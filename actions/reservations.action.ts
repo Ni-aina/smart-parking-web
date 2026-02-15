@@ -81,9 +81,9 @@ export async function getTotalReservationsForOwnerByTime(filter: keyFilter)
     }
 }
 
-export async function getOccupancyForOwnerByTime(filter: keyFilter)
+export async function getCompletedForOwnerByTime(filter: keyFilter)
     : Promise<{
-        occupancy: number
+        completed: number
         rate: number
         isGrowing: boolean
     }> {
@@ -97,11 +97,11 @@ export async function getOccupancyForOwnerByTime(filter: keyFilter)
         const request = (async () => {
             const [
                 {
-                    count: currentActive,
+                    count: currentCompleted,
                     error: currentError
                 },
                 {
-                    count: previousActive,
+                    count: previousCompleted,
                     error: previousError
                 }
             ] = await Promise.all([
@@ -109,13 +109,13 @@ export async function getOccupancyForOwnerByTime(filter: keyFilter)
                     .from("reservations")
                     .select("lot:lot_id!inner(owner_id)", { count: "exact" })
                     .eq("lot.owner_id", userId)
-                    .eq("status", "active")
+                    .eq("status", "completed")
                     .gte("created_at", firstDay.toISOString()),
                 supabase
                     .from("reservations")
                     .select("lot:lot_id!inner(owner_id)", { count: "exact" })
                     .eq("lot.owner_id", userId)
-                    .eq("status", "active")
+                    .eq("status", "completed")
                     .gte("created_at", previousFirstDay.toISOString())
                     .lt("created_at", firstDay.toISOString())
             ])
@@ -123,14 +123,14 @@ export async function getOccupancyForOwnerByTime(filter: keyFilter)
             if (currentError) throw currentError;
             if (previousError) throw previousError;
 
-            const rate = previousActive === 0
-                ? (currentActive > 0 ? 100 : 0)
-                : ((currentActive - previousActive) / previousActive) * 100;
+            const rate = previousCompleted === 0
+                ? (currentCompleted > 0 ? 100 : 0)
+                : ((currentCompleted - previousCompleted) / previousCompleted) * 100;
 
             const isGrowing = rate > 0;
 
             return {
-                occupancy: currentActive,
+                completed: currentCompleted,
                 rate,
                 isGrowing
             }
@@ -199,6 +199,56 @@ export async function getCancelledReservationsForOwnerByTime(filter: keyFilter)
                 rate,
                 isGrowing
             }
+        })()
+
+        return Promise.race([
+            request,
+            rejectTimeout()
+        ])
+    } catch (error) {
+        throw error;
+    }
+}
+
+export async function getBokingsLastWeekForOwner()
+    : Promise<{ name: string; value: number }[]> {
+    try {
+        const { supabase, userId } = await getServerAuth();
+
+        const request = (async () => {
+            const { firstDay } = getFilterDates("this-week");
+
+            const firstDayLastWeek = new Date(firstDay);
+            firstDayLastWeek.setDate(firstDay.getDate() - 7);
+
+            const { data: reservations, error } = await supabase
+                .from("reservations")
+                .select("created_at, lot:lot_id!inner(owner_id)")
+                .eq("lot.owner_id", userId)
+                .gte("created_at", firstDayLastWeek.toISOString());
+
+            if (error) throw error;
+
+            const bookingsByDay = [
+                { name: "Sunday", value: 0 },
+                { name: "Monday", value: 0 },
+                { name: "Tuesday", value: 0 },
+                { name: "Wednesday", value: 0 },
+                { name: "Thursday", value: 0 },
+                { name: "Friday", value: 0 },
+                { name: "Saturday", value: 0 }
+            ].reduce((acc, day) => {
+                acc[day.name] = day.value;
+                return acc;
+            }, {} as Record<string, number>);
+
+            reservations.forEach((reservation: any) => {
+                const day = new Date(reservation.created_at).toLocaleDateString("en-US",
+                    { weekday: "long" });
+                bookingsByDay[day] = (bookingsByDay[day] || 0) + 1;
+            })
+
+            return Object.entries(bookingsByDay).map(([name, value]) => ({ name, value }));
         })()
 
         return Promise.race([
