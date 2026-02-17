@@ -2,26 +2,167 @@
 
 import { getServerAuth } from "./authServer.action";
 import { normalizeData } from "@/utils/normalizeData";
-import { ReservationInterface } from "@/types/reservation";
+import { ReservationFormInterface, ReservationInterface } from "@/types/reservation";
 import { rejectTimeout } from "@/utils/rejectTimeout";
 import { isUUID } from "@/utils/isUUID";
 import { revalidatePath } from "next/cache";
 import { keyFilter } from "@/types/global";
 import { getFilterDates } from "@/utils/DateTimeFilter";
 
-export async function deleteRerservation(reservationId: string) {
+export async function createReservation(reservation: ReservationFormInterface)
+    : Promise<ReservationInterface> {
     try {
-
         const request = (async () => {
-            const { supabase } = await getServerAuth();
+            const { supabase, userId } = await getServerAuth();
 
-            const { error } = await supabase.from("reservations")
-                .delete()
-                .eq("id", reservationId)
+            if (!isUUID(userId)) throw new Error("Invalid user ID");
+
+            const {
+                lotId: lot_id,
+                driverId: driver_id,
+                vehicleId: vehicle_id,
+                startTime: start_time,
+                endTime: end_time,
+                amount
+            } = reservation;
+
+            if (!lot_id || !driver_id || !vehicle_id) {
+                throw new Error("Lot, driver and vehicle are required");
+            }
+
+            if (new Date(start_time) >= new Date(end_time)) {
+                throw new Error("Start time must be before end time");
+            }
+
+            const { data: newReservation, error } = await supabase
+                .from("reservations")
+                .insert([{
+                    lot_id,
+                    driver_id,
+                    vehicle_id,
+                    start_time,
+                    end_time,
+                    status: "active"
+                }])
+                .select(`
+                    *,
+                    driver: driver_id(*),
+                    lot: lot_id!inner(
+                        *,
+                        lot_type:type_id(*)
+                    ),
+                    vehicle: vehicle_id(*)
+                `)
                 .single();
 
-            if (error) return;
+            if (!newReservation || error) {
+                throw new Error(`Reservation creation error, ${error?.message}`);
+            }
+
+            await supabase
+                .from("payments")
+                .insert([{
+                    reservation_id: newReservation.id,
+                    amount: Number(amount),
+                    method: "Cash",
+                    status: "succeeded"
+                }]);
+
             revalidatePath("/owner/reservations");
+
+            return normalizeData(newReservation) as ReservationInterface;
+        })()
+
+        return Promise.race([
+            request,
+            rejectTimeout()
+        ])
+    } catch (error) {
+        throw error;
+    }
+}
+
+export async function getReservationByIdForOwner(reservationId: string)
+    : Promise<ReservationInterface> {
+    try {
+        if (!reservationId) throw new Error("Reservation id is required");
+
+        const request = (async () => {
+            const { supabase, userId } = await getServerAuth();
+
+            const { data: reservation, error } = await supabase.from("reservations")
+                .select(`
+                    *,
+                    driver: driver_id(*),
+                    lot: lot_id!inner(
+                        *,
+                        lot_type:type_id(*)
+                    ),
+                    vehicle: vehicle_id(*)
+                `)
+                .eq("id", reservationId)
+                .eq("lot.owner_id", userId)
+                .single();
+
+            if (!reservation || error) throw new Error(`Reservation fetching error, ${error?.message}`);
+            return normalizeData(reservation) as ReservationInterface;
+        })()
+
+        return Promise.race([
+            request,
+            rejectTimeout()
+        ])
+    } catch (error) {
+        throw error;
+    }
+}
+
+export async function cancelReservation(reservationId: string)
+    : Promise<ReservationInterface> {
+    try {
+        if (!reservationId) throw new Error("Reservation id is required");
+
+        const request = (async () => {
+            const { supabase, userId } = await getServerAuth();
+
+            if (!isUUID(userId)) throw new Error("Invalid user ID");
+
+            const { data: currentReservation, error: fetchError } = await supabase
+                .from("reservations")
+                .select("status, lot:lot_id!inner(owner_id)")
+                .eq("id", reservationId)
+                .eq("lot.owner_id", userId)
+                .single();
+
+            if (fetchError || !currentReservation) {
+                throw new Error("Reservation not found");
+            }
+
+            if (
+                currentReservation.status !== "pending" &&
+                currentReservation.status !== "active"
+            ) throw new Error("Only pending or active reservations can be cancelled");
+
+            const { data, error } = await supabase.from("reservations")
+                .update({ status: "cancelled" })
+                .eq("id", reservationId)
+                .select(`
+                    *,
+                    driver: driver_id(*),
+                    lot: lot_id!inner(
+                        *,
+                        lot_type:type_id(*)
+                    ),
+                    vehicle: vehicle_id(*)
+                `)
+                .single();
+
+            if (error) throw new Error(`Reservation cancellation error, ${error.message}`);
+
+            revalidatePath("/owner/reservations");
+            revalidatePath(`/owner/reservations/${reservationId}`);
+
+            return normalizeData(data) as ReservationInterface;
         })()
 
         return Promise.race([

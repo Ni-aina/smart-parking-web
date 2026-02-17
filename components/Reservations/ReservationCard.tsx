@@ -6,8 +6,7 @@ import {
   Calendar,
   User,
   Eye,
-  Edit,
-  Trash2,
+  Ban,
   Clock,
   CarFront
 } from 'lucide-react';
@@ -18,13 +17,23 @@ import { getDateFormat, getTimeFormat } from '@/utils/DateTimeAction';
 
 interface ReservationCardProps {
   reservation: ReservationInterface;
-  handleDelete?: (id: string)=> void;
+  handleCancel?: (id: string) => void;
 }
 
-const ReservationCard = ({ 
+const statusStyles: Record<string, string> = {
+  active: "text-green-500/70 bg-green-500/10",
+  pending: "text-blue-500/70 bg-blue-500/10",
+  cancelled: "text-red-500/70 bg-red-500/10",
+  completed: "text-white/70 bg-white/5"
+}
+
+const isCancellable = (status: string) =>
+  status === "pending" || status === "active";
+
+const ReservationCard = ({
   reservation,
-  handleDelete
- }: ReservationCardProps) => {
+  handleCancel
+}: ReservationCardProps) => {
   const [loadingImage, setLoadingImage] = useState(true);
 
   const {
@@ -59,43 +68,31 @@ const ReservationCard = ({
       <div className="flex items-center justify-between gap-3">
         <h1
           className={
-            `text-xs font-medium capitalize p-2 rounded-full bg-white/5
-              ${status === 'active' && 'text-green-500/70' ||
-            status === 'pending' && 'text-blue-500/70' ||
-            status === 'cancelled' && 'text-red-500/70' ||
-            'text-white'
-            }`
+            `text-xs font-medium capitalize p-2 rounded-full
+              ${statusStyles[status] || "text-white bg-white/5"}`
           }
         >
           {status}
         </h1>
         <div className="flex items-center">
           <Link
-            href={`#`}
+            href={`/owner/reservations/${id}`}
             className="text-yellow-500 hover:bg-yellow-500/10 p-2 rounded"
-            aria-label="View reservation details">
-            <Eye
-              size={18}
-            />
-          </Link>
-          <Link
-            href={`#`}
-            className="text-green-500 hover:bg-yellow-500/10 p-2 rounded"
-            aria-label="View reservation details">
-            <Edit
-              size={18}
-            />
+            aria-label="View reservation details"
+          >
+            <Eye size={18} />
           </Link>
           {
-            handleDelete &&
+            handleCancel && isCancellable(status) &&
             <button
               className="text-red-500 hover:bg-red-500/10 p-2 rounded cursor-pointer"
               onClick={
-                ()=> handleDelete(id)
+                () => handleCancel(id)
               }
               type="button"
+              aria-label="Cancel reservation"
             >
-              <Trash2 size={18} />
+              <Ban size={18} />
             </button>
           }
         </div>

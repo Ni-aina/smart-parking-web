@@ -16,4 +16,13 @@ export interface ReservationInterface {
   createdAt?: string;
 }
 
+export interface ReservationFormInterface {
+  lotId: string;
+  driverId: string;
+  vehicleId: string;
+  startTime: string;
+  endTime: string;
+  amount: number | string;
+}
+
 export default ReservationInterface;

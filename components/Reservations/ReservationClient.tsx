@@ -6,8 +6,8 @@ import { ReservationInterface } from "@/types/reservation";
 import ReservationCards from "./ReservationCards";
 import { startTransition, useOptimistic, useState } from "react";
 import Pagination from "../ui/pagination";
-import DeleteConfrim from "../ui/deleteConfirm";
-import { deleteRerservation } from "@/actions/reservations.action";
+import CancelConfirm from "../ui/cancelConfirm";
+import { cancelReservation } from "@/actions/reservations.action";
 
 interface ReservationClientProps {
     reservations: ReservationInterface[];
@@ -22,21 +22,27 @@ const ReservationClient = ({
 }: ReservationClientProps) => {
     const router = useRouter();
     const [search, setSearch] = useState<string>("");
-    const [isConfirm, setIsConfirm] = useState("");
+    const [cancellingId, setCancellingId] = useState("");
+    const [isCancelling, setIsCancelling] = useState(false);
 
-    const [optimisticReservation, addOptimisticReservation] = useOptimistic(
+    const [optimisticReservations, addOptimisticReservation] = useOptimistic(
         reservations,
-        (currentReservation: ReservationInterface[], id: string) =>
-            currentReservation.filter(r => r.id !== id)
+        (currentReservations: ReservationInterface[], id: string) =>
+            currentReservations.map(r =>
+                r.id === id ? { ...r, status: "cancelled" as const } : r
+            )
     )
 
-    const handleDelete = () => {
-        if (!isConfirm) return;
+    const handleCancel = async () => {
+        if (!cancellingId) return;
+
+        setIsCancelling(true);
         startTransition(() => {
-            addOptimisticReservation(isConfirm);
-            deleteRerservation(isConfirm);
+            addOptimisticReservation(cancellingId);
+            cancelReservation(cancellingId);
         })
-        setIsConfirm("")
+        setIsCancelling(false);
+        setCancellingId("");
     }
 
     return (
@@ -45,19 +51,19 @@ const ReservationClient = ({
                 title={title}
                 search={search}
                 setSearch={setSearch}
-                onAdd={() => router.push("#")}
+                onAdd={() => router.push("/owner/reservations/form")}
             />
             <div className="mt-5 lg:mt-10">
                 {
-                    optimisticReservation.length === 0 && (
+                    optimisticReservations.length === 0 && (
                         <div className="text-white/80">No reservations found</div>
                     )
                 }
 
                 <ReservationCards
-                    reservations={optimisticReservation}
-                    handleDelete={
-                        (id: string) => setIsConfirm(id)
+                    reservations={optimisticReservations}
+                    handleCancel={
+                        (id: string) => setCancellingId(id)
                     }
                 />
             </div>
@@ -65,12 +71,13 @@ const ReservationClient = ({
                 showPage={6}
                 count={count}
             />
-            <DeleteConfrim
-                isOpen={!!isConfirm}
+            <CancelConfirm
+                isOpen={!!cancellingId}
+                isLoading={isCancelling}
                 handleCancel={
-                    () => setIsConfirm("")
+                    () => setCancellingId("")
                 }
-                handleConfirm={handleDelete}
+                handleConfirm={handleCancel}
             />
         </div>
     )

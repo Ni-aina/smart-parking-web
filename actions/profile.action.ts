@@ -89,3 +89,32 @@ export async function getAgents(): Promise<ProfileInterface[]> {
         throw error;
     }
 }
+
+export async function getDrivers(
+    searchTerm: string = ""
+): Promise<ProfileInterface[]> {
+    try {
+        const request = (async () => {
+            const { data: profiles, error } = await supabase.from("profiles")
+                .select("*")
+                .contains("roles", ["driver"])
+                .ilike("full_name", `%${searchTerm}%`)
+                .order("created_at", {
+                    ascending: false
+                })
+                .limit(100)
+
+            if (!profiles || error) throw new Error(`The profile cannot be find, ${error?.message}`);
+            const normalized = profiles.map((item: any) => normalizeData(item))
+
+            return normalized as ProfileInterface[];
+        })()
+
+        return Promise.race([
+            request,
+            rejectTimeout()
+        ])
+    } catch (error) {
+        throw error;
+    }   
+}

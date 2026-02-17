@@ -5,12 +5,12 @@ import { ReservationInterface } from '@/types/reservation';
 
 interface ReservationCardsProps {
     reservations: ReservationInterface[];
-    handleDelete: (id: string) => void;
+    handleCancel: (id: string) => void;
 }
 
 const ReservationCards = ({
     reservations,
-    handleDelete
+    handleCancel
 }: ReservationCardsProps) => {
 
     return (
@@ -20,7 +20,7 @@ const ReservationCards = ({
                     <ReservationCard
                         key={r.id}
                         reservation={r}
-                        handleDelete={handleDelete}
+                        handleCancel={handleCancel}
                     />
                 ))
             }

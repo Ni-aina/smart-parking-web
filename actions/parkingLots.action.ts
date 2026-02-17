@@ -276,6 +276,35 @@ export async function getParkingLots(
     }
 }
 
+export async function getAllParkingLotsForOwner()
+    : Promise<ParkingInterface[]> {
+    try {
+        const request = (async () => {
+            const { supabase, userId } = await getServerAuth();
+
+            if (!userId || !isUUID(userId)) return [];
+
+            const { data: parkings, error } = await supabase
+                .from("parking_lots")
+                .select("*, lotType: type_id(id, vehicle_type)")
+                .eq("owner_id", userId)
+                .order("name", { ascending: true });
+
+            if (!parkings || error) return [];
+
+            const normalized = parkings.map((item: any) => normalizeData(item));
+            return normalized as ParkingInterface[];
+        })()
+
+        return Promise.race([
+            request,
+            rejectTimeout()
+        ])
+    } catch (error) {
+        throw error;
+    }
+}
+
 export async function getOccupancyLots(filter: keyFilter): Promise<{
     occupiedSpots: number;
     availableSpots: number;
