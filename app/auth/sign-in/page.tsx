@@ -36,7 +36,7 @@ const SignIn = () => {
     }
 
     return (
-        <div className="grid place-items-center w-full h-screen">
+        <div className="grid place-items-center w-full h-dvh">
             <form
                 className="flex flex-col space-y-4 lg:w-md
                 bg-white/5 text-white rounded-xl shadow-2xl p-8"
@@ -48,6 +48,8 @@ const SignIn = () => {
                             src={"/images/smart-parking.png"}
                             alt="Smart parking"
                             fill
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            priority
                         />
                     </div>
                 </div>

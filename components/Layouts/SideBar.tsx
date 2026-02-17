@@ -59,6 +59,8 @@ const SideBarLayout = () => {
                                 src={"/images/smart-parking.png"}
                                 alt="Smart parking"
                                 fill
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                priority
                             />
                         </div>
                     </div>
