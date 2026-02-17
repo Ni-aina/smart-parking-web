@@ -1,6 +1,6 @@
 import { ParkingInterface } from "./parking";
 import { ProfileInterface } from "./profile";
-import { Status } from "./global";
+import { StatusType } from "./global";
 import { VehicleInterface } from "./vehicle";
 
 export interface ReservationInterface {
@@ -12,7 +12,7 @@ export interface ReservationInterface {
   vehicle: VehicleInterface;
   startTime: string;
   endTime: string;
-  status: Status;
+  status: StatusType;
   createdAt?: string;
 }
 
