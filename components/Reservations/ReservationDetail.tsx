@@ -55,7 +55,7 @@ const ReservationDetail = ({
         reservation,
         (_current: ReservationInterface, updated: Partial<ReservationInterface>) =>
             ({ ..._current, ...updated })
-    );
+    )
 
     const {
         id,
@@ -79,7 +79,7 @@ const ReservationDetail = ({
         startTransition(() => {
             setOptimisticReservation({ status: "cancelled" });
             cancelReservation(cancellingId);
-        });
+        })
 
         setCancellingId("");
     }
@@ -87,7 +87,6 @@ const ReservationDetail = ({
     return (
         <>
             <div className="flex flex-col gap-6">
-                {/* Action bar */}
                 <div className="flex flex-wrap items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
                         <span
@@ -115,16 +114,14 @@ const ReservationDetail = ({
                                 onClick={() => setCancellingId(id)}
                                 type="button"
                             >
-                                <Ban size={16} />
+                                <Ban size={16} className="text-red-500" />
                                 Cancel
                             </button>
                         }
                     </div>
                 </div>
 
-                {/* Main content grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {/* Parking lot info */}
                     <div className="lg:col-span-1 flex flex-col gap-4 bg-white/5 backdrop-blur-sm rounded-lg p-5">
                         <h2 className="text-sm font-semibold uppercase text-white/50 tracking-wide">
                             Parking Lot
@@ -163,9 +160,7 @@ const ReservationDetail = ({
                         </div>
                     </div>
 
-                    {/* Reservation details */}
                     <div className="lg:col-span-2 flex flex-col gap-6">
-                        {/* Time & Duration */}
                         <div className="bg-white/5 backdrop-blur-sm rounded-lg p-5">
                             <h2 className="text-sm font-semibold uppercase text-white/50 tracking-wide mb-4">
                                 Schedule
@@ -194,7 +189,6 @@ const ReservationDetail = ({
                             </div>
                         </div>
 
-                        {/* Driver & Vehicle */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             <div className="bg-white/5 backdrop-blur-sm rounded-lg p-5">
                                 <h2 className="text-sm font-semibold uppercase text-white/50 tracking-wide mb-4">
@@ -246,13 +240,12 @@ const ReservationDetail = ({
                             </div>
                         </div>
 
-                        {/* Payment info */}
                         <div className="bg-white/5 backdrop-blur-sm rounded-lg p-5">
                             <h2 className="text-sm font-semibold uppercase text-white/50 tracking-wide mb-4">
                                 Payment
                             </h2>
                             {
-                                payment ? (
+                                payment ?
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <InfoBlock
                                             icon={<DollarSign size={16} />}
@@ -294,11 +287,11 @@ const ReservationDetail = ({
                                             />
                                         }
                                     </div>
-                                ) : (
+                                    :
                                     <p className="text-sm text-white/40">
                                         No payment recorded for this reservation
                                     </p>
-                                )
+
                             }
                         </div>
                     </div>

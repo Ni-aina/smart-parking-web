@@ -8,6 +8,7 @@ import { isUUID } from "@/utils/isUUID";
 import { revalidatePath } from "next/cache";
 import { keyFilter } from "@/types/global";
 import { getFilterDates } from "@/utils/DateTimeFilter";
+import { checkLotByTime } from "./parkingLots.action";
 
 export async function createReservation(reservation: ReservationFormInterface)
     : Promise<ReservationInterface> {
@@ -32,6 +33,15 @@ export async function createReservation(reservation: ReservationFormInterface)
 
             if (new Date(start_time) >= new Date(end_time)) {
                 throw new Error("Start time must be before end time");
+            }
+
+            const startTime = new Date(start_time);
+            const endTime = new Date(end_time);
+
+            const availableSpots = await checkLotByTime(lot_id, startTime, endTime);
+
+            if (availableSpots <= 0) {
+                throw new Error("No available spots for the selected time");
             }
 
             const { data: newReservation, error } = await supabase

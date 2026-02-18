@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeftCircle, Pencil, Plus } from "lucide-react";
+import { ArrowLeftCircle, Eye, Pencil, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const HeaderBack = (
@@ -9,7 +9,7 @@ const HeaderBack = (
         action
      }: { 
         title: string,
-        action: "Edit" | "New"
+        action: "New" | "Edit" | "View"
     }
 ) => {
     const router = useRouter();
@@ -32,13 +32,22 @@ const HeaderBack = (
             </div>
             <div className="flex items-center space-x-2">
                 {
-                    action === "New" ?
+                    action === "New" &&
                     <Plus
                         size={20}
                         className="text-red-500"
                     />
-                    :
+                }
+                {
+                    action === "Edit" &&
                     <Pencil
+                        size={18}
+                        className="text-red-500"
+                    />
+                }
+                {
+                    action === "View" &&
+                    <Eye
                         size={18}
                         className="text-red-500"
                     />

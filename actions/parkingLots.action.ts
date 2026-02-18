@@ -363,3 +363,49 @@ export async function getOccupancyLots(filter: keyFilter): Promise<{
         throw error;
     }
 }
+
+export async function checkLotByTime(
+    lotId: string,
+    startTime: Date,
+    endTime: Date
+): Promise<number> {
+    try {
+        if (!lotId) throw new Error("Lot id is required");
+        if (!startTime || !endTime) throw new Error("Start time and end time are required");
+        if (startTime > endTime) throw new Error("Start time must be before end time");
+
+        const { supabase } = await getServerAuth();
+
+        const request = (async () => {
+            const [lotResult, reservationsResult] = await Promise.all([
+                supabase
+                    .from("parking_lots")
+                    .select("total_spots")
+                    .eq("id", lotId)
+                    .single(),
+                supabase
+                    .from("reservations")
+                    .select("id")
+                    .eq("lot_id", lotId)
+                    .eq("status", "active")
+                    .or(`and(start_time.lte.${endTime.toISOString()},end_time.gte.${startTime.toISOString()})`)
+            ])
+
+            if (lotResult.error) throw new Error(`Lot fetching error, ${lotResult.error.message}`);
+            if (reservationsResult.error) throw new Error(`Reservations fetching error, ${reservationsResult.error.message}`);
+            if (!lotResult.data) throw new Error("Lot not found");
+
+            const totalSpots = lotResult.data.total_spots;
+            const occupiedSpots = reservationsResult.data?.length || 0;
+
+            return totalSpots - occupiedSpots;
+        })()
+
+        return Promise.race([
+            request,
+            rejectTimeout()
+        ])
+    } catch (error) {
+        throw error;
+    }
+}

@@ -15,13 +15,13 @@ const ReservationDetailPage = async ({
     const [reservation, payment] = await Promise.all([
         getReservationByIdForOwner(id),
         getPaymentByReservationId(id)
-    ]);
+    ])
 
     return (
         <div className="flex flex-col gap-5 text-white/90 lg:p-2">
             <HeaderBack
                 title="Reservation"
-                action="New"
+                action="View"
             />
             <div className="mt-3">
                 <ReservationDetail
