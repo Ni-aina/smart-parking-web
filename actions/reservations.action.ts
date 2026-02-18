@@ -69,14 +69,17 @@ export async function createReservation(reservation: ReservationFormInterface)
                 throw new Error(`Reservation creation error, ${error?.message}`);
             }
 
+            const transactionUUID = `txn_${crypto.randomUUID()}`;
+
             await supabase
                 .from("payments")
                 .insert([{
                     reservation_id: newReservation.id,
                     amount: Number(amount),
                     method: "Cash",
-                    status: "succeeded"
-                }]);
+                    status: "succeeded",
+                    transaction_id: transactionUUID
+                }])
 
             revalidatePath("/owner/reservations");
 
