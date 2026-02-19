@@ -152,3 +152,63 @@ export async function getTypes(
         throw error;
     }
 }
+
+export async function checkVehicleSpace(
+    lotId: string,
+    vehicleId: string
+): Promise<boolean> {
+    try {
+        const request = (async () => {
+            const { supabase } = await getServerAuth();
+
+            if (!lotId) throw new Error("Lot ID is required");
+            if (!vehicleId) throw new Error("Vehicle ID is required");
+
+            const [
+                { data: types, error: typesError },
+                { data: vehicle, error: vehicleError }
+            ] = await Promise.all([
+                supabase.from("parking_lots")
+                    .select("type:type_id(max_width, max_height, max_length)")
+                    .eq("id", lotId),
+                supabase.from("vehicles")
+                    .select("width, height, length")
+                    .eq("id", vehicleId)
+            ])
+
+            if (!types || typesError) throw new Error(`Failed to check vehicle space, ${typesError?.message}`);
+            if (!vehicle || vehicleError) throw new Error(`Failed to check vehicle space, ${vehicleError?.message}`);
+            
+            const [
+                {
+                    type: {
+                        max_width,
+                        max_height,
+                        max_length
+                    }
+                }
+            ] = types;
+
+            const [
+                { 
+                    width, 
+                    length,
+                    height
+                }
+            ] = vehicle;
+
+            if (width > max_width) throw new Error(`Vehicle width exceeds maximum width of ${max_width}`);
+            if (length > max_length) throw new Error(`Vehicle length exceeds maximum length of ${max_length}`);
+            if (height > max_height) throw new Error(`Vehicle height exceeds maximum height of ${max_height}`);
+            
+            return true;
+        })()
+
+        return Promise.race([
+            request,
+            rejectTimeout()
+        ])
+    } catch (error) {
+        throw error;
+    }
+}

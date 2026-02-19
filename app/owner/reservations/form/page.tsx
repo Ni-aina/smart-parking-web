@@ -5,12 +5,12 @@ import HeaderBack from "@/components/ui/headerBack";
 
 const ReservationFormPage = async ({
     searchParams
-}: { searchParams: Promise<{ driverName?: string }> }) => {
-    const { driverName = "" } = await searchParams;
+}: { searchParams: Promise<{ driver_name?: string }> }) => {
+    const { driver_name = "" } = await searchParams;
 
     const [parkingLots, drivers] = await Promise.all([
         getAllParkingLotsForOwner(),
-        getDrivers(driverName)
+        getDrivers(driver_name)
     ])
 
     return (

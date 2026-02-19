@@ -9,6 +9,7 @@ import { revalidatePath } from "next/cache";
 import { keyFilter } from "@/types/global";
 import { getFilterDates } from "@/utils/DateTimeFilter";
 import { checkLotByTime } from "./parkingLots.action";
+import { checkVehicleSpace } from "./type.action";
 
 export async function createReservation(reservation: ReservationFormInterface)
     : Promise<ReservationInterface> {
@@ -38,10 +39,20 @@ export async function createReservation(reservation: ReservationFormInterface)
             const startTime = new Date(start_time);
             const endTime = new Date(end_time);
 
-            const availableSpots = await checkLotByTime(lot_id, startTime, endTime);
+            const [
+                availableSpots,
+                isValidVehicle
+            ] = await Promise.all([
+                checkLotByTime(lot_id, startTime, endTime),
+                checkVehicleSpace(lot_id, vehicle_id)
+            ])
 
             if (availableSpots <= 0) {
                 throw new Error("No available spots for the selected time");
+            }
+
+            if (!isValidVehicle) {
+                throw new Error("Vehicle does not fit in the selected spot");
             }
 
             const { data: newReservation, error } = await supabase

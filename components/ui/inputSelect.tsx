@@ -1,6 +1,8 @@
+import useDebounce from "@/hooks/useDebounce";
 import { SelectInterface } from "@/types/input";
 import { ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface InpuSelectInterface {
     name?: string;
@@ -11,6 +13,7 @@ interface InpuSelectInterface {
     }>;
     handleChange: (e: SelectInterface) => void;
     placeholder?: string;
+    searchParamName?: string;
 }
 
 const InputSelect = ({
@@ -18,12 +21,33 @@ const InputSelect = ({
     value,
     data,
     handleChange,
-    placeholder
+    placeholder,
+    searchParamName
 }: InpuSelectInterface) => {
+    const router = useRouter();
+    const pathname = usePathname();
+
+    const [searchQuery, setSearchQuery] = useState("");
+
     const [openMenu, setOpenMenu] = useState(false);
     const handleOpenMenu = () => setOpenMenu(prev => !prev);
     const selected = data.find((item) => item.id === value);
 
+    const {
+        debouncedValue: debouncedSearchQuery
+    } = useDebounce(searchQuery, 500);
+
+    useEffect(()=> {
+        if (!debouncedSearchQuery) {
+            router.push(pathname);
+            return;
+        }
+        router.push(`?${searchParamName}=${debouncedSearchQuery}`);
+    }, [
+        searchParamName,
+        debouncedSearchQuery
+    ])
+    
     return (
         <div className="relative w-full pl-4 pr-2 py-2 border border-white/10 rounded-sm">
             <button
@@ -54,6 +78,22 @@ const InputSelect = ({
                 bg-neutral-950 border border-white/10 rounded-md shadow-lg max-h-64 overflow-y-auto"
                 >
                     {
+                        searchParamName &&
+                        <input 
+                            type="text" 
+                            className="w-full px-2 py-1 border border-white/10 
+                            outline-none rounded-sm bg-neutral-950"
+                            placeholder="Search..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                    }
+                    {
+                        data.length === 0 ?
+                        <div className="text-center text-white/70 p-2">
+                            No data found
+                        </div>
+                        :
                         data.map((item) => (
                             <button
                                 type="button"

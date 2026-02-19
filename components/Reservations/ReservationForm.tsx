@@ -41,7 +41,7 @@ const ReservationForm = ({
     } = useReservationForm({
         parkingLots,
         drivers
-    });
+    })
 
     const {
         lotId,
@@ -86,6 +86,7 @@ const ReservationForm = ({
                     handleChange={handleChange}
                     data={selectDrivers}
                     placeholder="Select a driver"
+                    searchParamName="driver_name"
                 />
             </div>
             <div className="flex flex-col gap-2">
