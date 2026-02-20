@@ -36,13 +36,13 @@ const SignIn = () => {
     }
 
     return (
-        <div className="grid place-items-center w-full h-dvh">
+        <div className="grid w-full h-screen sm:place-items-center">
             <form
-                className="flex flex-col space-y-4 lg:w-md
-                bg-white/5 text-white rounded-xl shadow-2xl p-8"
+                className="flex flex-col space-y-4 text-white rounded-xl p-8
+                sm:w-md sm:bg-white/5 sm:shadow-2xl"
                 onSubmit={handleSubmit}
             >
-                <div className="flex justify-center">
+                <div className="flex lg:justify-center">
                     <div className="relative w-48 h-16">
                         <Image
                             src={"/images/smart-parking.png"}
@@ -113,7 +113,7 @@ const SignIn = () => {
                     }
                     <h1>Login</h1>
                 </button>
-                <div className="flex flex-wrap justify-center lg:justify-end items-center gap-2">
+                <div className="flex flex-wrap justify-end items-center gap-2">
                     <h1 className="text-sm">Don't have an account ?</h1>
                     <Link
                         href={"/auth/sign-up"}

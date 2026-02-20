@@ -7,6 +7,7 @@ export async function POST(req: Request) {
     const {
       amount,
       currency,
+      customerId,
       userId,
       reservationId
     } = await req.json();
@@ -29,6 +30,7 @@ export async function POST(req: Request) {
       amount: amount * 100,
       currency: currency || "usd",
       automatic_payment_methods: { enabled: true },
+      customer: customerId,
       metadata: {
         userId,
         reservationId
