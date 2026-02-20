@@ -72,7 +72,7 @@ export async function POST(req: Request) {
                 break;
             }
 
-            default: console.error(`Unhandled event type: ${event.type}`);
+            default: throw new Error(`Unhandled event type: ${event.type}`);
         }
 
         return NextResponse.json({ received: true })
