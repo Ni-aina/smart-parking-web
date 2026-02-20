@@ -40,7 +40,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     }, [])
 
     if (isPending) return (
-        <div className="w-full h-screen">
+        <div className="w-full h-dvh">
             <Loading />
         </div>
     )

@@ -6,9 +6,9 @@ import { getServerAuth } from "./authServer.action";
 import { rejectTimeout } from "@/utils/rejectTimeout";
 import { isUUID } from "@/utils/isUUID";
 
-export async function getCurrentProfile(user: User | null): Promise<ProfileInterface | null> {
+export async function getCurrentProfile(user: User | null): Promise<ProfileInterface> {
     try {
-        if (!user) return null;
+        if (!user) throw new Error("Unauthorized");
         const { id } = user;
 
         const request = (async () => {
@@ -65,7 +65,7 @@ export async function getAgents(): Promise<ProfileInterface[]> {
                 userId: ownerId
             } = await getServerAuth();
 
-            if (!isUUID(ownerId || "")) return [];
+            if (!isUUID(ownerId || "")) throw new Error("Unauthorized");
 
             const { data: profiles, error } = await supabase.from("profiles")
                 .select("*")

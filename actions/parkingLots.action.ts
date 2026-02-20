@@ -372,7 +372,7 @@ export async function checkLotByTime(
     try {
         if (!lotId) throw new Error("Lot id is required");
         if (!startTime || !endTime) throw new Error("Start time and end time are required");
-        if (startTime > endTime) throw new Error("Start time must be before end time");
+        if (startTime >= endTime) throw new Error("Start time must be before end time");
 
         const { supabase } = await getServerAuth();
 

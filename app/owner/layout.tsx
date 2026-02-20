@@ -18,7 +18,7 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
     return (
         <SidebarProvider>
             <SideBarLyout />
-            <main className="relative w-full h-screen p-8">
+            <main className="relative w-full h-dvh p-8">
                 <OwnerProtected>
                     <SidebarTrigger
                         className="absolute top-0 left-0 text-white/80 cursor-pointer 

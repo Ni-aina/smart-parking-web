@@ -35,7 +35,7 @@ const InputSelect = ({
 
     const {
         debouncedValue: debouncedSearchQuery
-    } = useDebounce(searchQuery, 500);
+    } = useDebounce(searchQuery, 300);
 
     useEffect(()=> {
         if (!debouncedSearchQuery) {

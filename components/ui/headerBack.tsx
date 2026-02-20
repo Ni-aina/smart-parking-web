@@ -6,10 +6,12 @@ import { useRouter } from "next/navigation";
 const HeaderBack = (
     { 
         title,
-        action
+        action,
+        onBack
      }: { 
         title: string,
-        action: "New" | "Edit" | "View"
+        action: "New" | "Edit" | "View",
+        onBack?: () => void
     }
 ) => {
     const router = useRouter();
@@ -20,7 +22,7 @@ const HeaderBack = (
                 <button
                     title="Go back"
                     className="cursor-pointer hover:opacity-80"
-                    onClick={router.back}
+                    onClick={onBack || router.back}
                 >
                     <ArrowLeftCircle
                         size={24}

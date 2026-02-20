@@ -8,7 +8,7 @@ const NotFound = ()=> {
     const router = useRouter();
 
     return (
-        <div className="flex items-center justify-center h-screen bg-black/95">
+        <div className="flex items-center justify-center h-dvh bg-black/95">
             <div className="text-center space-y-6 px-4">
                 <h1 className="text-6xl font-bold text-yellow-500">404</h1>
                 <p className="text-2xl font-semibold text-white">Page not found</p>

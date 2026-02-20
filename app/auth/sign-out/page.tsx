@@ -14,7 +14,7 @@ const signOut = () => {
     return (
         <div>
             <div 
-                className="flex items-center justify-center h-screen bg-black/95"
+                className="flex items-center justify-center h-dvh bg-black/95"
             >
                 <div className="flex flex-col items-center gap-2">
                     <div className="mb-8 flex justify-center">

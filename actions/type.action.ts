@@ -7,7 +7,7 @@ import { getServerAuth } from "./authServer.action";
 import { isUUID } from "@/utils/isUUID";
 import { rejectTimeout } from "@/utils/rejectTimeout";
 
-export async function createType(formType: FormTypeInterface): Promise<TypeInterface | null> {
+export async function createType(formType: FormTypeInterface): Promise<TypeInterface> {
     try {
         const request = (async () => {
             const {
@@ -15,7 +15,7 @@ export async function createType(formType: FormTypeInterface): Promise<TypeInter
                 userId: ownerId
             } = await getServerAuth();
 
-            if (!ownerId || !isUUID(ownerId)) return null;
+            if (!ownerId || !isUUID(ownerId)) throw new Error("Unauthorized");
 
             const { data: newType, error } = await supabase.from("lot_types")
                 .insert([{
@@ -29,7 +29,7 @@ export async function createType(formType: FormTypeInterface): Promise<TypeInter
                 .select()
                 .single();
 
-            if (!newType || error) return null;
+            if (!newType || error) throw new Error(error.message || "Failed to create type");
             const normalized = normalizeData(newType);
 
             revalidatePath("/owner/settings/types");
@@ -45,13 +45,13 @@ export async function createType(formType: FormTypeInterface): Promise<TypeInter
     }
 }
 
-export async function updateType(formType: FormTypeInterface): Promise<TypeInterface | null> {
+export async function updateType(formType: FormTypeInterface): Promise<TypeInterface> {
     try {
         const request = (async () => {
             const { supabase } = await getServerAuth();
 
             const { id } = formType;
-            if (!id) return null;
+            if (!id) throw new Error("Type ID is required");
 
             const { data: updatedType, error } = await supabase.from("lot_types")
                 .update({
@@ -65,7 +65,7 @@ export async function updateType(formType: FormTypeInterface): Promise<TypeInter
                 .select()
                 .single();
 
-            if (!updatedType || error) return null;
+            if (!updatedType || error) throw new Error(error.message || "Failed to update type");
             const normalized = normalizeData(updatedType);
 
             revalidatePath("/owner/settings/types");
@@ -86,7 +86,7 @@ export async function deleteType(id: string) {
         const request = (async () => {
             const { supabase } = await getServerAuth();
 
-            if (!id) return;
+            if (!id) throw new Error("Type ID is required");
 
             const { error } = await supabase.from("lot_types")
                 .delete()
@@ -119,7 +119,7 @@ export async function getTypes(
             const from = (page - 1) * limit;
             const to = from + (limit - 1);
 
-            if (!ownerId || !isUUID(ownerId)) return [];
+            if (!ownerId || !isUUID(ownerId)) throw new Error("Unauthorized");
 
             const [
                 { count },
@@ -137,7 +137,7 @@ export async function getTypes(
                     .range(from, to)
             ])
 
-            if (!types || error) return [];
+            if (!types || error) throw new Error(error.message || "Failed to fetch types");
 
             const normalized = types.map((item: any) => normalizeData(item));
 

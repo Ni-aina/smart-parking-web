@@ -7,7 +7,7 @@ const ErrorPage = () => {
 
     return (
         <div 
-           className="flex items-center justify-center h-screen bg-black/95"
+           className="flex items-center justify-center h-dvh bg-black/95"
         >
             <div className="text-center space-y-6 px-4">
                 <h1 className="text-6xl font-bold text-red-500">Oops!</h1>

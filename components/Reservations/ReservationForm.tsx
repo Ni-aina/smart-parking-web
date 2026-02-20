@@ -53,7 +53,8 @@ const ReservationForm = ({
 
     const {
         availableSpots,
-        isLoading: isLoadingOccupancy
+        isLoading: isLoadingOccupancy,
+        error: occupancyError
     } = useOccupancy({
         lotId,
         startTime: new Date(startTime),
@@ -63,9 +64,15 @@ const ReservationForm = ({
     return (
         <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             {
-                error &&
+                error  &&
                 <div className="lg:col-span-2 text-red-500 text-sm bg-red-500/10 px-4 py-2 rounded-sm">
                     {error}
+                </div>
+            }
+            {
+                occupancyError  &&
+                <div className="lg:col-span-2 text-red-500 text-sm bg-red-500/10 px-4 py-2 rounded-sm">
+                    {occupancyError?.message || "Failed to check parking lot availability"}
                 </div>
             }
             <div className="flex flex-col gap-2">
@@ -196,7 +203,11 @@ const ReservationForm = ({
                         className="w-56 text-black"
                         isPending={isPending}
                         Icon={Upload}
-                        disabled={isLoadingOccupancy || availableSpots <= 0}
+                        disabled={
+                            isLoadingVehicles ||
+                            isLoadingOccupancy ||
+                            availableSpots <= 0
+                        }
                     />
                 </div>
             </div>
@@ -206,7 +217,11 @@ const ReservationForm = ({
                     className="w-56 text-black"
                     isPending={isPending}
                     Icon={Upload}
-                    disabled={isLoadingOccupancy || availableSpots <= 0}
+                    disabled={
+                        isLoadingVehicles ||
+                        isLoadingOccupancy ||
+                        availableSpots <= 0
+                    }
                 />
                 <CustomButton
                     title="Cancel"

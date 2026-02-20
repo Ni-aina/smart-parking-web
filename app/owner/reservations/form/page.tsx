@@ -2,6 +2,7 @@ import { getAllParkingLotsForOwner } from "@/actions/parkingLots.action";
 import { getDrivers } from "@/actions/profile.action";
 import ReservationForm from "@/components/Reservations/ReservationForm";
 import HeaderBack from "@/components/ui/headerBack";
+import { redirect } from "next/navigation";
 
 const ReservationFormPage = async ({
     searchParams
@@ -13,11 +14,17 @@ const ReservationFormPage = async ({
         getDrivers(driver_name)
     ])
 
+    const handleBack = async () => {
+        "use server";
+        redirect("/owner/reservations");
+    }
+
     return (
         <div className="flex flex-col gap-5 text-white/90 lg:p-2">
             <HeaderBack
                 title="Reservation"
                 action="New"
+                onBack={handleBack}
             />
             <div className="mt-3">
                 <ReservationForm

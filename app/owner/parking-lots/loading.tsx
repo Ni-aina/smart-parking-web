@@ -1,7 +1,7 @@
 import LoadingSkeleton from "@/components/ui/loadingSkeleton";
 
 const LoadingPage = () => (
-    <div className="h-screen">
+    <div className="h-dvh">
         <LoadingSkeleton />
     </div>
 )

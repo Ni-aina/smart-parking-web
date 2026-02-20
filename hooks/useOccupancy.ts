@@ -1,4 +1,5 @@
-import { checkLotByTime } from "@/actions/parkingLots.action";
+"use client";
+
 import { useQuery } from "@tanstack/react-query";
 
 interface useOccupancyProps {
@@ -15,15 +16,34 @@ const useOccupancy = ({
 
     const {
         data: availableSpots = 0,
-        isLoading
+        isLoading,
+        error
     } = useQuery({
-        queryKey: [`check-lot-availability-${lotId}-${startTime}-${endTime}`],
-        queryFn: () => checkLotByTime(lotId, startTime, endTime)
+        queryKey: ["check-lot-availability", lotId, startTime, endTime],
+        queryFn: async () => {
+            const res = await fetch("/api/check-lot", {
+                method: "POST",
+                body: JSON.stringify({
+                    lotId,
+                    startTime,
+                    endTime
+                })
+            })
+
+            if (!res.ok) {
+                const err = await res.json();
+                throw new Error(err.message);
+            }
+
+            const { data } = await res.json();
+            return data;
+        }
     })
 
     return {
         availableSpots,
-        isLoading
+        isLoading,
+        error
     }
 }
 

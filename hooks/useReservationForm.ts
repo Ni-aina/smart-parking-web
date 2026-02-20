@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import {
     ChangeEvent,
     FormEvent,
-    useEffect,
+    useLayoutEffect,
     useState
 } from "react";
 
@@ -42,12 +42,12 @@ const useReservationForm = ({
     const selectLots = parkingLots.map(item => ({
         id: item.id,
         value: `${item.name} — ${item.location} ($${item.pricePerHour}/hr)`
-    }));
+    }))
 
     const selectDrivers = drivers.map(item => ({
         id: item.id,
         value: item.fullName
-    }));
+    }))
 
     const [vehicles, setVehicles] = useState<VehicleInterface[]>([]);
     const [isLoadingVehicles, setIsLoadingVehicles] = useState(false);
@@ -55,7 +55,7 @@ const useReservationForm = ({
     const selectVehicles = vehicles.map(item => ({
         id: item.id,
         value: `${item.plateNumber} — ${item.make} ${item.model}`
-    }));
+    }))
 
     const [formData, setFormData] = useState({
         lotId: selectLots.at(0)?.id || "",
@@ -63,7 +63,11 @@ const useReservationForm = ({
         vehicleId: "",
         startTime: toDateTimeLocal(now),
         endTime: toDateTimeLocal(defaultEnd)
-    });
+    })
+
+    const {
+        driverId
+    } = formData;
 
     const selectedLot = parkingLots.find(l => l.id === formData.lotId);
     const pricePerHour = selectedLot?.pricePerHour || 0;
@@ -74,7 +78,7 @@ const useReservationForm = ({
         } catch {
             return 0;
         }
-    })();
+    })()
 
     const amount = pricePerHour * durationHours;
 
@@ -100,7 +104,7 @@ const useReservationForm = ({
             const startDate = new Date(formData.startTime);
             const endDate = new Date(formData.endTime);
 
-            if (startDate >= endDate) {
+            if (startDate > endDate) {
                 throw new Error("Start time must be before end time");
             }
 
@@ -126,8 +130,8 @@ const useReservationForm = ({
         router.back();
     }
 
-    useEffect(() => {
-        if (!formData.driverId) {
+    useLayoutEffect(() => {
+        if (!driverId) {
             setVehicles([]);
             setFormData(prev => ({ ...prev, vehicleId: "" }));
             return;
@@ -136,7 +140,7 @@ const useReservationForm = ({
         (async function () {
             setIsLoadingVehicles(true);
             try {
-                const driverVehicles = await getVehiclesByDriverId(formData.driverId);
+                const driverVehicles = await getVehiclesByDriverId(driverId);
                 setVehicles(driverVehicles);
                 setFormData(prev => ({
                     ...prev,
@@ -148,7 +152,7 @@ const useReservationForm = ({
                 setIsLoadingVehicles(false);
             }
         })()
-    }, [formData.driverId]);
+    }, [driverId]);
 
     return {
         formData,
