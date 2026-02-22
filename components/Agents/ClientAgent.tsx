@@ -1,0 +1,124 @@
+"use client";
+
+import Navbar from "../Navbar";
+import Table from "../Table";
+import { Modal } from "../ui/modal";
+import { ProfileInterface } from "@/types/profile";
+import { Loader2 } from "lucide-react";
+import useAgent from "@/hooks/useAgent";
+
+const ClientAgent = ({ 
+    agents,
+    count
+ }: { 
+    agents: ProfileInterface[],
+    count: number
+ }) => {
+
+    const {
+        formData,
+        search,
+        setSearch,
+        isModalOpen,
+        setIsModalOpen,
+        isPending,
+        title,
+        headers,
+        body,
+        handleChange,
+        handleSubmit,
+        handleOnClose,
+        handleEdit,
+        handleDelete
+    } = useAgent({ agents });
+
+    const {
+        id,
+        fullName,
+        emailAddress,
+        phoneNumber
+    } = formData;
+
+    return (
+        <div className="flex flex-col gap-5">
+            <Navbar
+                title={title}
+                search={search}
+                setSearch={setSearch}
+                onAdd={() => setIsModalOpen(true)}
+            />
+            <Table
+                title={title}
+                headers={headers}
+                body={body}
+                handleEdit={handleEdit}
+                handleDelete={handleDelete}
+                count={count}
+            />
+            <Modal
+                isOpen={isModalOpen}
+                onClose={handleOnClose}
+                title={`${id ? "Update" : "Add"} agent`}
+            >
+                <form
+                    className="flex flex-col gap-3"
+                    onSubmit={handleSubmit}
+                >
+                    <div className="flex flex-col gap-3">
+                        <label htmlFor="fullName">Full name *</label>
+                        <input
+                            type="text"
+                            name="fullName"
+                            value={fullName}
+                            onChange={handleChange}
+                            required
+                            className="outline-none px-4 py-2 border border-white/10 rounded-sm" />
+                        <label htmlFor="emailAddress">Email address *</label>
+                        <input
+                            type="email"
+                            name="emailAddress"
+                            value={emailAddress}
+                            onChange={handleChange}
+                            required
+                            className="outline-none px-4 py-2 border border-white/10 rounded-sm" />
+                        <label htmlFor="phoneNumber">Phone number *</label>
+                        <input
+                            type="tel"
+                            name="phoneNumber"
+                            value={phoneNumber}
+                            onChange={handleChange}
+                            required
+                            className="outline-none px-4 py-2 border border-white/10 rounded-sm" />
+                    </div>
+                    <div className="mt-3 w-full flex justify-end gap-3">
+                        <button
+                            type="button"
+                            onClick={handleOnClose}
+                            className="w-[120px] h-[40px] flex justify-center items-center 
+                            bg-white/5 rounded-sm cursor-pointer hover:opacity-80"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            className="w-[120px] h-[40px] flex justify-center items-center gap-2
+                            bg-white text-black rounded-sm cursor-pointer hover:opacity-80
+                            disabled:cursor-not-allowed disabled:opacity-80"
+                            disabled={isPending}
+                        >
+                            {
+                                isPending &&
+                                <Loader2
+                                    size={14}
+                                    className="animate-spin"
+                                />
+                            }
+                            <span>{id ? "Update" : "Add"}</span>
+                        </button>
+                    </div>
+                </form>
+            </Modal>
+        </div>
+    )
+}
+
+export default ClientAgent;

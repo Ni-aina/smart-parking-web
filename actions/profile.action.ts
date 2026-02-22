@@ -56,7 +56,6 @@ export async function getProfiles(): Promise<ProfileInterface[]> {
     }
 }
 
-
 export async function getAgents(): Promise<ProfileInterface[]> {
     try {
         const request = (async () => {
@@ -74,6 +73,7 @@ export async function getAgents(): Promise<ProfileInterface[]> {
                 .order("created_at", {
                     ascending: false
                 })
+                .limit(100)
 
             if (!profiles || error) throw new Error(`The profile cannot be find, ${error?.message}`);
             const normalized = profiles.map((item: any) => normalizeData(item))

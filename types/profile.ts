@@ -14,3 +14,10 @@ export interface AgentsInterface {
     urlImage: string,
     checked: boolean
 }
+
+export interface AgentFormInterface {
+    id?: string,
+    fullName: string,
+    emailAddress: string,
+    phoneNumber: string
+}

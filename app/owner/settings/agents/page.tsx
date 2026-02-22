@@ -1,9 +1,16 @@
-const AgentsPage = () => {
+import { getAgents } from "@/actions/profile.action";
+import ClientAgent from "@/components/Agents/ClientAgent";
+
+const AgentsPage = async () => {
+    const agents = await getAgents();
+    const count = agents.length;
+
     return (
-        <div>
-            
-        </div>
+        <ClientAgent
+            agents={agents}
+            count={count}
+        />
     )
 }
- 
+
 export default AgentsPage;
