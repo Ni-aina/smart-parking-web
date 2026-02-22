@@ -122,7 +122,11 @@ const ReservationForm = ({
             <div className="flex flex-col gap-2">
                 <label htmlFor="startTime">Start time *</label>
                 <input
-                    className="w-full outline-none px-4 py-2 border border-white/10 rounded-sm"
+                    className="w-full outline-none px-4 py-2 border border-white/10 rounded-sm
+                                text-white
+                                [&::-webkit-calendar-picker-indicator]:invert
+                                [&::-webkit-calendar-picker-indicator]:opacity-70
+                                [&::-webkit-calendar-picker-indicator]:cursor-pointer"
                     name="startTime"
                     type="datetime-local"
                     value={startTime}
@@ -133,7 +137,11 @@ const ReservationForm = ({
             <div className="flex flex-col gap-2">
                 <label htmlFor="endTime">End time *</label>
                 <input
-                    className="w-full outline-none px-4 py-2 border border-white/10 rounded-sm"
+                    className="w-full outline-none px-4 py-2 border border-white/10 rounded-sm
+                                text-white
+                                [&::-webkit-calendar-picker-indicator]:invert
+                                [&::-webkit-calendar-picker-indicator]:opacity-70
+                                [&::-webkit-calendar-picker-indicator]:cursor-pointer"
                     name="endTime"
                     type="datetime-local"
                     value={endTime}

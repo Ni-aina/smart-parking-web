@@ -22,6 +22,24 @@ export async function logIn(email: string, password: string):
     }
 }
 
+export async function resetPassword(email: string): Promise<void> {
+    try {
+        const request = (async () => {
+            const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: `${window.location.origin}/auth/sign-in`
+            })
+
+            if (error) throw error;
+        })()
+        return Promise.race([
+            request,
+            rejectTimeout()
+        ])
+    } catch (error) {
+        throw error;
+    }
+}
+
 export async function logOut() {
     try {
         const request = (async () => {

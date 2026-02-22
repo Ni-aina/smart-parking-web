@@ -1,5 +1,5 @@
 import { getReservationByIdForOwner } from "@/actions/reservations.action";
-import { getPaymentByReservationId } from "@/actions/payments.action";
+import { getPaymentByReservationId } from "@/actions/transaction.action";
 import ReservationDetail from "@/components/Reservations/ReservationDetail";
 import HeaderBack from "@/components/ui/headerBack";
 

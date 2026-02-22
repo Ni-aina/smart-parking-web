@@ -9,9 +9,9 @@ import Pagination from "../ui/pagination";
 import { PAGINATION } from "@/lib/pagination";
 import { SelectInterface } from "@/types/input";
 
-interface PaymentTableInterface {
+interface  TransactionTableInterface {
     title: string;
-    payments: PaymentInterface[];
+    transactions: PaymentInterface[];
     count: number;
 }
 
@@ -35,11 +35,11 @@ const headers = [
     "Date"
 ]
 
-const PaymentTable = ({
+const TransactionTable = ({
     title,
-    payments,
+    transactions,
     count
-}: PaymentTableInterface) => {
+}: TransactionTableInterface) => {
     const [showPage, setShowPage] = useState("10");
 
     const handlePaginationChange = (e: SelectInterface) => {
@@ -89,7 +89,7 @@ const PaymentTable = ({
                         </thead>
                         <tbody className="text-white/70 text-sm">
                             {
-                                payments.map((payment, index) => {
+                                transactions.map((transaction, index) => {
                                     const {
                                         id,
                                         amount,
@@ -98,7 +98,7 @@ const PaymentTable = ({
                                         transactionId,
                                         createdAt,
                                         reservation
-                                    } = payment;
+                                    } = transaction;
 
                                     const driver = reservation?.driver;
                                     const lot = reservation?.lot;
@@ -169,4 +169,4 @@ const PaymentTable = ({
     )
 }
 
-export default PaymentTable;
+export default TransactionTable;

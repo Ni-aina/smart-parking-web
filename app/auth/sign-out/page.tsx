@@ -5,12 +5,14 @@ import { redirect } from "next/navigation";
 import { useEffect } from "react";
 
 const signOut = () => {
+
     useEffect(()=> {
         (async ()=> {
             await logOut();
             redirect("/auth/sign-in");
         })()
     }, [])
+    
     return (
         <div>
             <div 

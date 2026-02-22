@@ -6,8 +6,7 @@ import {
     SidebarContent,
     SidebarFooter,
     SidebarGroup,
-    SidebarHeader,
-    SidebarTrigger,
+    SidebarHeader
 } from "@/components/ui/sidebar"
 import {
     Bell,
@@ -93,14 +92,14 @@ const SideBarLayout = () => {
                         </SidebarGroup>
                         <SidebarGroup className="p-0">
                             <Link
-                                href={"/owner/payments"}
+                                href={"/owner/transactions"}
                                 className={`
                                 flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                                ${pathname === "/owner/payments" && "bg-white/5"}
+                                ${pathname === "/owner/transactions" && "bg-white/5"}
                             `}
                             >
                                 <Euro />
-                                <h1>Payments</h1>
+                                <h1>Transactions</h1>
                             </Link>
                         </SidebarGroup>
                         <SidebarGroup className="p-0">

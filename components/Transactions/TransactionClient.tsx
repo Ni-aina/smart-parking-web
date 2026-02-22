@@ -3,19 +3,19 @@
 import { useState } from "react";
 import { Search } from "lucide-react";
 import { PaymentInterface } from "@/types/payment";
-import PaymentTable from "./PaymentTable";
+import TransactionTable from "./TransactionTable";
 
-interface PaymentClientProps {
-    payments: PaymentInterface[];
+interface TransactionClientProps {
+    transactions: PaymentInterface[];
     count: number;
 }
 
-const title = "Payments";
+const title = "Transactions";
 
-const PaymentClient = ({
-    payments,
+const TransactionClient = ({
+    transactions,
     count
-}: PaymentClientProps) => {
+}: TransactionClientProps) => {
     const [search, setSearch] = useState<string>("");
 
     return (
@@ -24,7 +24,7 @@ const PaymentClient = ({
                 className="flex flex-wrap justify-between items-center text-white gap-5 
                 bg-white/5 backdrop-blur-md rounded-lg px-6 py-4"
             >
-                <h1 className="text-lg font-semibold tracking-wide">Payment History</h1>
+                <h1 className="text-lg font-semibold tracking-wide">Transaction History</h1>
                 <div
                     className="flex items-center bg-white/5 backdrop-blur-sm border 
                     border-white/5 rounded-lg px-4 py-2 gap-2"
@@ -39,13 +39,13 @@ const PaymentClient = ({
                     />
                 </div>
             </div>
-            <PaymentTable
+            <TransactionTable
                 title={title}
-                payments={payments}
+                transactions={transactions}
                 count={count}
             />
         </div>
     )
 }
 
-export default PaymentClient;
+export default TransactionClient;

@@ -24,8 +24,8 @@ const StepAccount = ({
     handleShowPassword
 }: StepAccountProps) => {
     return (
-        <div className="flex flex-col gap-3 max-h-75 overflow-y-auto p-2">
-            <div className="mt-3 flex flex-col gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="flex flex-col gap-3">
                 <h1 className="text-md font-semibold">Full name</h1>
                 <input
                     type="text"
@@ -55,7 +55,7 @@ const StepAccount = ({
                         name="password"
                         value={form.password}
                         onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
-                        className="flex-1 focus-within:outline-none"
+                        className="w-full focus-within:outline-none"
                         required
                     />
                     <div className="w-[24px] cursor-pointer">
@@ -75,7 +75,7 @@ const StepAccount = ({
                         name="confirmPassword"
                         value={form.confirmPassword}
                         onChange={e => setForm(f => ({ ...f, confirmPassword: e.target.value }))}
-                        className="flex-1 focus-within:outline-none"
+                        className="w-full focus-within:outline-none"
                         required
                     />
                 </div>

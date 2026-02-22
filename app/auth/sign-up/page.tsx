@@ -79,10 +79,12 @@ const SignUp = () => {
     return (
         <div className="grid w-full h-dvh sm:place-items-center">
             <div
-                className="flex flex-col space-y-4 text-white rounded-xl p-8
-                sm:w-md sm:bg-white/5 sm:shadow-2xl"
+                className={`
+                    flex flex-col space-y-4 text-white rounded-xl p-8
+                    ${step === 0 ? "sm:w-xl" : "sm:w-md"} sm:bg-white/5 sm:shadow-2xl"
+                `}
             >
-                <div className="flex lg:justify-center">
+                <div className="flex lg:justify-center mb-6">
                     <div className="relative w-48 h-16">
                         <Image
                             src={"/images/smart-parking.png"}
@@ -93,7 +95,7 @@ const SignUp = () => {
                         />
                     </div>
                 </div>
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center gap-2 mb-4">
                     {
                         steps.map((label, i) => (
                             <div key={label} className="flex items-center gap-2">
@@ -150,7 +152,7 @@ const SignUp = () => {
                         planPrice={activePlan.price}
                     />
                 }
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center mt-4">
                     {
                         step > 0 ?
                             <button
