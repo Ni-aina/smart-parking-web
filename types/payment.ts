@@ -12,4 +12,16 @@ export interface PaymentInterface {
     createdAt: string;
 }
 
+export interface BankAccountInterface {
+    id: number;
+    ownerId: string;
+    bankName: string;
+    accountHolder: string;
+    routingNumber: string;
+    cardNumber: string;
+    expiredDate: string;
+    createdAt: string;
+    accountNumber: string;
+}
+
 export default PaymentInterface;

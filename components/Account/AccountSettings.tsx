@@ -1,19 +1,18 @@
 "use client";
 
-import { CreditCard, Landmark, User } from "lucide-react";
+import { Landmark, User } from "lucide-react";
 import useAccountSettings from "@/hooks/useAccountSettings";
-import { AccountTabType } from "@/types/account";
 import Loading from "../ui/loading";
 import PersonalInformation from "./PersonalInformation";
 import AccountSecurity from "./AccountSecurity";
 import PaymentAccount from "./PaymentAccount";
+import { BankAccountInterface } from "@/types/payment";
 
-const tabs: { key: AccountTabType; label: string; Icon: typeof User }[] = [
-    { key: "personal", label: "Personal info", Icon: User },
-    { key: "payment", label: "Payment account", Icon: CreditCard }
-]
-
-const AccountSettings = () => {
+const AccountSettings = ({
+    paymentAccount
+}: {
+    paymentAccount: BankAccountInterface | null
+}) => {
     const {
         isProfileLoading,
         personalForm,
@@ -30,7 +29,7 @@ const AccountSettings = () => {
         handleSecuritySubmit
     } = useAccountSettings();
 
-    if (isProfileLoading) return <Loading />;
+    if (isProfileLoading) return <Loading />
 
     return (
         <div className="flex flex-col gap-5 text-white">
@@ -64,7 +63,9 @@ const AccountSettings = () => {
                             <Landmark size={20} />
                             <h1 className="text-lg font-semibold">Bank account</h1>
                         </div>
-                        <PaymentAccount />
+                        <PaymentAccount 
+                            paymentAccount={paymentAccount}
+                        />
                     </div>
                 </div>
             </div>

@@ -8,7 +8,6 @@ import {
 } from "react";
 import useCurrentProfile from "./useCurrentProfile";
 import {
-    AccountTabType,
     PersonalInfoFormInterface,
     SecurityFormInterface
 } from "@/types/account";
