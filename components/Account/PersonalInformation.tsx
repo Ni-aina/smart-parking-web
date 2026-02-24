@@ -1,7 +1,9 @@
 "use client";
 
+import "react-phone-number-input/style.css"
+import PhoneInput from "react-phone-number-input"
 import { PersonalInfoFormInterface } from "@/types/account";
-import { Save } from "lucide-react";
+import { Flag, Save } from "lucide-react";
 import Image from "next/image";
 import { ChangeEvent, DragEvent, FormEvent } from "react";
 import CustomButton from "../ui/customButton";
@@ -106,12 +108,23 @@ const PersonalInformation = ({
             </div>
             <div className="flex flex-col gap-2">
                 <label htmlFor="phoneNumber">Phone number</label>
-                <input
-                    className="w-full outline-none px-4 py-2 border border-white/10 rounded-sm"
-                    name="phoneNumber"
-                    type="tel"
+                <PhoneInput
+                    defaultCountry="US"
                     value={phoneNumber}
-                    onChange={handleChange}
+                    onChange={value => {
+                        handleChange({ target: { name: "phoneNumber", value: value || "" } } as ChangeEvent<HTMLInputElement>)
+                    }}
+                    className="
+                        flex items-center w-full 
+                        border border-white/10 
+                        rounded-sm 
+                        px-3 py-2 
+                        bg-transparent
+                    "
+                    countrySelectProps={{
+                        className: "bg-black text-white p-2"
+                    }}
+                    internationalIcon={() => <Flag className="w-5 h-5" />}
                 />
             </div>
             <div className="lg:col-span-2 flex justify-end mt-3">

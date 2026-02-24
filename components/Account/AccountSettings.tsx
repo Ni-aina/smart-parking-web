@@ -63,7 +63,7 @@ const AccountSettings = ({
                             <Landmark size={20} />
                             <h1 className="text-lg font-semibold">Bank account</h1>
                         </div>
-                        <PaymentAccount 
+                        <PaymentAccount
                             paymentAccount={paymentAccount}
                         />
                     </div>

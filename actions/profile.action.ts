@@ -1,10 +1,16 @@
+"use server";
+
 import { supabase } from "@/lib/supabase/client";
 import { ProfileInterface } from "@/types/profile";
-import { normalizeData } from "@/utils/normalizeData";
+import { denormalizeData, normalizeData } from "@/utils/normalizeData";
 import { User } from "@supabase/supabase-js";
 import { getServerAuth } from "./authServer.action";
 import { rejectTimeout } from "@/utils/rejectTimeout";
 import { isUUID } from "@/utils/isUUID";
+import { PersonalInfoFormInterface } from "@/types/account";
+import { ProfileStateInterface } from "@/hooks/useAccountSettings";
+import { uploadFile } from "./uploadFile.action";
+import { removeFile } from "./removeFile.action";
 
 export async function getCurrentProfile(user: User | null): Promise<ProfileInterface> {
     try {
@@ -56,6 +62,35 @@ export async function getProfiles(): Promise<ProfileInterface[]> {
     }
 }
 
+export async function getDrivers(
+    searchTerm: string = ""
+): Promise<ProfileInterface[]> {
+    try {
+        const request = (async () => {
+            const { data: profiles, error } = await supabase.from("profiles")
+                .select("*")
+                .contains("roles", ["driver"])
+                .ilike("full_name", `%${searchTerm}%`)
+                .order("created_at", {
+                    ascending: false
+                })
+                .limit(100)
+
+            if (!profiles || error) throw new Error(`The profile cannot be find, ${error?.message}`);
+            const normalized = profiles.map((item: any) => normalizeData(item))
+
+            return normalized as ProfileInterface[];
+        })()
+
+        return Promise.race([
+            request,
+            rejectTimeout()
+        ])
+    } catch (error) {
+        throw error;
+    }
+}
+
 export async function getAgents(): Promise<ProfileInterface[]> {
     try {
         const request = (async () => {
@@ -90,31 +125,100 @@ export async function getAgents(): Promise<ProfileInterface[]> {
     }
 }
 
-export async function getDrivers(
-    searchTerm: string = ""
-): Promise<ProfileInterface[]> {
-    try {
-        const request = (async () => {
-            const { data: profiles, error } = await supabase.from("profiles")
-                .select("*")
-                .contains("roles", ["driver"])
-                .ilike("full_name", `%${searchTerm}%`)
-                .order("created_at", {
-                    ascending: false
-                })
-                .limit(100)
+interface avatarInterface {
+    avatar: File;
+    urlImage: string;
+}
 
-            if (!profiles || error) throw new Error(`The profile cannot be find, ${error?.message}`);
-            const normalized = profiles.map((item: any) => normalizeData(item))
+export async function updateAvatar(
+    _previousState: ProfileStateInterface,
+    avatars: avatarInterface
+): Promise<ProfileStateInterface> {
+    const {
+        supabase,
+        userId
+    } = await getServerAuth();
 
-            return normalized as ProfileInterface[];
-        })()
+    if (!supabase || !isUUID(userId)) {
+        return {
+            error: "Unauthorized",
+            success: null
+        }
+    }
 
-        return Promise.race([
-            request,
-            rejectTimeout()
-        ])
-    } catch (error) {
-        throw error;
-    }   
+    const {
+        avatar,
+        urlImage
+    } = avatars;
+
+    const filePath = urlImage.split("/").slice(-2).join("/");
+    const [
+        uploadedFileURL
+    ] = await Promise.all([
+        uploadFile(avatar, "images", "avatars"),
+        removeFile(filePath, "images")
+    ])
+
+    if (!uploadedFileURL) {
+        return {
+            error: "The avatar cannot be updated",
+            success: null
+        }
+    }
+
+    const { data: updatedProfile, error } = await supabase.from("profiles")
+        .update({ url_image: uploadedFileURL })
+        .eq("id", userId)
+        .select()
+        .single()
+
+    if (!updatedProfile || error) {
+        return {
+            error: `The profile cannot be updated, ${error?.message}`,
+            success: null
+        }
+    }
+
+    return {
+        error: null,
+        success: "Avatar updated successfully"
+    }
+}
+
+export async function updateProfile(
+    _previousState: ProfileStateInterface,
+    profile: PersonalInfoFormInterface
+): Promise<ProfileStateInterface> {
+    const {
+        supabase,
+        userId
+    } = await getServerAuth();
+
+    if (!supabase || !userId) {
+        return {
+            error: "Unauthorized",
+            success: null
+        }
+    }
+
+    const profileToUpdate = denormalizeData(profile);
+    const { urlImage, ...rest } = profileToUpdate;
+
+    const { data: updatedProfile, error } = await supabase.from("profiles")
+        .update(rest)
+        .eq("id", userId)
+        .select()
+        .single()
+
+    if (!updatedProfile || error) {
+        return {
+            error: `The profile cannot be updated, ${error?.message}`,
+            success: null
+        }
+    }
+
+    return {
+        error: null,
+        success: "Profile updated successfully"
+    }
 }

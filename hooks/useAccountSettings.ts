@@ -4,6 +4,9 @@ import {
     ChangeEvent,
     DragEvent,
     FormEvent,
+    startTransition,
+    useActionState,
+    useEffect,
     useState
 } from "react";
 import useCurrentProfile from "./useCurrentProfile";
@@ -11,6 +14,13 @@ import {
     PersonalInfoFormInterface,
     SecurityFormInterface
 } from "@/types/account";
+import { updateAvatar, updateProfile } from "@/actions/profile.action";
+import { toast } from "sonner";
+
+export interface ProfileStateInterface {
+    error: string | null,
+    success: string | null
+}
 
 const allowedTypes = ["image/png", "image/jpeg", "image/jpg"]
 
@@ -20,13 +30,21 @@ const initSecurityForm = {
     confirmPassword: ""
 }
 
+const initialProfileState: ProfileStateInterface = {
+    error: null,
+    success: null
+}
+
 const useAccountSettings = () => {
     const { currentProfile, isPending: isProfileLoading } = useCurrentProfile();
 
+    const [imageFile, setImageFile] = useState<File | null>(null);
+    const [avatarState, setAvatarState] = useActionState(updateAvatar, initialProfileState)
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [isDragging, setIsDragging] = useState(false);
 
     const [personalForm, setPersonalForm] = useState<PersonalInfoFormInterface | null>(null);
+    const [personalState, personalFormAction] = useActionState(updateProfile, initialProfileState);
     const [securityForm, setSecurityForm] = useState<SecurityFormInterface>(initSecurityForm);
 
     const getPersonalForm = (): PersonalInfoFormInterface => {
@@ -65,10 +83,15 @@ const useAccountSettings = () => {
     const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
         if (!files?.length) return;
+
         const file = Array.from(files).find(f =>
             allowedTypes.includes(f.type)
         )
-        if (file) previewFile(file)
+
+        if (file) {
+            setImageFile(file);
+            previewFile(file);
+        }
     }
 
     const handleDrop = (e: DragEvent<HTMLElement>) => {
@@ -79,7 +102,10 @@ const useAccountSettings = () => {
         const file = Array.from(files).find(f =>
             allowedTypes.includes(f.type)
         )
-        if (file) previewFile(file)
+        if (file) {
+            setImageFile(file);
+            previewFile(file);
+        }
     }
 
     const handleDragOver = (e: DragEvent<HTMLElement>) => {
@@ -91,13 +117,47 @@ const useAccountSettings = () => {
 
     const handleRemoveImage = () => setImagePreview(null);
 
-    const handlePersonalSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const handlePersonalSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        if (imageFile) {
+            startTransition(() => setAvatarState({ avatar: imageFile, urlImage: currentProfile?.urlImage || "" }))
+        }
+
+        if (personalForm) {
+            startTransition(() => personalFormAction(personalForm));
+        }
     }
 
     const handleSecuritySubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
     }
+
+    useEffect(() => {
+        if (avatarState.error) {
+            toast.error(avatarState.error, {
+                duration: 3000
+            })
+        }
+        if (avatarState.success) {
+            toast.success(avatarState.success, {
+                duration: 3000
+            })
+        }
+    }, [avatarState])
+
+    useEffect(() => {
+        if (personalState.error) {
+            toast.error(personalState.error, {
+                duration: 3000
+            })
+        }
+        if (personalState.success) {
+            toast.success(personalState.success, {
+                duration: 3000
+            })
+        }
+    }, [personalState])
 
     return {
         currentProfile,
@@ -119,3 +179,4 @@ const useAccountSettings = () => {
 }
 
 export default useAccountSettings;
+

@@ -25,3 +25,26 @@ export const normalizeData = (data: Record<string, any>): Record<string, any> =>
 
     return data;
 }
+
+export const denormalizeData = (data: Record<string, any>): Record<string, any> => {
+    if (data === null || data === undefined) {
+        return data;
+    }
+
+    if (Array.isArray(data)) {
+        return data.map(item => denormalizeData(item));
+    }
+
+    if (typeof data === 'object') {
+        const denormalized: Record<string, any> = {};
+        
+        for (const [key, value] of Object.entries(data)) {
+            const newKey = key.replace(/([A-Z])/g, '_$1').toLowerCase();
+            denormalized[newKey] = denormalizeData(value);
+        }
+        
+        return denormalized;
+    }
+
+    return data;
+}
