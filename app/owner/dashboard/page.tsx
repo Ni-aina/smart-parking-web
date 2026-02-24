@@ -22,7 +22,7 @@ const DashboardPage = async ({
     searchParams
 }: DashboardPageProps) => {
 
-    const { filter = "this-year" } = await searchParams;
+    const { filter = "this-week" } = await searchParams;
 
     const [
         {

@@ -21,16 +21,16 @@ interface summaryInterface {
 
 const dataFilter = [
     {
-        id: "this-year",
-        value: "This year"
+        id: "this-week",
+        value: "This week"
     },
     {
         id: "this-month",
         value: "This month"
     },
     {
-        id: "this-week",
-        value: "This week"
+        id: "this-year",
+        value: "This year"
     }
 ]
 
@@ -43,10 +43,10 @@ const handleExport = async (
         const res = await fetch("/api/export-dashboard", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ 
-                summaryData, 
+            body: JSON.stringify({
+                summaryData,
                 bookingsLastWeek,
-                occupancyLots 
+                occupancyLots
             })
         })
         if (!res.ok) throw new Error("Failed to export");
@@ -78,7 +78,7 @@ const HeaderDashboard = ({
     occupancyLots
 }: HeaderProps) => {
     const searchParams = useSearchParams();
-    const filterParams = searchParams.get("filter") || "this-year";
+    const filterParams = searchParams.get("filter") || "this-week";
     const { currentProfile } = useCurrentProfile();
     const fullName = currentProfile?.fullName || "";
 
