@@ -16,6 +16,8 @@ const AccountSettings = ({
     const {
         isProfileLoading,
         personalForm,
+        avatarState,
+        personalState,
         securityForm,
         imagePreview,
         isDragging,
@@ -43,6 +45,8 @@ const AccountSettings = ({
                         </div>
                         <PersonalInformation
                             formData={personalForm}
+                            avatarState={avatarState}
+                            personalState={personalState}
                             imagePreview={imagePreview}
                             isDragging={isDragging}
                             handleChange={handlePersonalChange}

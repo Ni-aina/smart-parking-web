@@ -5,11 +5,14 @@ import PhoneInput from "react-phone-number-input"
 import { PersonalInfoFormInterface } from "@/types/account";
 import { Flag, Save } from "lucide-react";
 import Image from "next/image";
-import { ChangeEvent, DragEvent, FormEvent } from "react";
+import { ChangeEvent, DragEvent, FormEvent, useEffect, useState } from "react";
 import CustomButton from "../ui/customButton";
+import { ProfileStateInterface } from "@/hooks/useAccountSettings";
 
 interface PersonalInformationInterface {
     formData: PersonalInfoFormInterface;
+    avatarState: ProfileStateInterface;
+    personalState: ProfileStateInterface;
     imagePreview: string | null;
     isDragging: boolean;
     handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -22,6 +25,8 @@ interface PersonalInformationInterface {
 
 const PersonalInformation = ({
     formData,
+    avatarState,
+    personalState,
     imagePreview,
     isDragging,
     handleChange,
@@ -32,6 +37,8 @@ const PersonalInformation = ({
     handleSubmit
 }: PersonalInformationInterface) => {
 
+    const [state, setState] = useState<ProfileStateInterface | null>(null);
+
     const {
         fullName,
         emailAddress,
@@ -40,6 +47,34 @@ const PersonalInformation = ({
     } = formData;
 
     const displayImage = imagePreview || urlImage;
+
+        useEffect(() => {
+        if (avatarState.error) {
+            setState(avatarState);
+        }
+        if (avatarState.success) {
+            setState(avatarState);
+        }
+    }, [avatarState])
+
+    useEffect(() => {
+        if (personalState.error) {
+            setState(personalState);
+        }
+        if (personalState.success) {
+            setState(personalState);
+        }
+    }, [personalState])
+
+    useEffect(()=> {
+        if (!state) return;
+
+        const timeVisibility = setTimeout(() => {
+            setState(null);
+        }, 4000);
+
+        return () => clearTimeout(timeVisibility);
+    }, [state])
 
     return (
         <form
@@ -124,9 +159,24 @@ const PersonalInformation = ({
                     countrySelectProps={{
                         className: "bg-black text-white p-2"
                     }}
+                    numberInputProps={{
+                        className: "outline-none bg-transparent"
+                    }}
                     internationalIcon={() => <Flag className="w-5 h-5" />}
                 />
             </div>
+            {
+                state?.error &&
+                <div className="lg:col-span-2 text-red-500 text-sm bg-red-500/10 px-4 py-2 rounded-sm">
+                    {state.error}
+                </div>
+            }
+            {
+                state?.success &&
+                <div className="lg:col-span-2 text-green-500 text-sm bg-green-500/10 px-4 py-2 rounded-sm">
+                    {state.success}
+                </div>
+            }
             <div className="lg:col-span-2 flex justify-end mt-3">
                 <CustomButton
                     title="Save changes"

@@ -39,7 +39,7 @@ const MetricCard = ({
                     </h2>
                     <div className={`flex items-center gap-1 text-sm ${trendColor} font-medium`}>
                         <span>
-                            {trendSymbol}{trend.value}%
+                            {trendSymbol}{trend.value.toFixed(2)}%
                         </span>
                         <div className={`p-1 rounded ${trendBgColor}`}>
                             <TrendIcon size={14} className={trendColor} />

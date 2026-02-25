@@ -6,7 +6,6 @@ import {
     FormEvent,
     startTransition,
     useActionState,
-    useEffect,
     useState
 } from "react";
 import useCurrentProfile from "./useCurrentProfile";
@@ -133,36 +132,12 @@ const useAccountSettings = () => {
         e.preventDefault();
     }
 
-    useEffect(() => {
-        if (avatarState.error) {
-            toast.error(avatarState.error, {
-                duration: 3000
-            })
-        }
-        if (avatarState.success) {
-            toast.success(avatarState.success, {
-                duration: 3000
-            })
-        }
-    }, [avatarState])
-
-    useEffect(() => {
-        if (personalState.error) {
-            toast.error(personalState.error, {
-                duration: 3000
-            })
-        }
-        if (personalState.success) {
-            toast.success(personalState.success, {
-                duration: 3000
-            })
-        }
-    }, [personalState])
-
     return {
         currentProfile,
         isProfileLoading,
         personalForm: getPersonalForm(),
+        avatarState,
+        personalState,
         securityForm,
         imagePreview,
         isDragging,
