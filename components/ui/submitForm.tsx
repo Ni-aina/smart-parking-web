@@ -1,21 +1,19 @@
 "use client";
 
-import { ReactNode, useEffect, useRef } from "react";
+import { ReactNode, useEffect } from "react";
 import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
 
 const SubmitForm = ({ children, pendingMessage }: { children: ReactNode, pendingMessage: string }) => {
     const { pending } = useFormStatus();
-    const toastId = useRef<string | number | null>(null);
 
     useEffect(() => {
         if (pending) {
-            toastId.current = toast.loading(pendingMessage);
+            toast.loading(pendingMessage, {
+                id: `toast-${pendingMessage}`,
+            });
         } else {
-            if (toastId.current) {
-                toast.dismiss(toastId.current);
-                toastId.current = null;
-            }
+            toast.dismiss(`toast-${pendingMessage}`);
         }
     }, [pending]);
 

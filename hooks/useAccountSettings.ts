@@ -121,7 +121,7 @@ const useAccountSettings = () => {
 
     const handleRemoveImage = () => setImagePreview(null);
 
-    const handlePersonalSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    const handlePersonalSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (imageFile) {
@@ -152,20 +152,22 @@ const useAccountSettings = () => {
             return;
         }
 
-        const { user } = await logIn(currentProfile.emailAddress, currentPassword);
+        startTransition(async () => {
+            const { user } = await logIn(currentProfile.emailAddress, currentPassword);
+            
+            if (!user) {
+                toast.error("Your current password is incorrect");
+                return;
+            }
 
-        if (!user) {
-            toast.error("Your current password is incorrect");
-            return;
-        }
-        
-        startTransition(() => {
-            setPasswordState({ 
-                oldPassword: currentPassword, 
-                newPassword, 
-                confirmPassword 
+            startTransition(() => {
+                setPasswordState({ 
+                    oldPassword: currentPassword, 
+                    newPassword, 
+                    confirmPassword 
+                })
+                setSecurityForm(initSecurityForm)
             })
-            setSecurityForm(initSecurityForm)
         })
     }
 

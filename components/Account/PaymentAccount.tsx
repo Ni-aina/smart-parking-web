@@ -35,7 +35,7 @@ const PaymentAccount = ({
 
     const expiredDateObj = expiredDate ? new Date(expiredDate) : null;
     const formattedExpiredDate = expiredDateObj ?
-        `${expiredDateObj.getMonth() + 1}/${expiredDateObj.getFullYear().toString().slice(2)}` : "";
+        `${(expiredDateObj.getMonth() + 1).toString().padStart(2, '0')}/${expiredDateObj.getFullYear().toString().slice(2)}` : "";
 
     useEffect(() => {
         if (!state.error && !state.success) return;
