@@ -5,6 +5,7 @@ import { Eye, EyeOff, ShieldCheck } from "lucide-react";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import CustomButton from "../ui/customButton";
 import { ProfileStateInterface } from "@/hooks/useAccountSettings";
+import SubmitForm from "../ui/submitForm";
 
 interface AccountSecurityInterface {
     formData: SecurityFormInterface;
@@ -136,11 +137,15 @@ const AccountSecurity = ({
                 </div>
             }
             <div className="lg:col-span-2 flex justify-end mt-3">
-                <CustomButton
-                    title="Update password"
-                    className="w-48"
-                    Icon={ShieldCheck}
-                />
+                <SubmitForm
+                    pendingMessage="Updating password..."
+                >
+                    <CustomButton
+                        title="Update password"
+                        className="w-48"
+                        Icon={ShieldCheck}
+                    />
+                </SubmitForm>
             </div>
         </form>
     )

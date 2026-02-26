@@ -8,6 +8,7 @@ import Image from "next/image";
 import { ChangeEvent, DragEvent, FormEvent, useEffect, useState } from "react";
 import CustomButton from "../ui/customButton";
 import { ProfileStateInterface } from "@/hooks/useAccountSettings";
+import SubmitForm from "../ui/submitForm";
 
 interface PersonalInformationInterface {
     formData: PersonalInfoFormInterface;
@@ -178,11 +179,15 @@ const PersonalInformation = ({
                 </div>
             }
             <div className="lg:col-span-2 flex justify-end mt-3">
-                <CustomButton
-                    title="Save changes"
-                    className="w-48"
-                    Icon={Save}
-                />
+                <SubmitForm
+                    pendingMessage="Saving profile..."
+                >
+                    <CustomButton
+                        title="Save changes"
+                        className="w-48"
+                        Icon={Save}
+                    />
+                </SubmitForm>
             </div>
         </form>
     )

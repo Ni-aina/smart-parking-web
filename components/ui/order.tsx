@@ -8,7 +8,7 @@ const Order = () => {
             />
             <ChevronDown
                 size={12}
-                className="mt-[-3px]"
+                className="-mt-0.75"
             />
         </div>
     )

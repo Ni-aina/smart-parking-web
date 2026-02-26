@@ -54,7 +54,7 @@ const InputNumber = ({
                 />
                 <ChevronDown
                     size={16}
-                    className="text-red-500 mt-[-3px] cursor-pointer"
+                    className="text-red-500 -mt-0.75 cursor-pointer"
                     onClick={handleDecreaseInput}
                 />
             </div>

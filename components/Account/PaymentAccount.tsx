@@ -5,6 +5,7 @@ import CustomButton from "../ui/customButton";
 import { updatePaymentAccount } from "@/actions/bank.action";
 import { BankAccountInterface } from "@/types/payment";
 import { useActionState, useEffect, useState } from "react";
+import SubmitForm from "../ui/submitForm";
 
 export interface PaymentStateInterface {
     error: string | null,
@@ -143,11 +144,15 @@ const PaymentAccount = ({
                 </div>
             }
             <div className="lg:col-span-2 flex justify-end mt-3">
-                <CustomButton
-                    title="Save account"
-                    className="w-48"
-                    Icon={Save}
-                />
+                <SubmitForm
+                    pendingMessage="Saving bank account..."
+                >
+                    <CustomButton
+                        title="Save account"
+                        className="w-48"
+                        Icon={Save}
+                    />
+                </SubmitForm>
             </div>
         </form>
     )
