@@ -2,11 +2,13 @@
 
 import { SecurityFormInterface } from "@/types/account";
 import { Eye, EyeOff, ShieldCheck } from "lucide-react";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import CustomButton from "../ui/customButton";
+import { ProfileStateInterface } from "@/hooks/useAccountSettings";
 
 interface AccountSecurityInterface {
     formData: SecurityFormInterface;
+    passwordState: ProfileStateInterface;
     handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
     handleSubmit: (e: FormEvent<HTMLFormElement>) => void;
 }
@@ -54,15 +56,37 @@ const PasswordInput = ({
 
 const AccountSecurity = ({
     formData,
+    passwordState,
     handleChange,
     handleSubmit
 }: AccountSecurityInterface) => {
+
+    const [stateVisible, setStateVisible] = useState(false);
 
     const {
         currentPassword,
         newPassword,
         confirmPassword
     } = formData;
+
+    useEffect(()=> {
+        if(passwordState.error) {
+            setStateVisible(true);
+        }
+        if(passwordState.success) {
+            setStateVisible(true);
+        }
+    }, [passwordState])
+
+    useEffect(()=> {
+        if (!stateVisible) return;
+        
+        const timer = setTimeout(() => {
+            setStateVisible(false);
+        }, 4000);
+
+        return () => clearTimeout(timer);
+    }, [stateVisible])
 
     return (
         <form
@@ -99,6 +123,18 @@ const AccountSecurity = ({
             <div className="lg:col-span-2 text-xs">
                 Password must be at least 6 characters long
             </div>
+             {
+                stateVisible && passwordState.error &&
+                <div className="lg:col-span-2 text-red-500 text-sm bg-red-500/10 px-4 py-2 rounded-sm">
+                    {passwordState.error}
+                </div>
+            }
+            {
+                stateVisible && passwordState.success &&
+                <div className="lg:col-span-2 text-green-500 text-sm bg-green-500/10 px-4 py-2 rounded-sm">
+                    {passwordState.success}
+                </div>
+            }
             <div className="lg:col-span-2 flex justify-end mt-3">
                 <CustomButton
                     title="Update password"

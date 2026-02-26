@@ -171,7 +171,7 @@ export async function updateAvatar(
         .eq("id", userId)
         .select()
         .single()
-
+        
     if (!updatedProfile || error) {
         return {
             error: `The profile cannot be updated, ${error?.message}`,
@@ -202,8 +202,8 @@ export async function updateProfile(
     }
 
     const profileToUpdate = denormalizeData(profile);
-    const { urlImage, ...rest } = profileToUpdate;
-
+    const { url_image, ...rest } = profileToUpdate;
+    
     const { data: updatedProfile, error } = await supabase.from("profiles")
         .update(rest)
         .eq("id", userId)

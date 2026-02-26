@@ -18,6 +18,7 @@ const AccountSettings = ({
         personalForm,
         avatarState,
         personalState,
+        passwordState,
         securityForm,
         imagePreview,
         isDragging,
@@ -58,6 +59,7 @@ const AccountSettings = ({
                         />
                         <AccountSecurity
                             formData={securityForm}
+                            passwordState={passwordState}
                             handleChange={handleSecurityChange}
                             handleSubmit={handleSecuritySubmit}
                         />

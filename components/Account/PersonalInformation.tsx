@@ -48,7 +48,7 @@ const PersonalInformation = ({
 
     const displayImage = imagePreview || urlImage;
 
-        useEffect(() => {
+    useEffect(() => {
         if (avatarState.error) {
             setState(avatarState);
         }
