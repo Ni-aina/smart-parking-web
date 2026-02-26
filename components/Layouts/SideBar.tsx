@@ -28,7 +28,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import OwnerProtected from "../OwnerProtected";
 
 const SideBarLayout = () => {
@@ -48,11 +48,19 @@ const SideBarLayout = () => {
         }
     }
 
+    useEffect(()=> {
+        if (!pathname.startsWith("/owner/settings")) {
+            setIsOpenSettings(false);
+            return;
+        }
+        setIsOpenSettings(true);
+    }, [pathname])
+
     return (
         <Sidebar className="bg-black/95 border-none shadow-white/10 shadow-sm">
             <div className="flex flex-col bg-black/95 text-white w-full h-full gap-5 lg:gap-8 p-5">
                 <SidebarHeader>
-                    <div className="flex justify-center my-5">
+                    <div className="flex justify-center mt-3">
                         <div className="relative w-36 h-12">
                             <Image
                                 src={"/images/smart-parking.png"}

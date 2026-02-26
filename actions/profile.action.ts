@@ -202,10 +202,16 @@ export async function updateProfile(
     }
 
     const profileToUpdate = denormalizeData(profile);
-    const { url_image, ...rest } = profileToUpdate;
+    const {
+        full_name,
+        phone_number
+     } = profileToUpdate;
     
     const { data: updatedProfile, error } = await supabase.from("profiles")
-        .update(rest)
+        .update({
+            full_name,
+            phone_number
+        })
         .eq("id", userId)
         .select()
         .single()

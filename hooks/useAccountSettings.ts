@@ -19,6 +19,7 @@ import { updatePassword } from "@/actions/authServer.action";
 import { logIn } from "@/actions/auth.action";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
+import { isValidPhoneNumber } from "react-phone-number-input";
 
 export interface ProfileStateInterface {
     error: string | null,
@@ -123,11 +124,18 @@ const useAccountSettings = () => {
 
     const handlePersonalSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
+        
         if (imageFile) {
             startTransition(() => {
                 setAvatarState({ avatar: imageFile, urlImage: currentProfile?.urlImage || "" })
             })
+        }
+
+        const { phoneNumber } = personalForm;
+
+        if (!isValidPhoneNumber(phoneNumber)) {
+            toast.error("Invalid phone number");
+            return;
         }
 
         if (personalForm) {

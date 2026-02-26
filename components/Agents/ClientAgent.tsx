@@ -1,16 +1,19 @@
 "use client";
 
+import "react-phone-number-input/style.css";
+import PhoneInput from "react-phone-number-input";
 import Navbar from "../Navbar";
 import Table from "../Table";
 import { Modal } from "../ui/modal";
 import { ProfileInterface } from "@/types/profile";
-import { Loader2 } from "lucide-react";
+import { Flag } from "lucide-react";
 import useAgent from "@/hooks/useAgent";
+import { ChangeEvent } from "react";
 
 const ClientAgent = ({ 
     agents,
     count
- }: { 
+ }: {
     agents: ProfileInterface[],
     count: number
  }) => {
@@ -21,7 +24,6 @@ const ClientAgent = ({
         setSearch,
         isModalOpen,
         setIsModalOpen,
-        isPending,
         title,
         headers,
         body,
@@ -72,46 +74,64 @@ const ClientAgent = ({
                             value={fullName}
                             onChange={handleChange}
                             required
-                            className="outline-none px-4 py-2 border border-white/10 rounded-sm" />
-                        <label htmlFor="emailAddress">Email address *</label>
+                            className="outline-none px-4 py-2 border border-white/10 rounded-sm" 
+                        />
+                        <label htmlFor="emailAddress">
+                            Email address *
+                            {
+                                id &&
+                                <span className="ml-1 text-xs text-white/40">
+                                    (You can't change email address)
+                                </span>
+                            }
+                        </label>
                         <input
                             type="email"
                             name="emailAddress"
                             value={emailAddress}
                             onChange={handleChange}
+                            className="outline-none px-4 py-2 border border-white/10 rounded-sm
+                            disabled:bg-white/5 disabled:cursor-not-allowed" 
                             required
-                            className="outline-none px-4 py-2 border border-white/10 rounded-sm" />
+                            disabled={!!id}
+                        />
                         <label htmlFor="phoneNumber">Phone number *</label>
-                        <input
-                            type="tel"
-                            name="phoneNumber"
+                        <PhoneInput
+                            defaultCountry="US"
                             value={phoneNumber}
-                            onChange={handleChange}
-                            required
-                            className="outline-none px-4 py-2 border border-white/10 rounded-sm" />
+                            onChange={value => {
+                                handleChange({ target: { name: "phoneNumber", value: value || "" } } as ChangeEvent<HTMLInputElement>)
+                            }}
+                            className="
+                                flex items-center w-full 
+                                border border-white/10 
+                                rounded-sm 
+                                px-3 py-2 
+                                bg-transparent
+                            "
+                            countrySelectProps={{
+                                className: "bg-black text-white p-2"
+                            }}
+                            numberInputProps={{
+                                className: "outline-none bg-transparent"
+                            }}
+                            internationalIcon={() => <Flag className="w-5 h-5" />}
+                        />
                     </div>
                     <div className="mt-3 w-full flex justify-end gap-3">
                         <button
                             type="button"
                             onClick={handleOnClose}
-                            className="w-[120px] h-[40px] flex justify-center items-center 
+                            className="w-30 h-10 flex justify-center items-center 
                             bg-white/5 rounded-sm cursor-pointer hover:opacity-80"
                         >
                             Cancel
                         </button>
                         <button
-                            className="w-[120px] h-[40px] flex justify-center items-center gap-2
+                            className="w-30 h-10 flex justify-center items-center gap-2
                             bg-white text-black rounded-sm cursor-pointer hover:opacity-80
                             disabled:cursor-not-allowed disabled:opacity-80"
-                            disabled={isPending}
                         >
-                            {
-                                isPending &&
-                                <Loader2
-                                    size={14}
-                                    className="animate-spin"
-                                />
-                            }
                             <span>{id ? "Update" : "Add"}</span>
                         </button>
                     </div>

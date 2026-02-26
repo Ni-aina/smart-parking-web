@@ -2,6 +2,8 @@
 
 import { AgentFormInterface, ProfileInterface } from "@/types/profile";
 import { ChangeEvent, FormEvent, useState } from "react";
+import { isValidPhoneNumber } from "react-phone-number-input";
+import { toast } from "sonner";
 
 const initForm = {
     fullName: "",
@@ -15,7 +17,6 @@ const useAgent = ({ agents }: { agents: ProfileInterface[] }) => {
 
     const [search, setSearch] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isPending, setIsPending] = useState(false);
     const [formData, setFormData] = useState<AgentFormInterface>(initForm);
 
     const title = "Agents";
@@ -62,7 +63,13 @@ const useAgent = ({ agents }: { agents: ProfileInterface[] }) => {
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const { id } = formData;
+
+        const { id, phoneNumber } = formData;
+
+        if (!isValidPhoneNumber(phoneNumber)) {
+            toast.error("Invalid phone number");
+            return;
+        }
 
         if (!id) {
             const newAgent: ProfileInterface = {
@@ -86,7 +93,7 @@ const useAgent = ({ agents }: { agents: ProfileInterface[] }) => {
                 emailAddress: formData.emailAddress,
                 phoneNumber: formData.phoneNumber
             }
-        ));
+        ))
         handleOnClose();
     }
 
@@ -117,7 +124,10 @@ const useAgent = ({ agents }: { agents: ProfileInterface[] }) => {
 
     const handleDelete = (id: string) => {
         const agent = localAgents.find(item => item.id === id);
-        if (!agent || !isAgentOnly(agent.roles)) return;
+        if (!agent || !isAgentOnly(agent.roles)){
+            toast.error("Only agents can be deleted");
+            return;
+        }
 
         setLocalAgents(prev => prev.filter(item => item.id !== id));
     }
@@ -128,7 +138,6 @@ const useAgent = ({ agents }: { agents: ProfileInterface[] }) => {
         setSearch,
         isModalOpen,
         setIsModalOpen,
-        isPending,
         title,
         headers,
         body,

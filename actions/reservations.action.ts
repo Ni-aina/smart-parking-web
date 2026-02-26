@@ -384,14 +384,11 @@ export async function getBokingsLastWeekForOwner()
         const request = (async () => {
             const { firstDay } = getFilterDates("this-week");
 
-            const firstDayLastWeek = new Date(firstDay);
-            firstDayLastWeek.setDate(firstDay.getDate() - 7);
-
             const { data: reservations, error } = await supabase
                 .from("reservations")
                 .select("created_at, lot:lot_id!inner(owner_id)")
                 .eq("lot.owner_id", userId)
-                .gte("created_at", firstDayLastWeek.toISOString());
+                .gte("created_at", firstDay.toISOString());
 
             if (error) throw error;
 

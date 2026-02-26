@@ -1,7 +1,7 @@
 "use client";
 
-import "react-phone-number-input/style.css"
-import PhoneInput from "react-phone-number-input"
+import "react-phone-number-input/style.css";
+import PhoneInput from "react-phone-number-input";
 import { PersonalInfoFormInterface } from "@/types/account";
 import { Flag, Save } from "lucide-react";
 import Image from "next/image";

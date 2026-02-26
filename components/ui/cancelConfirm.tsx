@@ -29,7 +29,7 @@ const CancelConfirm = ({
                 </p>
                 <div className="mt-3 w-full flex justify-end gap-3">
                     <button
-                        className="w-[120px] h-[40px] flex justify-center items-center 
+                        className="w-30 h-10 flex justify-center items-center 
                                 bg-white/10 rounded-sm cursor-pointer hover:opacity-80"
                         onClick={handleCancel}
                         type="button"
@@ -37,7 +37,7 @@ const CancelConfirm = ({
                         Go back
                     </button>
                     <button
-                        className="w-[120px] h-[40px] flex justify-center items-center gap-2
+                        className="w-30 h-10 flex justify-center items-center gap-2
                                 bg-red-500/80 text-white rounded-sm cursor-pointer hover:opacity-80
                                 disabled:cursor-not-allowed disabled:opacity-50"
                         onClick={handleConfirm}
