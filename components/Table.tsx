@@ -10,7 +10,7 @@ import InputSelect from "./ui/inputSelect";
 import { SelectInterface } from "@/types/input";
 import Pagination from "./ui/pagination";
 import { PAGINATION } from "@/lib/pagination";
-import DeleteConfrim from "./ui/deleteConfirm";
+import DeleteConfirm from "./ui/deleteConfirm";
 
 interface TabelInterface {
     title: string;
@@ -241,7 +241,7 @@ const Table = ({
                 showPage={+showPage}
                 count={count}
             />
-            <DeleteConfrim
+            <DeleteConfirm
                 isOpen={!!isConfirmId || !!allConfirmIds.length}
                 handleCancel={() => {
                     setAllConfirmIds([]);

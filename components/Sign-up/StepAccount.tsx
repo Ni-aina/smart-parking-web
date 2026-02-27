@@ -24,7 +24,7 @@ const StepAccount = ({
     handleShowPassword
 }: StepAccountProps) => {
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:my-4">
             <div className="flex flex-col gap-3">
                 <h1 className="text-md font-semibold">Full name</h1>
                 <input

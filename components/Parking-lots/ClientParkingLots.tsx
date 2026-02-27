@@ -8,7 +8,7 @@ import ParkingCards from "./ParkingCards";
 import { ProfileInterface } from "@/types/profile";
 import { deleteParking } from "@/actions/parkingLots.action";
 import Pagination from "../ui/pagination";
-import DeleteConfrim from "../ui/deleteConfirm";
+import DeleteConfirm from "../ui/deleteConfirm";
 
 interface ClientParkingLotsInterface {
     parkings: ParkingInterface[];
@@ -71,7 +71,7 @@ const ClientParkingLots = ({
                 showPage={6}
                 count={count}
             />
-            <DeleteConfrim
+            <DeleteConfirm
                 isOpen={!!isConfirm}
                 handleCancel={
                     () => setIsConfirm("")

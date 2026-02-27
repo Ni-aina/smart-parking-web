@@ -2,17 +2,17 @@
 
 import { Modal } from "./modal";
 
-interface DeleteConfrimProps {
+interface DeleteConfirmProps {
     isOpen: boolean;
     handleCancel: ()=> void;
     handleConfirm: ()=> void;
 }
 
-const DeleteConfrim = ({
+const DeleteConfirm = ({
     isOpen,
     handleCancel,
     handleConfirm
-}: DeleteConfrimProps) => {
+}: DeleteConfirmProps) => {
 
     return (
         <Modal
@@ -24,6 +24,7 @@ const DeleteConfrim = ({
                 <p className="text-sm text-red-600">Are you sure to proccess it?</p>
                 <div className="mt-3 w-full flex justify-end gap-3">
                     <button
+                        type="button"
                         className="w-30 h-10 flex justify-center items-center 
                                 bg-white/10 rounded-sm cursor-pointer hover:opacity-80"
                         onClick={handleCancel}
@@ -44,4 +45,4 @@ const DeleteConfrim = ({
     )
 }
 
-export default DeleteConfrim;
+export default DeleteConfirm;
