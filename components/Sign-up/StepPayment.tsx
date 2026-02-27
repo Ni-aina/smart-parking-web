@@ -24,7 +24,7 @@ const StepPayment = ({
                             <h2 className="font-semibold text-sm">{planName} Plan</h2>
                             <span 
                                 className="text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-sm 
-                                bg-[#FFC439] text-black animate-pulse"
+                                bg-blue-950 text-white animate-pulse"
                             >
                                 Soon
                             </span>
@@ -51,8 +51,8 @@ const StepPayment = ({
 
             <button
                 disabled
-                className="w-full py-3 rounded-sm bg-[#FFC439] text-black font-bold
-                 text-sm opacity-40 cursor-not-allowed"
+                className="w-full py-3 rounded-sm bg-blue-950 text-white font-bold
+                 text-sm opacity-60 cursor-not-allowed"
             >
                 Not available yet
             </button>
@@ -76,20 +76,17 @@ const StepPayment = ({
                 </div>
             </div>
             <button
-                className="w-full py-3 rounded-sm bg-[#FFC439] text-black 
+                className="w-full py-3 rounded-sm bg-blue-950 text-white 
                 font-bold flex items-center justify-center gap-1 
                 cursor-pointer hover:opacity-90 transition-opacity"
             >
                 <span className="text-sm">Pay with</span>
-                <span className="text-[#003087] font-extrabold italic text-sm">
-                    Pay
-                </span>
-                <span className="text-[#009CDE] font-extrabold italic text-sm">
-                    Pal
+                <span className="font-extrabold italic text-sm">
+                    Stripe
                 </span>
             </button>
             <p className="text-[10px] text-white/30 text-center">
-                Powered by PayPal — Secure payment processing
+                Powered by Stripe — Secure payment processing
             </p>
         </div>
     )
