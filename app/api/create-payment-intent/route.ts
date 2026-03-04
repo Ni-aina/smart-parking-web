@@ -1,5 +1,6 @@
 import { stripe } from "@/lib/stripe/server";
 import { createClient } from "@/lib/supabase/server";
+import { isUUID } from "@/utils/isUUID";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -14,7 +15,7 @@ export async function POST(request: NextRequest) {
         } = await request.json();
 
         if (
-            !planId ||
+            !isUUID(planId) ||
             !name || 
             !email || 
             !phone ||
