@@ -87,7 +87,7 @@ export async function createReservation(reservation: ReservationFormInterface)
                 .insert([{
                     reservation_id: newReservation.id,
                     amount: Number(amount),
-                    method: "Cash",
+                    method: "cash",
                     status: "succeeded",
                     transaction_id: transactionUUID
                 }])

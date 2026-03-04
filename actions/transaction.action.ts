@@ -112,7 +112,7 @@ export async function getPaymentsForOwner(
     }
 }
 
-export async function getRevevueForOwnerByTime(filter: keyFilter)
+export async function getRevenueForOwnerByTime(filter: keyFilter)
     : Promise<{
         revenue: number;
         rate: number;

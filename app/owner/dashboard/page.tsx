@@ -5,7 +5,7 @@ import {
     getCompletedForOwnerByTime,
     getTotalReservationsForOwnerByTime
 } from "@/actions/reservations.action";
-import { getRevevueForOwnerByTime } from "@/actions/transaction.action";
+import { getRevenueForOwnerByTime } from "@/actions/transaction.action";
 import AreaChartDashboard from "@/components/Dashboards/AreaChart";
 import DashboardCards from "@/components/Dashboards/DashboardCards";
 import HeaderDashboard, { trendType } from "@/components/Dashboards/Header";
@@ -49,7 +49,7 @@ const DashboardPage = async ({
         occupancyLots
     ] = await Promise.all([
         getTotalReservationsForOwnerByTime(filter),
-        getRevevueForOwnerByTime(filter),
+        getRevenueForOwnerByTime(filter),
         getCompletedForOwnerByTime(filter),
         getCancelledReservationsForOwnerByTime(filter),
         getBokingsLastWeekForOwner(),
