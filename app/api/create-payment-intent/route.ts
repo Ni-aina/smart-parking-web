@@ -1,3 +1,4 @@
+import { getProfileByEmail } from "@/actions/profile.action";
 import { stripe } from "@/lib/stripe/server";
 import { createClient } from "@/lib/supabase/server";
 import { isUUID } from "@/utils/isUUID";
@@ -24,13 +25,28 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
         }
 
-        const supabase = await createClient();
-        const { data: { user }, error } = await supabase.auth.signUp({
-            email,
-            password
-        })
+        let [
+            supabase,
+            user
+        ] = await Promise.all([
+            createClient(),
+            getProfileByEmail(email)
+        ])
 
-        if (!user || error) throw new Error(`Failed to create user ${error?.message}`);
+        if (!user) {
+            const { data: { user: signUpUser }, error } = await supabase.auth.signUp({
+                email,
+                password
+            })
+            
+            if (error) throw new Error(`Failed to create user ${error?.message}`);
+            
+            user = signUpUser;
+        }
+
+        if (!user) {
+            throw new Error("Failed to get user");
+        }
 
         const {
             id: userId

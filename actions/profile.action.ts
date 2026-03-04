@@ -46,6 +46,32 @@ export async function createProfile(profile: ProfileInterface)
     }
 }
 
+export async function getProfileByEmail(email: string)
+    : Promise<User | null> {
+    try {
+        if (!email) throw new Error("Email is required");
+
+        const request = (async () => {
+            const { data: profile, error } = await supabase.from("profiles")
+                .select("id, email")
+                .eq("email", email)
+                .maybeSingle();
+
+            if (!profile || error) throw new Error(`The profile cannot be find, ${error?.message}`);
+            const normalized = normalizeData(profile);
+
+            return normalized as User;
+        })()
+
+        return Promise.race([
+            request,
+            rejectTimeout()
+        ])
+    } catch (error) {
+        throw error;
+    }
+}
+
 export async function getCurrentProfile(user: User | null): Promise<ProfileInterface> {
     try {
         if (!user) throw new Error("Unauthorized");
