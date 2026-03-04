@@ -20,7 +20,7 @@ export async function POST(req: Request) {
       )
     }
 
-    if (!isUUID(userId) || !isUUID(customerId) || !reservationId) {
+    if (!isUUID(userId) || !customerId || !reservationId) {
       return NextResponse.json(
         { error: "User ID, Customer ID and Reservation ID are required" },
         { status: 400 }
