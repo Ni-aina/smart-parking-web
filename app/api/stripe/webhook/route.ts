@@ -45,13 +45,17 @@ export async function POST(req: Request) {
                     }
                 } = intent;
 
+                const charge = await stripe.charges.retrieve(intent.latest_charge as string, {
+                    expand: ["payment_method_details"]
+                })
+
                 if (transactionId && reservationId) {
                     
                     const paymentRequest = supabaseAdmin
                         .from("payments")
                         .update({
                             status: "succeeded",
-                            method: intent.payment_method_types[0],
+                            method: "card",
                         })
                         .eq("transaction_id", transactionId)
 
@@ -86,11 +90,7 @@ export async function POST(req: Request) {
                     phone
                 ) {
 
-                    const charge = await stripe.charges.retrieve(intent.latest_charge as string, {
-                        expand: ["payment_method_details"]
-                    })
-
-                    const cardLastFour = charge.payment_method_details?.card?.last4 ?? "****";
+                    const cardLast4 = charge.payment_method_details?.card?.last4 ?? "****";
 
                     const startDate = new Date();
                     const endDate = new Date(startDate);
@@ -115,7 +115,7 @@ export async function POST(req: Request) {
                             owner_id: userId,
                             plan_id: planId,
                             transaction_id: transactionId,
-                            card_last_four: cardLastFour,
+                            card_last_four: cardLast4,
                             status: "active",
                             start_date: startDate.toISOString(),
                             end_date: endDate.toISOString()
