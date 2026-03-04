@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
-import { stripe } from "@/lib/stripe";
+import { stripe } from "@/lib/stripe/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export async function POST(req: Request) {
@@ -29,34 +29,44 @@ export async function POST(req: Request) {
         switch (event.type) {
             case "payment_intent.succeeded": {
                 const intent = event.data.object;
-               
-                const paymentRequest = supabaseAdmin
-                    .from("payments")
-                    .update({
-                        status: "succeeded",
-                        method: intent.payment_method_types[0],
-                    })
-                    .eq("transaction_id", intent.id)
 
-                const reservationRequest = supabaseAdmin
-                    .from("reservations")
-                    .update({ status: "active" })
-                    .eq("id", intent.metadata.reservationId);
+                const {
+                    id: transactionId,
+                    metadata: {
+                        reservationId
+                    }
+                } = intent;
 
-                const [
-                    { error: paymentError },
-                    { error: reservationError }
-                ] = await Promise.all([
-                    paymentRequest,
-                    reservationRequest,
-                ])
+                if (transactionId && reservationId) {
+                    
+                    const paymentRequest = supabaseAdmin
+                        .from("payments")
+                        .update({
+                            status: "succeeded",
+                            method: intent.payment_method_types[0],
+                        })
+                        .eq("transaction_id", transactionId)
 
-                if (paymentError) {
-                    throw paymentError;
-                }
+                    const reservationRequest = supabaseAdmin
+                        .from("reservations")
+                        .update({ status: "active" })
+                        .eq("id", reservationId);
 
-                if (reservationError) {
-                    throw reservationError;
+                    const [
+                        { error: paymentError },
+                        { error: reservationError }
+                    ] = await Promise.all([
+                        paymentRequest,
+                        reservationRequest,
+                    ])
+
+                    if (paymentError) {
+                        throw paymentError;
+                    }
+
+                    if (reservationError) {
+                        throw reservationError;
+                    }
                 }
                 
                 break;
@@ -64,11 +74,12 @@ export async function POST(req: Request) {
 
             case "payment_intent.payment_failed": {
                 const intent = event.data.object;
+                const { id: transactionId } = intent;
 
                 await supabaseAdmin
                     .from("payments")
                     .update({ status: "failed" })
-                    .eq("transaction_id", intent.id);
+                    .eq("transaction_id", transactionId);
                 break;
             }
 

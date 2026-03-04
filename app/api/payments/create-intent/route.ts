@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { stripe } from "@/lib/stripe";
+import { stripe } from "@/lib/stripe/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { isUUID } from "@/utils/isUUID";
 
 export async function POST(req: Request) {
   try {
@@ -19,9 +20,9 @@ export async function POST(req: Request) {
       )
     }
 
-    if (!userId || !reservationId) {
+    if (!isUUID(userId) || !isUUID(customerId) || !reservationId) {
       return NextResponse.json(
-        { error: "User ID and Reservation ID are required" },
+        { error: "User ID, Customer ID and Reservation ID are required" },
         { status: 400 }
       )
     }
