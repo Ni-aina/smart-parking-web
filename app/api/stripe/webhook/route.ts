@@ -104,7 +104,7 @@ export async function POST(req: Request) {
                     ] = await Promise.all([
                         createProfile({
                             id: userId,
-                            roles: ["owner"],
+                            roles: ["owner", "driver"],
                             fullName: name,
                             emailAddress: email,
                             phoneNumber: phone
