@@ -1,21 +1,58 @@
 import { stripe } from "@/lib/stripe/server";
+import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
    try {
-        const { amount } = await request.json();
+        const { 
+            amount,
+            name,
+            email,
+            phone,
+            password,
+            planId
+        } = await request.json();
+
+        if (
+            !planId ||
+            !name || 
+            !email || 
+            !phone ||
+            !password
+        ) {
+            return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+        }
+
+        const supabase = await createClient();
+        const { data: { user }, error } = await supabase.auth.signUp({
+            email,
+            password
+        })
+
+        if (!user || error) throw new Error(`Failed to create user ${error?.message}`);
+
+        const {
+            id: userId
+        } = user;
 
         const paymentIntent = await stripe.paymentIntents.create({
             amount,
             currency: "usd",
-            payment_method_types: ["card"]
+            payment_method_types: ["card"],
+            metadata: {
+                userId,
+                planId,
+                name,
+                email,
+                phone
+            }
         })
 
         return NextResponse.json({ clientSecret: paymentIntent.client_secret })
 
-   } catch (err) {
+   } catch (error) {
         return NextResponse.json(
-            { error: `Internal server error ${err}`},
+            { error },
             { status: 500 }
         )
    }

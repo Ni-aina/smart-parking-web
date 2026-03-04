@@ -13,6 +13,8 @@ import StepAccount from "@/components/Sign-up/StepAccount";
 import StepPlan from "@/components/Sign-up/StepPlan";
 import StepPayment from "@/components/Sign-up/StepPayment";
 import { SubscriptionPlanInterface } from "@/types/subscription";
+import { SignUpForm } from "@/types/auth";
+import { isValidPhoneNumber } from "react-phone-number-input";
 
 const steps = ["Account", "Plan", "Payment"];
 
@@ -25,7 +27,13 @@ const SignUpPage = ({
     const [showPassword, setShowPassword] = useState(false);
     const [selectedPlan, setSelectedPlan] = useState<string>(plans.find(item => item.popular)?.id || "");
     
-    const [form, setForm] = useState({ name: "", email: "", password: "", confirmPassword: "" });
+    const [form, setForm] = useState<SignUpForm>({ 
+        name: "", 
+        email: "", 
+        phone: "",
+        password: "", 
+        confirmPassword: "" 
+    })
 
     const activePlan = plans.find(p => p.id === selectedPlan);
 
@@ -35,24 +43,36 @@ const SignUpPage = ({
 
     const handleNext = () => {
         if (step === 0) {
-            if (!form.name || !form.email || !form.password || !form.confirmPassword) {
+            const {
+                name,
+                email,
+                password,
+                confirmPassword,
+                phone
+            } = form;
+
+            if (!name || !email || !password || !confirmPassword) {
                 toast.error("All fields are required");
                 return;
             }
-            if (form.name.length < 6) {
+            if (name.length < 6) {
                 toast.error("Full name must be at least 6 characters");
                 return;
             }
-            if (!isValidEmail(form.email)) {
+            if (!isValidEmail(email)) {
                 toast.error("Invalid email address");
                 return;
             }
-            if (form.password.length < 6) {
+            if (password.length < 6) {
                 toast.error("Password must be at least 6 characters");
                 return;
             }
-            if (form.password !== form.confirmPassword) {
+            if (password !== confirmPassword) {
                 toast.error("Passwords do not match");
+                return;
+            }
+            if (!isValidPhoneNumber(phone)) {
+                toast.error("Invalid phone number");
                 return;
             }
         }
@@ -132,6 +152,7 @@ const SignUpPage = ({
                     step === 2 && activePlan &&
                     <StepPayment
                         plan={activePlan}
+                        form={form}
                     />
                 }
                 <div className="flex justify-between items-center mt-4">

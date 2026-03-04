@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { stripe } from "@/lib/stripe/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { createProfile } from "@/actions/profile.action";
 
 export async function POST(req: Request) {
 
@@ -33,7 +34,14 @@ export async function POST(req: Request) {
                 const {
                     id: transactionId,
                     metadata: {
-                        reservationId
+                        // Reservation payment
+                        reservationId,
+                        // Subscription payment
+                        planId,
+                        userId,
+                        name,
+                        email,
+                        phone
                     }
                 } = intent;
 
@@ -66,6 +74,58 @@ export async function POST(req: Request) {
 
                     if (reservationError) {
                         throw reservationError;
+                    }
+                }
+
+                if (
+                    transactionId && 
+                    userId && 
+                    planId && 
+                    name && 
+                    email && 
+                    phone
+                ) {
+
+                    const charge = await stripe.charges.retrieve(intent.latest_charge as string, {
+                        expand: ["payment_method_details"]
+                    })
+
+                    const cardLastFour = charge.payment_method_details?.card?.last4 ?? "****";
+
+                    const startDate = new Date();
+                    const endDate = new Date(startDate);
+                    endDate.setMonth(endDate.getMonth() + 1);
+
+                    const [
+                        _profile,
+                        {
+                            error: subscriptionError
+                        }
+                    ] = await Promise.all([
+                        createProfile({
+                            id: userId,
+                            roles: ["owner"],
+                            fullName: name,
+                            emailAddress: email,
+                            phoneNumber: phone
+                        }),
+                        supabaseAdmin
+                        .from("subscriptions")
+                        .upsert({
+                            owner_id: userId,
+                            plan_id: planId,
+                            transaction_id: transactionId,
+                            card_last_four: cardLastFour,
+                            status: "active",
+                            start_date: startDate.toISOString(),
+                            end_date: endDate.toISOString()
+                        }, { onConflict: "owner_id" })
+                        .select("id")
+                        .single()
+                    ])
+                    
+                    if (subscriptionError) {
+                        throw subscriptionError;
                     }
                 }
                 

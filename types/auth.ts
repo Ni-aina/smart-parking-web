@@ -5,3 +5,11 @@ export interface AuthUserInterface {
     session: Session | null;
     weakPassword?: WeakPassword | null;
 }
+
+export interface SignUpForm {
+    name: string;
+    email: string;
+    phone: string;
+    password: string;
+    confirmPassword: string;
+}

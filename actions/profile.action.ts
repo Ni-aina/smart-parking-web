@@ -1,6 +1,7 @@
 "use server";
 
 import { supabase } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/server";
 import { ProfileInterface } from "@/types/profile";
 import { denormalizeData, normalizeData } from "@/utils/normalizeData";
 import { User } from "@supabase/supabase-js";
@@ -11,6 +12,39 @@ import { PersonalInfoFormInterface } from "@/types/account";
 import { ProfileStateInterface } from "@/hooks/useAccountSettings";
 import { uploadFile } from "./uploadFile.action";
 import { removeFile } from "./removeFile.action";
+
+export async function createProfile(profile: ProfileInterface)
+    : Promise<ProfileInterface> {
+    try {
+        const {
+            createdAt,
+            ...rest
+        } = profile;
+
+        const normalizedProfile = denormalizeData(rest);
+
+        const request = (async () => {
+            const supabase = await createClient();
+            
+            const { data: newProfile, error } = await supabase.from("profiles")
+                .upsert(normalizedProfile, { onConflict: "id" })
+                .select("*")
+                .single()
+
+            if (!newProfile || error) throw new Error(`The profile cannot be created, ${error?.message}`);
+            const normalized = normalizeData(newProfile);
+
+            return normalized as ProfileInterface;
+        })()
+
+        return Promise.race([
+            request,
+            rejectTimeout()
+        ])
+    } catch (error) {
+        throw error;
+    }
+}
 
 export async function getCurrentProfile(user: User | null): Promise<ProfileInterface> {
     try {

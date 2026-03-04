@@ -1,11 +1,17 @@
+import { SignUpForm } from "@/types/auth";
 import { useElements, useStripe } from "@stripe/react-stripe-js";
 import { FormEvent, useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const useCheckoutStripe = ({ 
+    planId,
     amount,
+    form,
     handleShowStripeElement
- }: { 
+ }: {
+    planId: string,
     amount: number,
+    form: SignUpForm,
     handleShowStripeElement: () => void
  }) => {
 
@@ -49,6 +55,7 @@ const useCheckoutStripe = ({
 
         if (paymentIntent.status === "succeeded") {
             handleShowStripeElement();
+            toast.success("Check your inbox to activate your account.");
             setLoading(false);
             return;
         }
@@ -56,18 +63,43 @@ const useCheckoutStripe = ({
 
     useEffect(() => {
         setLoading(true);
+
+        const {
+            name,
+            email,
+            phone,
+            password
+        } = form;
+
         fetch("/api/create-payment-intent", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ amount: amount * 100 })
+            body: JSON.stringify({ 
+                planId,
+                amount: amount * 100,
+                name,
+                email,
+                phone,
+                password
+            })
         })
             .then(res => res.json())
-            .then(data => setClientSecret(data.clientSecret))
-            .catch(err => setErrorMessage(err.message || "Error creating payment intent"))
+            .then(data => {
+                if (data.error) {
+                    setErrorMessage(data.error);
+                } else {
+                    setClientSecret(data.clientSecret);
+                }
+            })
+            .catch(err => setErrorMessage(err.message || "Failed to create payment intent"))
             .finally(() => setLoading(false))
-    }, [amount])
+    }, [
+        planId,
+        amount,
+        form
+    ])
 
     return {
         stripe,

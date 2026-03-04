@@ -7,13 +7,16 @@ import stripePromise from "@/lib/stripe/client";
 import SubmitPayment from "./SubmitPayment";
 import { useState } from "react";
 import { Modal } from "../ui/modal";
+import { SignUpForm } from "@/types/auth";
 
 interface StepPaymentProps {
     plan: SubscriptionPlanInterface;
+    form: SignUpForm;
 }
 
 const StepPayment = ({
-    plan
+    plan,
+    form
 }: StepPaymentProps) => {
     const [showStripeElement, setShowStripeElement] = useState<boolean>(false);
 
@@ -22,6 +25,7 @@ const StepPayment = ({
     }
 
     const {
+        id: planId,
         name,
         price,
         isActive
@@ -83,7 +87,9 @@ const StepPayment = ({
                         }}
                     >
                         <SubmitPayment 
-                            amount={price} 
+                            planId={planId}
+                            amount={price}
+                            form={form}
                             handleShowStripeElement={handleShowStripeElement}
                         />
                     </Elements>

@@ -1,18 +1,14 @@
 "use client";
 
-import { Eye, EyeClosed } from "lucide-react";
+import "react-phone-number-input/style.css";
+import { SignUpForm } from "@/types/auth";
+import { Eye, EyeClosed, Flag } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
-
-interface FormState {
-    name: string;
-    email: string;
-    password: string;
-    confirmPassword: string;
-}
+import PhoneInputWithCountrySelect from "react-phone-number-input";
 
 interface StepAccountProps {
-    form: FormState;
-    setForm: Dispatch<SetStateAction<FormState>>;
+    form: SignUpForm;
+    setForm: Dispatch<SetStateAction<SignUpForm>>;
     showPassword: boolean;
     handleShowPassword: () => void;
 }
@@ -23,6 +19,15 @@ const StepAccount = ({
     showPassword,
     handleShowPassword
 }: StepAccountProps) => {
+
+    const {
+        name,
+        email,
+        phone,
+        password,
+        confirmPassword
+    } = form;
+
     return (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:my-4">
             <div className="flex flex-col gap-3">
@@ -30,9 +35,9 @@ const StepAccount = ({
                 <input
                     type="text"
                     name="name"
-                    value={form.name}
+                    value={name}
                     onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                    className="p-2 focus-within:outline-none border border-white rounded-sm"
+                    className="p-2 focus-within:outline-none border border-white/10 rounded-sm"
                     required
                 />
             </div>
@@ -41,19 +46,19 @@ const StepAccount = ({
                 <input
                     type="email"
                     name="email"
-                    value={form.email}
+                    value={email}
                     onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                    className="p-2 focus-within:outline-none border border-white rounded-sm"
+                    className="p-2 focus-within:outline-none border border-white/10 rounded-sm"
                     required
                 />
             </div>
             <div className="flex flex-col gap-3">
                 <h1 className="text-md font-semibold">Password</h1>
-                <div className="flex items-center gap-2 w-full p-2 rounded-sm border border-white">
+                <div className="flex items-center gap-2 w-full p-2 rounded-sm border border-white/10">
                     <input
                         type={showPassword ? "text" : "password"}
                         name="password"
-                        value={form.password}
+                        value={password}
                         onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
                         className="w-full focus-within:outline-none"
                         required
@@ -69,16 +74,40 @@ const StepAccount = ({
             </div>
             <div className="flex flex-col gap-3">
                 <h1 className="text-md font-semibold">Confirm password</h1>
-                <div className="flex items-center gap-2 w-full p-2 rounded-sm border border-white">
+                <div className="flex items-center gap-2 w-full p-2 rounded-sm border border-white/10">
                     <input
                         type={showPassword ? "text" : "password"}
                         name="confirmPassword"
-                        value={form.confirmPassword}
+                        value={confirmPassword}
                         onChange={e => setForm(f => ({ ...f, confirmPassword: e.target.value }))}
                         className="w-full focus-within:outline-none"
                         required
                     />
                 </div>
+            </div>
+            <div className="flex flex-col gap-3">
+                <h1 className="text-md font-semi-bold">Phone number</h1>
+                <PhoneInputWithCountrySelect
+                    defaultCountry="US"
+                    value={phone}
+                    onChange={value => {
+                        setForm(f => ({ ...f, phone: value || "" }))
+                    }}
+                    className="
+                        flex items-center w-full 
+                        border border-white/10 
+                        rounded-sm 
+                        px-3 py-2 
+                        bg-transparent
+                    "
+                    countrySelectProps={{
+                        className: "bg-black text-white p-2"
+                    }}
+                    numberInputProps={{
+                        className: "outline-none bg-transparent"
+                    }}
+                    internationalIcon={() => <Flag className="w-5 h-5" />}
+                />
             </div>
         </div>
     )

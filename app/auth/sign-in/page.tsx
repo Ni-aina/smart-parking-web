@@ -71,7 +71,7 @@ const SignIn = () => {
                             className="flex-1 focus-within:outline-none"
                             required
                         />
-                        <div className="w-[24px] cursor-pointer">
+                        <div className="w-6 cursor-pointer">
                             {
                                 showPassword ?
                                     <Eye onClick={handleShowPassword} size={16} /> :
