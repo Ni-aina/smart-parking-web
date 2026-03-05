@@ -1,4 +1,4 @@
-import { getProfileByEmail } from "@/actions/profile.action";
+import { findProfileByEmail } from "@/actions/profile.action";
 import { stripe } from "@/lib/stripe/server";
 import { createClient } from "@/lib/supabase/server";
 import { isUUID } from "@/utils/isUUID";
@@ -32,17 +32,16 @@ export async function POST(request: NextRequest) {
             customer
         ] = await Promise.all([
             createClient(),
-            getProfileByEmail(email),
+            findProfileByEmail(email),
             customerId ?
             stripe.customers.retrieve(customerId) :
             stripe.customers.create({
                 email,
-                name,
-                phone
+                name
             })
         ])
 
-        if (!customer) throw new Error("Failed to retrieve or create customer");
+        if (!customer) throw new Error("Failed to retrieve customer");
 
         if (!user) {
             const { data: { user: signUpUser }, error } = await supabase.auth.signUp({
@@ -80,6 +79,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ clientSecret: paymentIntent.client_secret })
 
    } catch (error) {
+        console.error(error);
         return NextResponse.json(
             { error },
             { status: 500 }

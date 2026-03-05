@@ -46,18 +46,17 @@ export async function createProfile(profile: ProfileInterface & { customerId: st
     }
 }
 
-export async function getProfileByEmail(email: string)
+export async function findProfileByEmail(email: string)
     : Promise<User | null> {
     try {
-        if (!email) throw new Error("Email is required");
-
         const request = (async () => {
-            const { data: profile, error } = await supabase.from("profiles")
+            const { data: profile } = await supabase.from("profiles")
                 .select("id, email")
                 .eq("email", email)
                 .maybeSingle();
 
-            if (!profile || error) throw new Error(`The profile cannot be find, ${error?.message}`);
+            if (!profile) return null;
+
             const normalized = normalizeData(profile);
 
             return normalized as User;
