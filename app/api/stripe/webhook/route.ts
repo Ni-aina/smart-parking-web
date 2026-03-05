@@ -34,9 +34,7 @@ export async function POST(req: Request) {
                 const {
                     id: transactionId,
                     metadata: {
-                        // Reservation payment
                         reservationId,
-                        // Subscription payment
                         customerId,
                         planId,
                         userId,

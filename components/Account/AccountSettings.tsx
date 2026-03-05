@@ -1,6 +1,6 @@
 "use client";
 
-import { Landmark, Sparkles, User } from "lucide-react";
+import { Landmark, Lock, Sparkles, User } from "lucide-react";
 import useAccountSettings from "@/hooks/useAccountSettings";
 import Loading from "../ui/loading";
 import PersonalInformation from "./PersonalInformation";
@@ -43,27 +43,10 @@ const AccountSettings = ({
     return (
         <div className="flex flex-col gap-5 text-white">
             <h1 className="font-semibold">Account settings</h1>
-            <div className="mt-5">
+            <div className="my-5 space-y-10">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
                     <div className="flex flex-col gap-5">
-                        <div className="lg:col-span-2 flex items-center gap-3">
-                            <Landmark size={20} />
-                            <h1 className="text-lg font-semibold">Bank account</h1>
-                        </div>
-                        <PaymentAccount
-                            paymentAccount={paymentAccount}
-                        />
-                        <div className="lg:col-span-2 flex items-center gap-3">
-                            <Sparkles size={20} />
-                            <h1 className="text-lg font-semibold">Subscription</h1>
-                        </div>
-                        <SubscriptionPage
-                            plans={plans}
-                            currentSubscription={currentSubscription}
-                        />
-                    </div>
-                    <div className="flex flex-col gap-5">
-                        <div className="lg:col-span-2 flex items-center gap-3">
+                        <div className="flex items-center gap-3">
                             <User size={20} />
                             <h1 className="text-lg font-semibold">Personal information</h1>
                         </div>
@@ -80,11 +63,38 @@ const AccountSettings = ({
                             handleDragLeave={handleDragLeave}
                             handleSubmit={handlePersonalSubmit}
                         />
+                    </div>
+                    <div className="flex flex-col gap-5">
+                        <div className="flex items-center gap-3">
+                            <Sparkles size={20} />
+                            <h1 className="text-lg font-semibold">Subscription</h1>
+                        </div>
+                        <SubscriptionPage
+                            plans={plans}
+                            currentSubscription={currentSubscription}
+                        />
+                    </div>
+                </div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                    <div className="flex flex-col gap-5">
+                        <div className="flex items-center gap-3">
+                            <Lock size={20} />
+                            <h1 className="text-lg font-semibold">Account security</h1>
+                        </div>
                         <AccountSecurity
                             formData={securityForm}
                             passwordState={passwordState}
                             handleChange={handleSecurityChange}
                             handleSubmit={handleSecuritySubmit}
+                        />
+                    </div>
+                    <div className="flex flex-col gap-5">
+                        <div className="flex items-center gap-3">
+                            <Landmark size={20} />
+                            <h1 className="text-lg font-semibold">Bank account</h1>
+                        </div>
+                        <PaymentAccount
+                            paymentAccount={paymentAccount}
                         />
                     </div>
                 </div>

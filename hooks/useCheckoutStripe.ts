@@ -1,22 +1,26 @@
+import { revalidateSubscription } from "@/actions/subscription.action";
 import { SignUpForm } from "@/types/auth";
 import { useElements, useStripe } from "@stripe/react-stripe-js";
+import useCurrentProfile from "./useCurrentProfile";
 import { FormEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
 
-const useCheckoutStripe = ({ 
+const useCheckoutStripe = ({
     planId,
     amount,
     form,
     handleShowStripeElement
- }: {
+}: {
     planId: string,
     amount: number,
     form: SignUpForm,
     handleShowStripeElement: () => void
- }) => {
+}) => {
+    const { currentProfile } = useCurrentProfile();
 
     const stripe = useStripe();
     const elements = useElements();
+
     const [errorMessage, setErrorMessage] = useState<string>("");
     const [clientSecret, setClientSecret] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
@@ -54,6 +58,9 @@ const useCheckoutStripe = ({
         }
 
         if (paymentIntent.status === "succeeded") {
+            if (currentProfile) {
+                revalidateSubscription();
+            }
             handleShowStripeElement();
             toast.success("Check your inbox to activate your account.");
             setLoading(false);
@@ -76,7 +83,7 @@ const useCheckoutStripe = ({
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ 
+            body: JSON.stringify({
                 planId,
                 amount: amount * 100,
                 name,

@@ -12,7 +12,13 @@ import {
 import { revalidatePath } from "next/cache";
 import { supabase } from "@/lib/supabase/client";
 
-export async function getSubscriptionPlans(): Promise<SubscriptionPlanInterface[]> {
+export async function revalidateSubscription(): Promise<void> {
+    revalidatePath("/owner/settings/account");
+    revalidatePath("/owner");
+}
+
+export async function getSubscriptionPlans()
+    : Promise<SubscriptionPlanInterface[]> {
     try {
         const request = (async () => {
             const { data: plans, error } = await supabase
@@ -34,7 +40,8 @@ export async function getSubscriptionPlans(): Promise<SubscriptionPlanInterface[
     }
 }
 
-export async function getCurrentSubscription(): Promise<SubscriptionInterface | null> {
+export async function getCurrentSubscription()
+    : Promise<SubscriptionInterface | null> {
     try {
         const request = (async () => {
             const { supabase, userId } = await getServerAuth();
@@ -54,7 +61,43 @@ export async function getCurrentSubscription(): Promise<SubscriptionInterface | 
 
             if (!data) return null;
 
+            const isExpired = data?.status === "active"
+                && new Date(data.endDate) < new Date();
+
+            if (isExpired) {
+                await expireSubscription();
+            }
+
             return normalizeData(data) as SubscriptionInterface;
+        })()
+
+        return Promise.race([
+            request,
+            rejectTimeout()
+        ])
+    } catch (error) {
+        throw error;
+    }
+}
+
+export async function expireSubscription(): Promise<void> {
+    try {
+        const request = (async () => {
+            const { supabase, userId } = await getServerAuth();
+
+            if (!isUUID(userId)) throw new Error("Unauthorized");
+
+            const { error } = await supabase
+                .from("subscriptions")
+                .update({ status: "expired" })
+                .eq("owner_id", userId)
+                .eq("status", "active")
+                .lt("end_date", new Date().toISOString());
+
+            if (error) throw new Error(`Expire subscription error, ${error.message}`);
+
+            revalidatePath("/owner/settings/account");
+            revalidatePath("/owner");
         })()
 
         return Promise.race([
@@ -93,7 +136,7 @@ export async function cancelSubscription(
     }
 
     revalidatePath("/owner/settings/account");
-
+    revalidatePath("/owner");
     return {
         error: null,
         success: "Subscription cancelled successfully"

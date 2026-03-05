@@ -1,36 +1,20 @@
-"use client";
+import { getCurrentSubscription } from "@/actions/subscription.action";
+import OwnerLayoutClient from "@/components/Layouts/OwnerLayoutClient";
 
-import SideBarLyout from "@/components/Layouts/SideBar";
-import OwnerProtected from "@/components/OwnerProtected";
-import {
-    SidebarProvider,
-    SidebarTrigger
-} from "@/components/ui/sidebar";
-import { useAuthContext } from "@/context/AuthContext";
-import { redirect } from "next/navigation";
-import { ReactNode } from "react";
-
-const AdminLayout = ({ children }: { children: ReactNode }) => {
-    const { user } = useAuthContext();
-
-    if (!user) return redirect("/auth/sign-in");
+const OwnerLayout = async ({
+    children
+}: {
+    children: React.ReactNode
+}) => {
+    const currentSubscription = await getCurrentSubscription();
 
     return (
-        <SidebarProvider>
-            <SideBarLyout />
-            <main className="relative w-full h-dvh p-8">
-                <OwnerProtected>
-                    <SidebarTrigger
-                        className="absolute top-0 left-0 text-white/80 cursor-pointer 
-                        hover:text-white/80 hover:bg-transparent hover:opacity-80"
-                    />
-                    <div className="pb-5">
-                        {children}
-                    </div>
-                </OwnerProtected>
-            </main>
-        </SidebarProvider>
+        <OwnerLayoutClient
+            currentSubscription={currentSubscription}
+        >
+            {children}
+        </OwnerLayoutClient>
     )
 }
 
-export default AdminLayout;
+export default OwnerLayout;

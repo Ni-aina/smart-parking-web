@@ -262,7 +262,7 @@ export async function getParkingLots(
             if (!parkings || error) return [];
 
             const normalized = parkings.map((item: any) => normalizeData(item));
-            const count = normalized.at(0).totalLots;
+            const count = normalized.at(0)?.totalLots || 0;
 
             return Object.assign(normalized, { count });
         })()
@@ -348,8 +348,8 @@ export async function getOccupancyLots(filter: keyFilter): Promise<{
 
             const availableSpots = totalSpots - occupiedSpots;
 
-            return { 
-                occupiedSpots, 
+            return {
+                occupiedSpots,
                 availableSpots,
                 totalSpots
             }
