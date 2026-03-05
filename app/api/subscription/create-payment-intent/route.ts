@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(request: NextRequest) {
    try {
         const { 
+            customerId,
             amount,
             name,
             email,
@@ -27,11 +28,21 @@ export async function POST(request: NextRequest) {
 
         let [
             supabase,
-            user
+            user,
+            customer
         ] = await Promise.all([
             createClient(),
-            getProfileByEmail(email)
+            getProfileByEmail(email),
+            customerId ?
+            stripe.customers.retrieve(customerId) :
+            stripe.customers.create({
+                email,
+                name,
+                phone
+            })
         ])
+
+        if (!customer) throw new Error("Failed to retrieve or create customer");
 
         if (!user) {
             const { data: { user: signUpUser }, error } = await supabase.auth.signUp({
@@ -57,6 +68,7 @@ export async function POST(request: NextRequest) {
             currency: "usd",
             payment_method_types: ["card"],
             metadata: {
+                customerId: customer.id,
                 userId,
                 planId,
                 name,

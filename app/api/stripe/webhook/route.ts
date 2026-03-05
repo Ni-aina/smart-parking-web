@@ -37,6 +37,7 @@ export async function POST(req: Request) {
                         // Reservation payment
                         reservationId,
                         // Subscription payment
+                        customerId,
                         planId,
                         userId,
                         name,
@@ -83,6 +84,7 @@ export async function POST(req: Request) {
 
                 if (
                     transactionId && 
+                    customerId && 
                     userId && 
                     planId && 
                     name && 
@@ -107,7 +109,8 @@ export async function POST(req: Request) {
                             roles: ["owner", "driver"],
                             fullName: name,
                             emailAddress: email,
-                            phoneNumber: phone
+                            phoneNumber: phone,
+                            customerId
                         }),
                         supabaseAdmin
                         .from("subscriptions")

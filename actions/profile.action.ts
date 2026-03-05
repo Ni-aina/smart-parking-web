@@ -13,7 +13,7 @@ import { ProfileStateInterface } from "@/hooks/useAccountSettings";
 import { uploadFile } from "./uploadFile.action";
 import { removeFile } from "./removeFile.action";
 
-export async function createProfile(profile: ProfileInterface)
+export async function createProfile(profile: ProfileInterface & { customerId: string })
     : Promise<ProfileInterface> {
     try {
         const {
