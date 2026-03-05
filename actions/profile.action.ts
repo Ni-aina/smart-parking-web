@@ -46,31 +46,6 @@ export async function createProfile(profile: ProfileInterface & { customerId: st
     }
 }
 
-export async function findProfileByEmail(email: string)
-    : Promise<User | null> {
-    try {
-        const request = (async () => {
-            const { data: profile } = await supabase.from("profiles")
-                .select("id, email")
-                .eq("email", email)
-                .maybeSingle();
-
-            if (!profile) return null;
-
-            const normalized = normalizeData(profile);
-
-            return normalized as User;
-        })()
-
-        return Promise.race([
-            request,
-            rejectTimeout()
-        ])
-    } catch (error) {
-        throw error;
-    }
-}
-
 export async function getCurrentProfile(user: User | null): Promise<ProfileInterface> {
     try {
         if (!user) throw new Error("Unauthorized");

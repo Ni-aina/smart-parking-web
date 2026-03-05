@@ -1,4 +1,3 @@
-import { findProfileByEmail } from "@/actions/profile.action";
 import { stripe } from "@/lib/stripe/server";
 import { createClient } from "@/lib/supabase/server";
 import { isUUID } from "@/utils/isUUID";
@@ -7,7 +6,6 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(request: NextRequest) {
    try {
         const { 
-            customerId,
             amount,
             name,
             email,
@@ -18,6 +16,7 @@ export async function POST(request: NextRequest) {
 
         if (
             !isUUID(planId) ||
+            !amount || amount <= 0 ||
             !name || 
             !email || 
             !phone ||
@@ -26,37 +25,25 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
         }
 
-        let [
-            supabase,
-            user,
-            customer
+        const supabase = await createClient();
+
+        const [
+            customer,
+            { data: { user }, error }
         ] = await Promise.all([
-            createClient(),
-            findProfileByEmail(email),
-            customerId ?
-            stripe.customers.retrieve(customerId) :
             stripe.customers.create({
                 email,
                 name
-            })
-        ])
-
-        if (!customer) throw new Error("Failed to retrieve customer");
-
-        if (!user) {
-            const { data: { user: signUpUser }, error } = await supabase.auth.signUp({
+            }),
+            supabase.auth.signUp({
                 email,
                 password
             })
-            
-            if (error) throw new Error(`Failed to create user ${error?.message}`);
-            
-            user = signUpUser;
-        }
+        ])
 
-        if (!user) {
-            throw new Error("Failed to get user");
-        }
+        if (!customer) throw new Error("Failed to create customer");
+
+        if (!user || error) throw new Error(`Failed to create user ${error?.message}`);
 
         const {
             id: userId
@@ -79,7 +66,6 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ clientSecret: paymentIntent.client_secret })
 
    } catch (error) {
-        console.error(error);
         return NextResponse.json(
             { error },
             { status: 500 }

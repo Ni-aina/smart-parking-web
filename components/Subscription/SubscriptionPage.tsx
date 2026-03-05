@@ -16,38 +16,34 @@ import {
     SubscriptionInterface
 } from "@/types/subscription";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import DeleteConfirm from "../ui/deleteConfirm";
-import { BankAccountInterface } from "@/types/payment";
 
 interface SubscriptionPageProps {
     plans: SubscriptionPlanInterface[];
     currentSubscription: SubscriptionInterface | null;
-    paymentAccount: BankAccountInterface | null;
 }
 
 const steps = ["Plan", "Payment"];
 
 const SubscriptionPage = ({
     plans,
-    currentSubscription,
-    paymentAccount
+    currentSubscription
 }: SubscriptionPageProps) => {
     const {
         step,
         selectedPlan,
         setSelectedPlan,
-        cardForm,
-        setCardForm,
         activePlan,
-        isSubscribing,
         isCancelling,
         handleNext,
         handleBack,
-        handleSubscribe,
         handleCancel,
-        handleNewSubscription
+        handleNewSubscription,
+        handleSubscriptionComplete
     } = useSubscription(plans, currentSubscription);
 
+    const router = useRouter();
     const [isConfirmCancel, setIsConfirmCancel] = useState<boolean>(false);
 
     const showStatus = step === -1 && currentSubscription;
@@ -60,6 +56,11 @@ const SubscriptionPage = ({
     const handleConfirm = () => {
         setIsConfirmCancel(false);
         handleCancel();
+    }
+
+    const handlePaymentSuccess = () => {
+        handleSubscriptionComplete();
+        router.refresh();
     }
 
     return (
@@ -146,11 +147,7 @@ const SubscriptionPage = ({
                         step === 1 && activePlan &&
                         <StepCard
                             activePlan={activePlan}
-                            cardForm={cardForm}
-                            setCardForm={setCardForm}
-                            onSubscribe={handleSubscribe}
-                            isPending={isSubscribing}
-                            paymentAccount={paymentAccount}
+                            onSuccess={handlePaymentSuccess}
                         />
                     }
 

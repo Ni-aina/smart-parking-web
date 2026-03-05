@@ -82,15 +82,7 @@ export async function POST(req: Request) {
                     }
                 }
 
-                if (
-                    transactionId && 
-                    customerId && 
-                    userId && 
-                    planId && 
-                    name && 
-                    email && 
-                    phone
-                ) {
+                if (transactionId && customerId && userId && planId) {
 
                     const cardLast4 = charge.payment_method_details?.card?.last4 ?? "****";
 
@@ -98,21 +90,18 @@ export async function POST(req: Request) {
                     const endDate = new Date(startDate);
                     endDate.setMonth(endDate.getMonth() + 1);
 
-                    const [
-                        _profile,
-                        {
-                            error: subscriptionError
-                        }
-                    ] = await Promise.all([
-                        createProfile({
+                    if (name && email && phone) {
+                        await createProfile({
                             id: userId,
                             roles: ["owner", "driver"],
                             fullName: name,
                             emailAddress: email,
                             phoneNumber: phone,
                             customerId
-                        }),
-                        supabaseAdmin
+                        })
+                    }
+
+                    const { error: subscriptionError } = await supabaseAdmin
                         .from("subscriptions")
                         .upsert({
                             owner_id: userId,
@@ -125,7 +114,6 @@ export async function POST(req: Request) {
                         }, { onConflict: "owner_id" })
                         .select("id")
                         .single()
-                    ])
                     
                     if (subscriptionError) {
                         throw subscriptionError;

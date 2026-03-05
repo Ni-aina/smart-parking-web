@@ -60,7 +60,6 @@ const AccountSettings = ({
                         <SubscriptionPage
                             plans={plans}
                             currentSubscription={currentSubscription}
-                            paymentAccount={paymentAccount}
                         />
                     </div>
                     <div className="flex flex-col gap-5">

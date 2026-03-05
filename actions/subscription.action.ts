@@ -4,7 +4,6 @@ import { getServerAuth } from "./authServer.action";
 import { isUUID } from "@/utils/isUUID";
 import { normalizeData } from "@/utils/normalizeData";
 import { rejectTimeout } from "@/utils/rejectTimeout";
-import { validateCardNumber, validateExpiredDate } from "@/utils/checkBankInfo";
 import {
     SubscriptionPlanInterface,
     SubscriptionInterface,
@@ -64,101 +63,6 @@ export async function getCurrentSubscription(): Promise<SubscriptionInterface | 
         ])
     } catch (error) {
         throw error;
-    }
-}
-
-export async function subscribe(
-    _previousState: SubscriptionStateInterface,
-    payload: {
-        planId: string;
-        cardNumber: string;
-        expiredDate: string;
-    }
-): Promise<SubscriptionStateInterface> {
-
-    const { planId, cardNumber, expiredDate } = payload;
-
-    if (!planId || !cardNumber || !expiredDate) {
-        return {
-            error: "All fields are required",
-            success: null
-        }
-    }
-
-    if (!isUUID(planId)) {
-        return {
-            error: "Invalid plan selected",
-            success: null
-        }
-    }
-
-    const cleanCard = cardNumber.replace(/\s/g, "");
-
-    if (!validateCardNumber(cleanCard)) {
-        return {
-            error: "Invalid card number. Please enter a valid Visa card.",
-            success: null
-        }
-    }
-
-    if (!validateExpiredDate(expiredDate)) {
-        return {
-            error: "Card is expired or invalid date format",
-            success: null
-        }
-    }
-
-    const { supabase, userId } = await getServerAuth();
-
-    if (!supabase || !isUUID(userId)) {
-        return {
-            error: "Unauthorized",
-            success: null
-        }
-    }
-
-    const { data: plan, error: planError } = await supabase
-        .from("subscription_plans")
-        .select("*")
-        .eq("id", planId)
-        .single();
-
-    if (planError || !plan) {
-        return {
-            error: "Plan not found",
-            success: null
-        }
-    }
-
-    const startDate = new Date();
-    const endDate = new Date(startDate);
-    endDate.setMonth(endDate.getMonth() + 1);
-
-    const cardLastFour = cleanCard.slice(-4);
-
-    const { error } = await supabase
-        .from("subscriptions")
-        .upsert({
-            owner_id: userId,
-            plan_id: planId,
-            card_last_four: cardLastFour,
-            status: "active",
-            start_date: startDate.toISOString(),
-            end_date: endDate.toISOString()
-        }, { onConflict: "owner_id" });
-
-    if (error) {
-        return {
-            error: error.message,
-            success: null
-        }
-    }
-
-    revalidatePath("/owner/settings/account");
-
-    return {
-        error: null,
-        success: `Successfully subscribed to ${plan.name} plan`
     }
 }
 

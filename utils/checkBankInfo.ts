@@ -1,3 +1,19 @@
+export function getCardBrand(cardNumber: string): string | null {
+    const digits = cardNumber.replace(/\s/g, "");
+
+    if (digits.length < 4) return null;
+
+    if (/^4/.test(digits)) return "Visa";
+    if (/^5[1-5]/.test(digits) || /^2[2-7]/.test(digits)) return "Mastercard";
+    if (/^3[47]/.test(digits)) return "Amex";
+    if (/^6(?:011|5)/.test(digits)) return "Discover";
+    if (/^35(?:2[89]|[3-8])/.test(digits)) return "JCB";
+    if (/^3(?:0[0-5]|[68])/.test(digits)) return "Diners";
+    if (/^62/.test(digits)) return "UnionPay";
+
+    return null;
+}
+
 export function validateCardNumber(cardNumber: string): boolean {
     const digits = cardNumber.replace(/\s/g, "");
 
