@@ -14,14 +14,16 @@ interface ClientParkingLotsInterface {
     parkings: ParkingInterface[];
     agents: ProfileInterface[];
     count: number;
+    searchTerm: string;
 }
 
 const ClientParkingLots = ({
     parkings,
     agents,
-    count
+    count,
+    searchTerm
 }: ClientParkingLotsInterface) => {
-    const [search, setSearch] = useState("");
+    const [search, setSearch] = useState(searchTerm);
     const [isConfirm, setIsConfirm] = useState("");
     const router = useRouter();
 

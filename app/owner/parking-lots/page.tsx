@@ -5,6 +5,7 @@ import ClientParkingLots from "@/components/Parking-lots/ClientParkingLots";
 interface ParkingLotsPageProps {
     page?: number;
     limit?: number;
+    searchTerm?: string;
 }
 
 const ParkingLotsPage = async ({
@@ -12,9 +13,13 @@ const ParkingLotsPage = async ({
 }: {
     searchParams: Promise<ParkingLotsPageProps>
 }) => {
-    const { page, limit = 6 } = await searchParams;
+    const { 
+        page, 
+        limit = 6,
+        searchTerm = ""
+    } = await searchParams;
     const [parkings, agents] = await Promise.all([
-        getParkingLots(page, limit),
+        getParkingLots(page, limit, searchTerm),
         getAgents()
     ])
 
@@ -25,6 +30,7 @@ const ParkingLotsPage = async ({
             parkings={parkings}
             agents={agents}
             count={count}
+            searchTerm={searchTerm}
         />
     )
 }

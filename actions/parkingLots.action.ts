@@ -240,7 +240,7 @@ export async function getParkingById(parkingId: string): Promise<ParkingInterfac
 export async function getParkingLots(
     page = 1,
     limit = 20,
-    searchTerm?: string
+    searchTerm: string
 ): Promise<ParkingInterface[] & { count: number }> {
     try {
         const request = (async () => {
