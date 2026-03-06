@@ -4,6 +4,7 @@ import ClientType from "@/components/Types/ClientType";
 interface TypesPageProps {
     page?: number;
     limit?: number;
+    searchTerm?: string;
 }
 
 const TypesPage = async ({
@@ -11,14 +12,19 @@ const TypesPage = async ({
 }: {
     searchParams: Promise<TypesPageProps>
 }) => {
-    const { page, limit = 10 } = await searchParams;
-    const types = await getTypes(page, limit);
+    const { 
+        page,
+        limit = 10,
+        searchTerm = ""
+    } = await searchParams;
+    const types = await getTypes(page, limit, searchTerm);
     const { count } = types;
 
     return (
         <ClientType
             types={types}
             count={count}
+            searchTerm={searchTerm}
         />
     )
 }

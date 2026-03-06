@@ -17,7 +17,7 @@ const initForm = {
     maxHeight: ""
 }
 
-const useType = ({ types }: { types: TypeInterface[] }) => {
+const useType = ({ types, searchTerm }: { types: TypeInterface[], searchTerm: string }) => {
 
     const [optimisticTypes, addOptimisticTypes] = useOptimistic(
         types,
@@ -42,7 +42,7 @@ const useType = ({ types }: { types: TypeInterface[] }) => {
         }
     )
 
-    const [search, setSearch] = useState("");
+    const [search, setSearch] = useState(searchTerm);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isPending, setIsPending] = useState(false);
     const [formData, setFormData] = useState<FormTypeInterface>(initForm);

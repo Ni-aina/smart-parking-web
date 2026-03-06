@@ -107,7 +107,8 @@ export async function deleteType(id: string) {
 
 export async function getTypes(
     page = 1,
-    limit = 20
+    limit = 20,
+    searchTerm: string
 ): Promise<TypeInterface[] & { count: number }> {
     try {
         const request = (async () => {
@@ -131,6 +132,7 @@ export async function getTypes(
                 supabase.from("lot_types")
                     .select("*")
                     .eq("owner_id", ownerId)
+                    .or(`vehicle_type.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`)
                     .order("created_at", {
                         ascending: false
                     })

@@ -126,9 +126,9 @@ export async function getDrivers(
 }
 
 export async function getAgents(
-    page: number = 1,
-    limit: number = 50,
-    searchTerm: string = ""
+    page = 1,
+    limit = 50,
+    searchTerm = ""
 ): Promise<ProfileInterface[]> {
     try {
         const request = (async () => {

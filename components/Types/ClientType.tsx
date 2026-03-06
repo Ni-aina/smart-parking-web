@@ -10,10 +10,12 @@ import InputNumber from "../ui/inputNumber";
 
 const ClientType = ({ 
     types,
-    count
+    count,
+    searchTerm
  }: { 
     types: TypeInterface[],
-    count: number
+    count: number,
+    searchTerm: string
  }) => {
 
     const {
@@ -31,7 +33,10 @@ const ClientType = ({
         handleOnClose,
         handleEdit,
         handleDelete
-    } = useType({ types });
+    } = useType({ 
+        types,
+        searchTerm
+    })
 
     const {
         id,

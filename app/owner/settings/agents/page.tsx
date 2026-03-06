@@ -11,7 +11,7 @@ interface AgentsPageProps {
 
 const AgentsPage = async ({ searchParams }: AgentsPageProps) => {
     const {
-        page = 1,
+        page,
         limit = 10,
         searchTerm = ""
     } = await searchParams;
