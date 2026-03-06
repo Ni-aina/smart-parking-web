@@ -16,6 +16,7 @@ const Pagination = ({
 }: PaginationProps) => {
     const searchParams = useSearchParams();
     const page = searchParams.get("page");
+    const searchTerm = searchParams.get("searchTerm");
     const pathname = usePathname();
     const router = useRouter();
 
@@ -31,7 +32,7 @@ const Pagination = ({
     const navigateToPage = (page: number) => {
         startTransition(() => {
             toast.loading("Loading data...", { id: "pagination-loading" });
-            router.push(`?page=${page}&limit=${showPage}`);
+            router.push(`?page=${page}&limit=${showPage}${searchTerm ? `&searchTerm=${searchTerm}` : ""}`);
             setActivePage(page);
         })
     }
