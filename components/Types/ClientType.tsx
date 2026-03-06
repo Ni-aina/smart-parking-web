@@ -109,13 +109,13 @@ const ClientType = ({
                         <button
                             type="button"
                             onClick={handleOnClose}
-                            className="w-[120px] h-[40px] flex justify-center items-center 
+                            className="w-30 h-10 flex justify-center items-center 
                             bg-white/5 rounded-sm cursor-pointer hover:opacity-80"
                         >
                             Cancel
                         </button>
                         <button
-                            className="w-[120px] h-[40px] flex justify-center items-center gap-2
+                            className="w-30 h-10 flex justify-center items-center gap-2
                             bg-white text-black rounded-sm cursor-pointer hover:opacity-80
                             disabled:cursor-not-allowed disabled:opacity-80"
                             disabled={isPending}

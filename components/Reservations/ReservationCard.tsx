@@ -101,13 +101,13 @@ const ReservationCard = ({
         {
           loadingImage &&
           <Skeleton
-            className="flex-shrink-0 w-28 h-20 bg-white/5"
+            className="shrink-0 w-28 h-20 bg-white/5"
           />
         }
         <div
           className={
             `
-                relative flex-shrink-0 rounded-md overflow-hidden
+                relative shrink-0 rounded-md overflow-hidden
                 ${loadingImage ? "w-0 h-0" : "w-28 h-20"}
               `
           }

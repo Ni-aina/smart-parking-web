@@ -1,11 +1,16 @@
 "use client";
 
 import { Search } from "lucide-react";
+import { useRouter, usePathname } from "next/navigation";
 import { 
     ChangeEvent, 
     Dispatch, 
-    SetStateAction 
+    SetStateAction, 
+    useEffect,
+    useTransition
 } from "react";
+import { toast } from "sonner";
+import useDebounce from "@/hooks/useDebounce";
 
 interface Navbarinterface {
     title: string;
@@ -20,11 +25,41 @@ const Navbar = ({
     setSearch,
     onAdd
 }: Navbarinterface) => {
+    const router = useRouter();
+    const pathname = usePathname();
+
+    const [isPending, startTransition] = useTransition();
+    const {
+        debouncedValue: debouncedSearch
+    } = useDebounce(search, 300);
 
     const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
         setSearch(value);
     }
+
+    const handleFilter = ()=> {
+        startTransition(() => {
+            toast.loading("Loading data...", { id: "filter-loading" });
+            router.push(`${pathname}?page=1&searchTerm=${debouncedSearch}`);
+        })
+    }
+
+    useEffect(() => {
+        if (!debouncedSearch) {
+            router.push(pathname);
+            return;
+        } 
+        handleFilter();
+    }, [
+        pathname,
+        debouncedSearch
+    ])
+
+    useEffect(() => {
+        if (isPending) return;
+        toast.dismiss("filter-loading");
+    }, [isPending])
 
     return (  
         <div className="flex flex-wrap justify-between items-center text-white/90 gap-5">

@@ -425,7 +425,8 @@ export async function getBokingsLastWeekForOwner()
 
 export async function getReservationsForOwner(
     page = 1,
-    limit = 20
+    limit = 20,
+    searchTerm = ""
 )
     : Promise<ReservationInterface[] & { count: number }> {
     try {
@@ -448,15 +449,16 @@ export async function getReservationsForOwner(
                     .eq("lot.owner_id", userId),
                 supabase.from("reservations")
                     .select(`
-                    *,
-                    driver: driver_id(*),
-                    lot: lot_id!inner(
                         *,
-                        lot_type:type_id(*)
-                    ),
-                    vehicle: vehicle_id(*)
-                `)
+                        driver: driver_id!inner(*),
+                        lot: lot_id!inner(
+                            *,
+                            lot_type:type_id(*)
+                        ),
+                        vehicle: vehicle_id(*)
+                    `)
                     .eq("lot.owner_id", userId)
+                    .ilike("driver.full_name", `%${searchTerm}%`)
                     .order("created_at", {
                         ascending: false
                     })

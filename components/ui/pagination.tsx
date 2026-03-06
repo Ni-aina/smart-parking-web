@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 
@@ -14,10 +14,12 @@ const Pagination = ({
     showPage,
     count
 }: PaginationProps) => {
+    const searchParams = useSearchParams();
+    const page = searchParams.get("page");
     const pathname = usePathname();
     const router = useRouter();
 
-    const [activePage, setActivePage] = useState(1);
+    const [activePage, setActivePage] = useState(page ? parseInt(page) : 1);
     const [isPending, startTransition] = useTransition();
 
     const start = (activePage - 1) * showPage + 1;
@@ -44,6 +46,11 @@ const Pagination = ({
         navigateToPage(updatedPage);
     }
 
+    useEffect(()=> {
+        if (!page) return;
+        setActivePage(parseInt(page));
+    }, [page])
+
     useEffect(() => {
         router.push(pathname);
         setActivePage(1);
@@ -51,7 +58,7 @@ const Pagination = ({
 
     useEffect(() => {
         if (isPending) return;
-            toast.dismiss("pagination-loading");
+        toast.dismiss("pagination-loading");
     }, [isPending])
 
     if (!count) return null;

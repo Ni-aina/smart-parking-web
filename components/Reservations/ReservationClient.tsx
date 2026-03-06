@@ -12,16 +12,18 @@ import { cancelReservation } from "@/actions/reservations.action";
 interface ReservationClientProps {
     reservations: ReservationInterface[];
     count: number;
+    searchTerm: string;
 }
 
 const title = "Reservations";
 
 const ReservationClient = ({
     reservations,
-    count
+    count,
+    searchTerm
 }: ReservationClientProps) => {
     const router = useRouter();
-    const [search, setSearch] = useState<string>("");
+    const [search, setSearch] = useState<string>(searchTerm);
     const [cancellingId, setCancellingId] = useState("");
     const [isCancelling, setIsCancelling] = useState(false);
 
