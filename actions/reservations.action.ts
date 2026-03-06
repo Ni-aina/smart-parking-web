@@ -445,8 +445,12 @@ export async function getReservationsForOwner(
                 { data: reservations, error }
             ] = await Promise.all([
                 supabase.from("reservations")
-                    .select("*, lot:lot_id!inner(owner_id)", { count: "exact" })
-                    .eq("lot.owner_id", userId),
+                    .select(`
+                        *, lot:lot_id!inner(owner_id), 
+                        driver: driver_id!inner(full_name)
+                    `, { count: "exact" })
+                    .eq("lot.owner_id", userId)
+                    .ilike("driver.full_name", `%${searchTerm}%`),
                 supabase.from("reservations")
                     .select(`
                         *,

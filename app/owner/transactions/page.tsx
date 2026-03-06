@@ -25,6 +25,7 @@ const TransactionsPage = async ({
         <TransactionsClient
             transactions={transactions}
             count={count}
+            searchTerm={searchTerm}
         />
     )
 }

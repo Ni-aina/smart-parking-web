@@ -1,22 +1,58 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { Search } from "lucide-react";
 import { PaymentInterface } from "@/types/payment";
 import TransactionTable from "./TransactionTable";
+import useDebounce from "@/hooks/useDebounce";
+import { toast } from "sonner";
+import { useRouter, usePathname } from "next/navigation";
 
 interface TransactionClientProps {
     transactions: PaymentInterface[];
     count: number;
+    searchTerm: string;
 }
 
 const title = "Transactions";
 
 const TransactionClient = ({
     transactions,
-    count
+    count,
+    searchTerm
 }: TransactionClientProps) => {
-    const [search, setSearch] = useState<string>("");
+    const router = useRouter();
+    const pathname = usePathname();
+
+    const [search, setSearch] = useState<string>(searchTerm);
+   const [isPending, startTransition] = useTransition();
+
+    const {
+        debouncedValue: debouncedSearch
+    } = useDebounce(search, 300);
+
+     const handleFilter = ()=> {
+        startTransition(() => {
+            toast.loading("Loading data...", { id: "filter-loading" });
+            router.push(`${pathname}?page=1&searchTerm=${debouncedSearch}`);
+        })
+    }
+
+    useEffect(() => {
+        if (!debouncedSearch) {
+            router.push(pathname);
+            return;
+        } 
+        handleFilter();
+    }, [
+        pathname,
+        debouncedSearch
+    ])
+
+    useEffect(() => {
+        if (isPending) return;
+        toast.dismiss("filter-loading");
+    }, [isPending])
 
     return (
         <div className="flex flex-col gap-5">

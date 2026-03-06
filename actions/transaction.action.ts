@@ -63,50 +63,24 @@ export async function getPaymentsForOwner(
             throw new Error("Invalid user ID");
         }
 
-        const from = (page - 1) * limit;
-        const to = from + (limit - 1);
-
         const request = (async () => {
-            const [
-                { count },
-                { data: payments, error }
-            ] = await Promise.all([
-                supabase.from("payments")
-                    .select(
-                        "*, reservation:reservation_id!inner(*, lot:lot_id!inner(owner_id))",
-                        { count: "exact" }
-                    )
-                    .eq("reservation.lot.owner_id", userId),
-                supabase.from("payments")
-                    .select(`
-                        *,
-                        reservation:reservation_id!inner(
-                            *,
-                            driver:driver_id(*),
-                            lot:lot_id!inner(
-                                *,
-                                lot_type:type_id(*)
-                            ),
-                            vehicle:vehicle_id(*)
-                        )
-                    `)
-                    .eq("reservation.lot.owner_id", userId)
-                    .order("created_at", {
-                        ascending: false
-                    })
-                    .range(from, to)
-            ])
+            const { data, error } = await supabase.rpc("get_payments_for_owner", {
+                p_owner_id: userId,
+                p_search_term: searchTerm,
+                p_limit: limit,
+                p_offset: (page - 1) * limit,
+            })
 
-            if (!payments) throw new Error(`Payment fetching error, ${error.message}`);
+            if (error) throw new Error(`Payment fetching error: ${error.message}`);
+            if (!data?.length) return Object.assign([], { count: 0 });
 
-            const normalized = payments.map((item: any) => normalizeData(item));
+            const count = Number(data.at(0)?.total_count || 0);
+            const normalized = data.map((row: any) => normalizeData(row.payment_data));
+
             return Object.assign(normalized, { count });
         })()
 
-        return Promise.race([
-            request,
-            rejectTimeout()
-        ])
+        return Promise.race([request, rejectTimeout()]);
     } catch (error) {
         throw error;
     }

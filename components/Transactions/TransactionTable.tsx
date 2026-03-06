@@ -113,12 +113,12 @@ const TransactionTable = ({
                                             className={index % 2 === 0 ? "bg-black/5" : ""}
                                         >
                                             <td className="px-5 py-4">
-                                                <div className="truncate max-w-[140px]">
+                                                <div className="truncate max-w-35">
                                                     {driver?.fullName || "—"}
                                                 </div>
                                             </td>
                                             <td className="px-5 py-4">
-                                                <div className="truncate max-w-[140px]">
+                                                <div className="truncate max-w-35">
                                                     {lot?.name || "—"}
                                                 </div>
                                             </td>
@@ -143,7 +143,7 @@ const TransactionTable = ({
                                                 </span>
                                             </td>
                                             <td className="px-5 py-4">
-                                                <span className="truncate block max-w-[120px] text-xs font-mono text-white/50">
+                                                <span className="truncate block max-w-30 text-xs font-mono text-white/50">
                                                     {transactionId || "—"}
                                                 </span>
                                             </td>
