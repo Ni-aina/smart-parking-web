@@ -1,5 +1,6 @@
 "use client";
 
+import { revalidateAuthSubscription } from "@/actions/subscription.action";
 import SideBarLyout from "@/components/Layouts/SideBar";
 import OwnerProtected from "@/components/OwnerProtected";
 import SubscriptionProtected from "@/components/SubscriptionProtected";
@@ -10,7 +11,7 @@ import {
 import { useAuthContext } from "@/context/AuthContext";
 import { SubscriptionInterface } from "@/types/subscription";
 import { redirect, usePathname } from "next/navigation";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 
 const OwnerLayoutClient = ({
     children,
@@ -21,6 +22,12 @@ const OwnerLayoutClient = ({
 }) => {
     const { user } = useAuthContext();
     const pathname = usePathname();
+
+    useEffect(() => {
+        (async ()=> {
+            await revalidateAuthSubscription();
+        })()
+    }, [])
 
     if (!user) return redirect("/auth/sign-in");
 

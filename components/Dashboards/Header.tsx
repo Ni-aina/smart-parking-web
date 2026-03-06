@@ -1,6 +1,5 @@
 "use client";
 
-import useCurrentProfile from "@/hooks/useCurrentProfile";
 import CustomButton from "../ui/customButton";
 import { ArrowDown } from "lucide-react";
 import { useEffect, useState, useTransition } from "react";
@@ -9,6 +8,7 @@ import { keyFilter } from "@/types/global";
 import { SelectInterface } from "@/types/input";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
+import { useProfileContext } from "@/context/ProfileContext";
 
 export type trendType = "YES" | "NO";
 
@@ -79,7 +79,7 @@ const HeaderDashboard = ({
 }: HeaderProps) => {
     const searchParams = useSearchParams();
     const filterParams = searchParams.get("filter") || "this-week";
-    const { currentProfile } = useCurrentProfile();
+    const { currentProfile } = useProfileContext();
     const fullName = currentProfile?.fullName || "";
 
     const router = useRouter();

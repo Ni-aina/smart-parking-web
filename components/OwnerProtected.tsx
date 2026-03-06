@@ -1,18 +1,12 @@
 "use client";
 
-import useCurrentProfile from "@/hooks/useCurrentProfile";
 import { ReactNode } from "react";
-import LoadingSkeleton from "./ui/loadingSkeleton";
 import { SidebarTrigger } from "./ui/sidebar";
+import { useProfileContext } from "@/context/ProfileContext";
 
 const OwnerProtected = ({ children }: { children: ReactNode }) => {
 
-    const {
-        currentProfile,
-        isPending
-    } = useCurrentProfile();
-
-    if (isPending) return <LoadingSkeleton />;
+    const { currentProfile } = useProfileContext();
 
     const authorization = currentProfile?.roles.includes("owner") || false;
 

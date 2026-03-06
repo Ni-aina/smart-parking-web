@@ -1,19 +1,31 @@
+import { getCurrentProfile } from "@/actions/profile.action";
 import { getCurrentSubscription } from "@/actions/subscription.action";
 import OwnerLayoutClient from "@/components/Layouts/OwnerLayoutClient";
+import ProfileContextProvider from "@/context/ProfileContext";
 
 const OwnerLayout = async ({
     children
 }: {
     children: React.ReactNode
 }) => {
-    const currentSubscription = await getCurrentSubscription();
+    const [
+        currentProfile,
+        currentSubscription
+    ] = await Promise.all([
+        getCurrentProfile(),
+        getCurrentSubscription()
+    ])
 
     return (
-        <OwnerLayoutClient
-            currentSubscription={currentSubscription}
+        <ProfileContextProvider
+            currentProfile={currentProfile}
         >
-            {children}
-        </OwnerLayoutClient>
+            <OwnerLayoutClient
+                currentSubscription={currentSubscription}
+            >
+                {children}
+            </OwnerLayoutClient>
+        </ProfileContextProvider>
     )
 }
 

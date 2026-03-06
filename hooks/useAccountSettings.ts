@@ -9,7 +9,6 @@ import {
     useEffect,
     useState
 } from "react";
-import useCurrentProfile from "./useCurrentProfile";
 import {
     PersonalInfoFormInterface,
     SecurityFormInterface
@@ -20,6 +19,7 @@ import { logIn } from "@/actions/auth.action";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { isValidPhoneNumber } from "react-phone-number-input";
+import { useProfileContext } from "@/context/ProfileContext";
 
 export interface ProfileStateInterface {
     error: string | null,
@@ -42,10 +42,7 @@ const initialProfileState: ProfileStateInterface = {
 const useAccountSettings = () => {
     const queryClient = useQueryClient();
 
-    const {
-        currentProfile, 
-        isPending: isProfileLoading 
-    } = useCurrentProfile();
+    const { currentProfile } = useProfileContext();
 
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [avatarState, setAvatarState] = useActionState(updateAvatar, initialProfileState)
@@ -190,7 +187,6 @@ const useAccountSettings = () => {
 
     return {
         currentProfile,
-        isProfileLoading,
         personalForm,
         avatarState,
         personalState,

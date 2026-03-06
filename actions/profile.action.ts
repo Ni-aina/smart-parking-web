@@ -4,7 +4,6 @@ import { supabase } from "@/lib/supabase/client";
 import { createClient } from "@/lib/supabase/server";
 import { ProfileInterface } from "@/types/profile";
 import { denormalizeData, normalizeData } from "@/utils/normalizeData";
-import { User } from "@supabase/supabase-js";
 import { getServerAuth } from "./authServer.action";
 import { rejectTimeout } from "@/utils/rejectTimeout";
 import { isUUID } from "@/utils/isUUID";
@@ -46,15 +45,17 @@ export async function createProfile(profile: ProfileInterface & { customerId: st
     }
 }
 
-export async function getCurrentProfile(user: User | null): Promise<ProfileInterface> {
+export async function getCurrentProfile(): Promise<ProfileInterface> {
     try {
-        if (!user) throw new Error("Unauthorized");
-        const { id } = user;
+        const { 
+            supabase, 
+            userId 
+        } = await getServerAuth();
 
         const request = (async () => {
             const { data: currentProfile, error } = await supabase.from("profiles")
                 .select("*")
-                .eq("id", id)
+                .eq("id", userId)
                 .single();
 
             if (!currentProfile || error) throw new Error(`The profile cannot be find, ${error?.message}`);

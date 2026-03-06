@@ -12,11 +12,11 @@ import {
 import { revalidatePath } from "next/cache";
 import { supabase } from "@/lib/supabase/client";
 
-export async function revalidateSubscriptionPlans(): Promise<void> {
+export async function revalidateAuthSubscriptionPlans(): Promise<void> {
     revalidatePath("/auth/sign-up");
 }
 
-export async function revalidateSubscription(): Promise<void> {
+export async function revalidateAuthSubscription(): Promise<void> {
     revalidatePath("/owner/settings/account");
     revalidatePath("/owner");
 }

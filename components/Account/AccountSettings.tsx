@@ -20,7 +20,6 @@ const AccountSettings = ({
     currentSubscription: SubscriptionInterface | null;
 }) => {
     const {
-        isProfileLoading,
         personalForm,
         avatarState,
         personalState,
@@ -37,8 +36,6 @@ const AccountSettings = ({
         handlePersonalSubmit,
         handleSecuritySubmit
     } = useAccountSettings();
-
-    if (isProfileLoading) return <Loading />
 
     return (
         <div className="flex flex-col gap-5 text-white">
