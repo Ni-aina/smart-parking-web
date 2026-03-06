@@ -8,7 +8,6 @@ import {
     Sparkles
 } from "lucide-react";
 import useSubscription from "@/hooks/useSubscription";
-import StepPlan from "./StepPlan";
 import StepCard from "./StepCard";
 import SubscriptionStatus from "./SubscriptionStatus";
 import {
@@ -18,6 +17,7 @@ import {
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import DeleteConfirm from "../ui/deleteConfirm";
+import StepPlan from "./StepPlan";
 
 interface SubscriptionPageProps {
     plans: SubscriptionPlanInterface[];

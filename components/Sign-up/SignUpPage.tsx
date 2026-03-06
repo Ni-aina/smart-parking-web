@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
 import StepAccount from "@/components/Sign-up/StepAccount";
-import StepPlan from "@/components/Sign-up/StepPlan";
+import StepPlan from "@/components/Subscription/StepPlan";
 import StepPayment from "@/components/Sign-up/StepPayment";
 import { SubscriptionPlanInterface } from "@/types/subscription";
 import { SignUpForm } from "@/types/auth";
@@ -80,7 +80,7 @@ const SignUpPage = ({
     }
 
     return (
-        <div className="grid w-full h-dvh sm:place-items-center">
+        <div className="grid w-full min-h-dvh sm:place-items-center py-2">
             <div
                 className={`
                     flex flex-col space-y-4 text-white rounded-xl p-8

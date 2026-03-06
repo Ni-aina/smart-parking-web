@@ -1,12 +1,18 @@
 "use client";
 
+import { revalidateSubscriptionPlans } from "@/actions/subscription.action";
 import { useAuthContext } from "@/context/AuthContext";
 import { redirect, usePathname } from "next/navigation";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 
 const AuthLayout = ({ children }: { children: ReactNode }) => {
     const pathname = usePathname();
     const { user } = useAuthContext();
+
+    useEffect(() => {
+        if (pathname !== "/auth/sign-up") return;
+        revalidateSubscriptionPlans();
+    }, [pathname]);
 
     if (user && pathname !== "/auth/sign-out") return redirect("/owner/dashboard");
 

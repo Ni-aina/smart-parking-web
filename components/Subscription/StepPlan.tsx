@@ -1,10 +1,17 @@
 "use client";
 
 import { Check, Crown } from "lucide-react";
-import { SubscriptionPlanInterface } from "@/types/subscription";
+
+interface Plan {
+    id: string;
+    name: string;
+    price: number;
+    popular?: boolean;
+    features: string[];
+}
 
 interface StepPlanProps {
-    plans: SubscriptionPlanInterface[];
+    plans: Plan[];
     selectedPlan: string;
     setSelectedPlan: (id: string) => void;
 }
@@ -15,14 +22,14 @@ const StepPlan = ({
     setSelectedPlan
 }: StepPlanProps) => {
     return (
-        <div className="flex flex-col gap-3">
+        <div className="mt-3 flex flex-col gap-3">
             {
                 plans.map(plan => (
                     <div
                         key={plan.id}
                         onClick={() => setSelectedPlan(plan.id)}
                         className={`relative p-4 rounded-sm border cursor-pointer 
-                    transition-all ${selectedPlan === plan.id
+                                transition-all ${selectedPlan === plan.id
                                 ? "border-white bg-white/10"
                                 : "border-white/20 hover:border-white/50"
                             }`}
@@ -44,15 +51,15 @@ const StepPlan = ({
                                 <span className="text-white/40 text-xs font-normal">/mo</span>
                             </span>
                         </div>
-                        <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1">
+                        <div className="mt-2 space-y-1">
                             {
                                 plan.features.map(f =>
-                                    <span
+                                    <p
                                         key={f}
                                         className="text-xs text-white/50 flex items-center gap-1"
                                     >
                                         <Check size={10} /> {f}
-                                    </span>
+                                    </p>
                                 )}
                         </div>
                     </div>

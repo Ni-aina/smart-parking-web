@@ -42,7 +42,6 @@ const AccountSettings = ({
 
     return (
         <div className="flex flex-col gap-5 text-white">
-            <h1 className="font-semibold">Account settings</h1>
             <div className="my-5 space-y-10">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
                     <div className="flex flex-col gap-5">
@@ -74,6 +73,10 @@ const AccountSettings = ({
                             currentSubscription={currentSubscription}
                         />
                     </div>
+                </div>
+                <div className="hidden lg:flex items-center gap-10">
+                    <hr className="w-full border-white/5" />
+                    <hr className="w-full border-white/5" />
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
                     <div className="flex flex-col gap-5">
