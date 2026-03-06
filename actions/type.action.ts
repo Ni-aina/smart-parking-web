@@ -108,7 +108,7 @@ export async function deleteType(id: string) {
 export async function getTypes(
     page = 1,
     limit = 20,
-    searchTerm: string
+    searchTerm = ""
 ): Promise<TypeInterface[] & { count: number }> {
     try {
         const request = (async () => {
