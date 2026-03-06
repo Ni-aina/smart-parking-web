@@ -427,8 +427,7 @@ export async function getReservationsForOwner(
     page = 1,
     limit = 20,
     searchTerm = ""
-)
-    : Promise<ReservationInterface[] & { count: number }> {
+): Promise<ReservationInterface[] & { count: number }> {
     try {
         const { supabase, userId } = await getServerAuth();
 
@@ -436,42 +435,20 @@ export async function getReservationsForOwner(
             throw new Error("Invalid user ID");
         }
 
-        const from = (page - 1) * limit;
-        const to = from + (limit - 1);
-
         const request = (async () => {
-            const [
-                { count },
-                { data: reservations, error }
-            ] = await Promise.all([
-                supabase.from("reservations")
-                    .select(`
-                        *, lot:lot_id!inner(owner_id), 
-                        driver: driver_id!inner(full_name)
-                    `, { count: "exact" })
-                    .eq("lot.owner_id", userId)
-                    .ilike("driver.full_name", `%${searchTerm}%`),
-                supabase.from("reservations")
-                    .select(`
-                        *,
-                        driver: driver_id!inner(*),
-                        lot: lot_id!inner(
-                            *,
-                            lot_type:type_id(*)
-                        ),
-                        vehicle: vehicle_id(*)
-                    `)
-                    .eq("lot.owner_id", userId)
-                    .ilike("driver.full_name", `%${searchTerm}%`)
-                    .order("created_at", {
-                        ascending: false
-                    })
-                    .range(from, to)
-            ])
+            const { data, error } = await supabase.rpc("get_reservations_for_owner", {
+                p_owner_id: userId,
+                p_search_term: searchTerm,
+                p_limit: limit,
+                p_offset: (page - 1) * limit
+            });
 
-            if (!reservations) throw new Error(`Reservation fetching error, ${error.message}`);
+            if (error) throw new Error(`Reservation fetching error, ${error.message}`);
+            if (!data?.length) return Object.assign([], { count: 0 });
 
-            const normalized = reservations.map((item: any) => normalizeData(item));
+            const count = Number(data.at(0)?.total_count || 0);
+            const normalized = data.map((row: any) => normalizeData(row.reservation_data));
+
             return Object.assign(normalized, { count });
         })()
 

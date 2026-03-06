@@ -1,7 +1,7 @@
 "use client";
 
 import { AgentFormInterface, ProfileInterface } from "@/types/profile";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { isValidPhoneNumber } from "react-phone-number-input";
 import { toast } from "sonner";
 
@@ -11,11 +11,14 @@ const initForm = {
     phoneNumber: ""
 }
 
-const useAgent = ({ agents }: { agents: ProfileInterface[] }) => {
+const useAgent = (
+    { agents, searchTerm }: 
+    { agents: ProfileInterface[], searchTerm: string }
+) => {
 
     const [localAgents, setLocalAgents] = useState(agents);
 
-    const [search, setSearch] = useState("");
+    const [search, setSearch] = useState(searchTerm);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [formData, setFormData] = useState<AgentFormInterface>(initForm);
 
@@ -131,6 +134,10 @@ const useAgent = ({ agents }: { agents: ProfileInterface[] }) => {
 
         setLocalAgents(prev => prev.filter(item => item.id !== id));
     }
+
+    useEffect(()=> {
+        setLocalAgents(agents);
+    }, [agents])
 
     return {
         formData,

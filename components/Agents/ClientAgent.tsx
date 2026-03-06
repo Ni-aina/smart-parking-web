@@ -12,10 +12,12 @@ import { ChangeEvent } from "react";
 
 const ClientAgent = ({ 
     agents,
-    count
+    count,
+    searchTerm
  }: {
     agents: ProfileInterface[],
-    count: number
+    count: number,
+    searchTerm: string
  }) => {
 
     const {
@@ -32,7 +34,10 @@ const ClientAgent = ({
         handleOnClose,
         handleEdit,
         handleDelete
-    } = useAgent({ agents });
+    } = useAgent({ 
+        agents,
+        searchTerm
+     })
 
     const {
         id,

@@ -125,7 +125,11 @@ export async function getDrivers(
     }
 }
 
-export async function getAgents(): Promise<ProfileInterface[]> {
+export async function getAgents(
+    page: number = 1,
+    limit: number = 50,
+    searchTerm: string = ""
+): Promise<ProfileInterface[]> {
     try {
         const request = (async () => {
             const {
@@ -135,14 +139,18 @@ export async function getAgents(): Promise<ProfileInterface[]> {
 
             if (!isUUID(ownerId || "")) throw new Error("Unauthorized");
 
+            const from = (page - 1) * limit;
+            const to = from + limit - 1;
+
             const { data: profiles, error } = await supabase.from("profiles")
                 .select("*")
                 .contains("roles", ["agent"])
                 .eq("agent_creator_id", ownerId)
+                .or(`full_name.ilike.%${searchTerm}%,email_address.ilike.%${searchTerm}%,phone_number.ilike.%${searchTerm}%`)
                 .order("created_at", {
                     ascending: false
                 })
-                .limit(100)
+                .range(from, to)
 
             if (!profiles || error) throw new Error(`The profile cannot be find, ${error?.message}`);
             const normalized = profiles.map((item: any) => normalizeData(item))
