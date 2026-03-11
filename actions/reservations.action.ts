@@ -11,6 +11,11 @@ import { getFilterDates } from "@/utils/DateTimeFilter";
 import { checkLotByTime } from "./parkingLots.action";
 import { checkVehicleSpace } from "./type.action";
 
+export async function revalidateLotsReservations() {
+    revalidatePath("/owner/reservations");
+    revalidatePath("/owner/parking-lots");
+}
+
 export async function createReservation(reservation: ReservationFormInterface)
     : Promise<ReservationInterface> {
     try {

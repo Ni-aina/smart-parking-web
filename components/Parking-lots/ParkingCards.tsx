@@ -1,7 +1,11 @@
 "use client";
 
+import { useEffect } from "react";
 import ParkingCard from "./ParkingCard";
 import { ParkingInterface } from "@/types/parking";
+import { supabase } from "@/lib/supabase/client";
+import { useProfileContext } from "@/context/ProfileContext";
+import { revalidateLotsReservations } from "@/actions/reservations.action";
 
 interface ParkingCardsProps {
     parkings: ParkingInterface[];
@@ -11,6 +15,20 @@ interface ParkingCardsProps {
 }
 
 const ParkingCards = ({ parkings, agentsNamesMap, onEdit, onDelete }: ParkingCardsProps) => {
+    const { currentProfile } = useProfileContext();
+    const profileId = currentProfile?.id!;
+
+    useEffect(()=> {
+        const channel = supabase.channel(`lots-occupancy-channel-${profileId}`)
+        .on("postgres_changes", { event: "*", schema: "public", table: "reservations" }, 
+            async () => {
+            await revalidateLotsReservations()
+        }).subscribe()
+        
+        return () => {
+            channel.unsubscribe();
+        }
+    }, [profileId])
     
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5">

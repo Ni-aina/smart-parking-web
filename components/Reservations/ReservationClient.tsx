@@ -4,10 +4,12 @@ import { useRouter } from "next/navigation";
 import Navbar from "../Navbar";
 import { ReservationInterface } from "@/types/reservation";
 import ReservationCards from "./ReservationCards";
-import { startTransition, useOptimistic, useState } from "react";
+import { startTransition, useEffect, useOptimistic, useState } from "react";
 import Pagination from "../ui/pagination";
 import CancelConfirm from "../ui/cancelConfirm";
-import { cancelReservation } from "@/actions/reservations.action";
+import { cancelReservation, revalidateLotsReservations } from "@/actions/reservations.action";
+import { supabase } from "@/lib/supabase/client";
+import { useProfileContext } from "@/context/ProfileContext";
 
 interface ReservationClientProps {
     reservations: ReservationInterface[];
@@ -22,8 +24,12 @@ const ReservationClient = ({
     count,
     searchTerm
 }: ReservationClientProps) => {
+    const { currentProfile } = useProfileContext();
+    const profileId = currentProfile?.id!;
+
     const router = useRouter();
     const [search, setSearch] = useState<string>(searchTerm);
+
     const [cancellingId, setCancellingId] = useState("");
     const [isCancelling, setIsCancelling] = useState(false);
 
@@ -46,6 +52,18 @@ const ReservationClient = ({
         setIsCancelling(false);
         setCancellingId("");
     }
+
+    useEffect(()=> {
+        const channel = supabase.channel(`reservations-channel-${profileId}`)
+        .on("postgres_changes", { event: "*", schema: "public", table: "reservations" }, 
+            async () => {
+            await revalidateLotsReservations()
+        }).subscribe()
+        
+        return () => {
+            channel.unsubscribe();
+        }
+    }, [profileId])
 
     return (
         <div className="flex flex-col gap-5">
