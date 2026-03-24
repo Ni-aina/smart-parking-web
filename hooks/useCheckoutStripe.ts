@@ -1,5 +1,3 @@
-import { revalidateAuthSubscription } from "@/actions/subscription.action";
-import { useProfileContext } from "@/context/ProfileContext";
 import { SignUpForm } from "@/types/auth";
 import { useElements, useStripe } from "@stripe/react-stripe-js";
 import { FormEvent, useEffect, useState } from "react";
@@ -16,8 +14,6 @@ const useCheckoutStripe = ({
     form: SignUpForm,
     handleShowStripeElement: () => void
 }) => {
-    const { currentProfile } = useProfileContext();
-
     const stripe = useStripe();
     const elements = useElements();
 
@@ -58,9 +54,6 @@ const useCheckoutStripe = ({
         }
 
         if (paymentIntent.status === "succeeded") {
-            if (currentProfile) {
-                revalidateAuthSubscription();
-            }
             handleShowStripeElement();
             toast.success("Check your inbox to activate your account.");
             setLoading(false);

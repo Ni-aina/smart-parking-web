@@ -15,9 +15,9 @@ import {
     SubscriptionInterface
 } from "@/types/subscription";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import DeleteConfirm from "../ui/deleteConfirm";
 import StepPlan from "./StepPlan";
+import { revalidateAuthSubscription } from "@/actions/subscription.action";
 
 interface SubscriptionPageProps {
     plans: SubscriptionPlanInterface[];
@@ -43,7 +43,6 @@ const SubscriptionPage = ({
         handleSubscriptionComplete
     } = useSubscription(plans, currentSubscription);
 
-    const router = useRouter();
     const [isConfirmCancel, setIsConfirmCancel] = useState<boolean>(false);
 
     const showStatus = step === -1 && currentSubscription;
@@ -58,9 +57,9 @@ const SubscriptionPage = ({
         handleCancel();
     }
 
-    const handlePaymentSuccess = () => {
+    const handlePaymentSuccess = async () => {
+        await revalidateAuthSubscription();
         handleSubscriptionComplete();
-        router.refresh();
     }
 
     return (

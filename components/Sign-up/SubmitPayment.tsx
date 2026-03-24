@@ -7,7 +7,7 @@ const SubmitPayment = ({
     amount,
     form,
     handleShowStripeElement
-}: { 
+}: {
     planId: string,
     amount: number,
     form: SignUpForm,
