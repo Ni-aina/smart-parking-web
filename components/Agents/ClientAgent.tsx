@@ -9,6 +9,7 @@ import { ProfileInterface } from "@/types/profile";
 import { Flag } from "lucide-react";
 import useAgent from "@/hooks/useAgent";
 import { ChangeEvent } from "react";
+import NoData from "../ui/noData";
 
 const ClientAgent = ({ 
     agents,
@@ -54,14 +55,21 @@ const ClientAgent = ({
                 setSearch={setSearch}
                 onAdd={() => setIsModalOpen(true)}
             />
-            <Table
-                title={title}
-                headers={headers}
-                body={body}
-                handleEdit={handleEdit}
-                handleDelete={handleDelete}
-                count={count}
-            />
+            {
+                !count ?
+                    <NoData
+                        message="No agent yet"
+                    />
+                :
+                    <Table
+                        title={title}
+                        headers={headers}
+                        body={body}
+                        handleEdit={handleEdit}
+                        handleDelete={handleDelete}
+                        count={count}
+                    />
+            }
             <Modal
                 isOpen={isModalOpen}
                 onClose={handleOnClose}

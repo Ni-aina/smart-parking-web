@@ -1,7 +1,11 @@
+import NoData from "@/components/ui/noData";
+
 const MessagesPage = () => {
     return (
-        <div>
-            
+        <div className="h-full">
+            <NoData
+                message="No message yet"
+            />
         </div>
     )
 }

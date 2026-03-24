@@ -7,6 +7,7 @@ import { TypeInterface } from "@/types/type";
 import { Loader2 } from "lucide-react";
 import useType from "@/hooks/useType";
 import InputNumber from "../ui/inputNumber";
+import NoData from "../ui/noData";
 
 const ClientType = ({ 
     types,
@@ -55,14 +56,21 @@ const ClientType = ({
                 setSearch={setSearch}
                 onAdd={() => setIsModalOpen(true)}
             />
-            <Table
-                title={title}
-                headers={headers}
-                body={body}
-                handleEdit={handleEdit}
-                handleDelete={handleDelete}
-                count={count}
-            />
+            {
+                !count ?
+                    <NoData
+                        message="No vehicle type yet"
+                    />
+                :
+                    <Table
+                        title={title}
+                        headers={headers}
+                        body={body}
+                        handleEdit={handleEdit}
+                        handleDelete={handleDelete}
+                        count={count}
+                    />
+            }
             <Modal
                 isOpen={isModalOpen}
                 onClose={handleOnClose}

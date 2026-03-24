@@ -10,6 +10,7 @@ import CancelConfirm from "../ui/cancelConfirm";
 import { cancelReservation, revalidateLotsReservations } from "@/actions/reservations.action";
 import { supabase } from "@/lib/supabase/client";
 import { useProfileContext } from "@/context/ProfileContext";
+import NoData from "../ui/noData";
 
 interface ReservationClientProps {
     reservations: ReservationInterface[];
@@ -75,17 +76,19 @@ const ReservationClient = ({
             />
             <div className="mt-5 lg:mt-10">
                 {
-                    optimisticReservations.length === 0 && (
-                        <div className="text-white/80">No reservations found</div>
-                    )
+                    !count ?
+                        <NoData
+                            message="No reservation yet"
+                        />
+                    :
+                        <ReservationCards
+                            reservations={optimisticReservations}
+                            handleCancel={
+                                (id: string) => setCancellingId(id)
+                            }
+                        />
                 }
 
-                <ReservationCards
-                    reservations={optimisticReservations}
-                    handleCancel={
-                        (id: string) => setCancellingId(id)
-                    }
-                />
             </div>
             <Pagination
                 showPage={6}

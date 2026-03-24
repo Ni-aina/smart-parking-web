@@ -7,6 +7,7 @@ import TransactionTable from "./TransactionTable";
 import useDebounce from "@/hooks/useDebounce";
 import { toast } from "sonner";
 import { useRouter, usePathname } from "next/navigation";
+import NoData from "../ui/noData";
 
 interface TransactionClientProps {
     transactions: PaymentInterface[];
@@ -75,11 +76,18 @@ const TransactionClient = ({
                     />
                 </div>
             </div>
-            <TransactionTable
-                title={title}
-                transactions={transactions}
-                count={count}
-            />
+            {
+                !count ?
+                    <NoData
+                        message="No transaction yet"
+                    />
+                :
+                    <TransactionTable
+                        title={title}
+                        transactions={transactions}
+                        count={count}
+                    />
+            }
         </div>
     )
 }

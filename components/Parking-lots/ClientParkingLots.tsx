@@ -9,6 +9,7 @@ import { ProfileInterface } from "@/types/profile";
 import { deleteParking } from "@/actions/parkingLots.action";
 import Pagination from "../ui/pagination";
 import DeleteConfirm from "../ui/deleteConfirm";
+import NoData from "../ui/noData";
 
 interface ClientParkingLotsInterface {
     parkings: ParkingInterface[];
@@ -60,14 +61,21 @@ const ClientParkingLots = ({
                 onAdd={() => router.push("/owner/parking-lots/form/new")}
             />
             <div className="mt-5 lg:mt-10">
-                <ParkingCards
-                    parkings={optimisticParkings}
-                    agentsNamesMap={agentsNamesMap}
-                    onEdit={handleEdit}
-                    onDelete={
-                        (id: string) => setIsConfirm(id)
-                    }
-                />
+                {
+                    !count ?
+                        <NoData
+                            message="No lot yet"
+                        />
+                    :
+                        <ParkingCards
+                            parkings={optimisticParkings}
+                            agentsNamesMap={agentsNamesMap}
+                            onEdit={handleEdit}
+                            onDelete={
+                                (id: string) => setIsConfirm(id)
+                            }
+                        />
+                }
             </div>
             <Pagination
                 showPage={6}
