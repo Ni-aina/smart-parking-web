@@ -240,7 +240,7 @@ const LandingPage = () => {
                 <div className="max-w-7xl mx-auto px-6">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div>
-                            <div className="relative w-32 h-10 mb-4">
+                            <div className="relative w-36 h-12 mb-4">
                                 <Image
                                     src={"/images/smart-parking.png"}
                                     alt="Smart parking"
