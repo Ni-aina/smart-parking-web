@@ -23,7 +23,7 @@ const LandingPage = () => {
     return (
         <div className="min-h-screen bg-black/95">
             <nav className="flex justify-between items-center px-6 py-4 border-b border-white/10 gap-4">
-                <div className="relative w-25 h-8 sm:w-40 sm:h-12">
+                <div className="relative w-24 h-8 sm:w-36 sm:h-12">
                     <Image
                         src={"/images/smart-parking.png"}
                         alt="Smart parking"
