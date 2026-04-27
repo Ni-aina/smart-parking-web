@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import Navbar from "../Navbar";
+import Navbar from "../Layouts/Navbar";
 import { ReservationInterface } from "@/types/reservation";
 import ReservationCards from "./ReservationCards";
 import { startTransition, useEffect, useOptimistic, useState } from "react";

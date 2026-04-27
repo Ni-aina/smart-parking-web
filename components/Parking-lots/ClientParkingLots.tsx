@@ -1,7 +1,7 @@
 "use client";
 
 import { startTransition, useOptimistic, useState } from "react";
-import Navbar from "../Navbar";
+import Navbar from "../Layouts/Navbar";
 import { useRouter } from "next/navigation";
 import { ParkingInterface } from "@/types/parking";
 import ParkingCards from "./ParkingCards";

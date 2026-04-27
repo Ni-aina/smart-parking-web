@@ -2,7 +2,7 @@
 
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
-import Navbar from "../Navbar";
+import Navbar from "../Layouts/Navbar";
 import Table from "../Table";
 import { Modal } from "../ui/modal";
 import { ProfileInterface } from "@/types/profile";

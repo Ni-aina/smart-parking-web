@@ -66,7 +66,7 @@ export async function getCurrentSubscription()
             if (!data) return null;
 
             const isExpired = data?.status === "active"
-                && new Date(data.endDate) < new Date();
+                && new Date(data.end_date) < new Date();
 
             if (isExpired) {
                 await expireSubscription();
@@ -99,9 +99,6 @@ export async function expireSubscription(): Promise<void> {
                 .lt("end_date", new Date().toISOString());
 
             if (error) throw new Error(`Expire subscription error, ${error.message}`);
-
-            revalidatePath("/owner/settings/account");
-            revalidatePath("/owner");
         })()
 
         return Promise.race([

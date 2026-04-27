@@ -1,6 +1,6 @@
 "use client";
 
-import Navbar from "../Navbar";
+import Navbar from "../Layouts/Navbar";
 import Table from "../Table";
 import { Modal } from "../ui/modal";
 import { TypeInterface } from "@/types/type";

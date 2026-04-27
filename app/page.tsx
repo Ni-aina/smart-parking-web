@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
+import LandingPage from "@/components/LandingPage";
 
-const RootPage = () => redirect("/owner/dashboard");
+const RootPage = () => <LandingPage />;
 
 export default RootPage;

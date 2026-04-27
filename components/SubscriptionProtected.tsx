@@ -13,15 +13,15 @@ const SubscriptionProtected = ({
     currentSubscription: SubscriptionInterface | null
 }) => {
 
-    const isActive = currentSubscription?.status === "active";
+    const { status } = currentSubscription!;
 
-    if (!isActive) return (
+    if (status !== "active") return (
         <div className="flex flex-col justify-center items-center gap-4 w-full h-full text-white/80">
             <Sparkles size={32} className="text-white/30" />
             <div className="text-center">
                 <h2 className="text-lg font-semibold">
                     {
-                        currentSubscription ?
+                        status === "expired" ?
                             "Your subscription has expired" :
                             "No active subscription"
                     }
