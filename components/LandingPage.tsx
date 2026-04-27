@@ -12,17 +12,18 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { toast } from "sonner";
 
 const LandingPage = () => {
 
     const handleDownload = () => {
-        window.open("https://play.google.com/store", "_blank");
+        toast.info("Download coming soon!");
     }
 
     return (
         <div className="min-h-screen bg-black/95">
-            <nav className="flex justify-between items-center px-6 py-4 border-b border-white/10">
-                <div className="relative w-40 h-12">
+            <nav className="flex justify-between items-center px-6 py-4 border-b border-white/10 gap-4">
+                <div className="relative w-25 h-8 sm:w-40 sm:h-12">
                     <Image
                         src={"/images/smart-parking.png"}
                         alt="Smart parking"
@@ -41,7 +42,7 @@ const LandingPage = () => {
                     <Link
                         href={"/auth/sign-up"}
                         className="bg-blue-950 text-white px-4 py-2 rounded-lg 
-                        hover:opacity-90 transition-opacity hidden sm:flex"
+                        hover:opacity-90 transition-opacity"
                     >
                         Get Started
                     </Link>
@@ -55,11 +56,11 @@ const LandingPage = () => {
                         <span className="block text-blue-400">Made Simple</span>
                     </h1>
                     <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
-                        Complete parking management system with vehicle tracking, subscription plans, 
-                        and multi-agent support. Owners manage via web dashboard while drivers and agents 
+                        Complete parking management system with vehicle tracking, subscription plans,
+                        and multi-agent support. Owners manage via web dashboard while drivers and agents
                         use the mobile app for seamless parking operations.
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <button
                             onClick={handleDownload}
                             className="flex items-center gap-3 bg-white text-black px-8 py-4 rounded-xl 
@@ -213,7 +214,7 @@ const LandingPage = () => {
                 <section className="text-center mb-20">
                     <h2 className="text-3xl font-bold text-white mb-6">Ready to Get Started?</h2>
                     <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-                        Join parking owners who manage their business through our web dashboard while 
+                        Join parking owners who manage their business through our web dashboard while
                         drivers and agents use the mobile app for seamless operations.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -254,19 +255,35 @@ const LandingPage = () => {
                         <div>
                             <h4 className="text-white font-semibold mb-4">Platform</h4>
                             <ul className="space-y-2 text-gray-400 text-sm">
-                                <li><Link href="/owner/dashboard" className="hover:text-white transition-colors">Owner Dashboard</Link></li>
-                                <li><Link href="#" className="hover:text-white transition-colors">Mobile App</Link></li>
-                                <li><Link href="#" className="hover:text-white transition-colors">Subscription Plans</Link></li>
-                                <li><Link href="#" className="hover:text-white transition-colors">Documentation</Link></li>
+                                <li>
+                                    <Link href="/owner/dashboard" className="hover:text-white transition-colors">Owner Dashboard</Link>
+                                </li>
+                                <li>
+                                    <Link href="#" >Mobile App</Link>
+                                </li>
+                                <li>
+                                    <Link href="#" className="hover:text-white transition-colors">Subscription Plans</Link>
+                                </li>
+                                <li>
+                                    <Link href="#" className="hover:text-white transition-colors">Documentation</Link>
+                                </li>
                             </ul>
                         </div>
                         <div>
                             <h4 className="text-white font-semibold mb-4">Support</h4>
                             <ul className="space-y-2 text-gray-400 text-sm">
-                                <li><Link href="#" className="hover:text-white transition-colors">Help Center</Link></li>
-                                <li><Link href="#" className="hover:text-white transition-colors">Contact Us</Link></li>
-                                <li><Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link></li>
-                                <li><Link href="#" className="hover:text-white transition-colors">Terms of Service</Link></li>
+                                <li>
+                                    <Link href="#" className="hover:text-white transition-colors">Help Center</Link>
+                                </li>
+                                <li>
+                                    <Link href="#" className="hover:text-white transition-colors">Contact Us</Link>
+                                </li>
+                                <li>
+                                    <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>
+                                </li>
+                                <li>
+                                    <Link href="#" className="hover:text-white transition-colors">Terms of Service</Link>
+                                </li>
                             </ul>
                         </div>
                     </div>
