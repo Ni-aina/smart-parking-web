@@ -1,26 +1,25 @@
 "use client";
 
 import { logOut } from "@/actions/auth.action";
-import { redirect } from "next/navigation";
 import { useEffect } from "react";
 
 const signOut = () => {
 
-    useEffect(()=> {
-        (async ()=> {
+    useEffect(() => {
+        (async () => {
             await logOut();
-            redirect("/auth/sign-in");
+            window.location.href = "/auth/sign-in"
         })()
     }, [])
-    
+
     return (
         <div>
-            <div 
+            <div
                 className="flex items-center justify-center h-dvh bg-black/95"
             >
                 <div className="flex flex-col items-center gap-2">
                     <div className="mb-10 flex justify-center">
-                        <div 
+                        <div
                             className="animate-spin rounded-full h-12 w-12 
                             border-b-2 border-white"
                         />
@@ -36,5 +35,5 @@ const signOut = () => {
         </div>
     )
 }
- 
+
 export default signOut;

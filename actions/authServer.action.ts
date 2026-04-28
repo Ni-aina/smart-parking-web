@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
 export async function getServerAuth(): Promise<{
-    supabase:  any,
+    supabase: any,
     userId: string
 }> {
     const supabase = await createClient();
@@ -26,18 +26,18 @@ export async function getServerAuth(): Promise<{
 export const updatePassword = async (
     _previousState: ProfileStateInterface,
     passwords: {
-        oldPassword: string, 
+        oldPassword: string,
         newPassword: string,
         confirmPassword: string
     }
 ): Promise<ProfileStateInterface> => {
-    
+
     const {
         oldPassword,
         newPassword,
         confirmPassword
     } = passwords;
-    
+
     if (!oldPassword || !newPassword || !confirmPassword) {
         return {
             success: null,
@@ -60,16 +60,16 @@ export const updatePassword = async (
     }
 
     const { supabase } = await getServerAuth();
-    
+
     const { error } = await supabase.auth.updateUser({
         password: newPassword
     })
-    
+
     if (error) return {
         success: null,
         error: error.message
     }
-    
+
     return {
         success: "Password updated successfully",
         error: null
