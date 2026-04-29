@@ -14,7 +14,7 @@ const tools: ChatCompletionTool[] = [
     {
         type: "function",
         function: {
-            name: "getParkingLots",
+            name: "get_parking_lots",
             description: "Search and filter parking lots based on user intent",
             parameters: {
                 type: "object",
@@ -49,7 +49,7 @@ const tools: ChatCompletionTool[] = [
     {
         type: "function",
         function: {
-            name: "getUserVehicles",
+            name: "get_user_vehicles",
             description: `
                 Search the driver's registered vehicles by plate number, make, or model 
                 based on what the user described. 
@@ -77,7 +77,7 @@ const tools: ChatCompletionTool[] = [
     {
         type: "function",
         function: {
-            name: "checkVehicleFitsLot",
+            name: "check_vehicle_fits_lot",
             description: `
                 Check if a vehicle's dimensions fit within a parking lot type's constraints. 
                 Returns whether the vehicle fits and a reason.
@@ -110,7 +110,7 @@ const tools: ChatCompletionTool[] = [
     {
         type: "function",
         function: {
-            name: "checkAvailability",
+            name: "check_availability",
             description: `
                 Check how many spots are available in a parking lot for a given time range. 
                 Returns the number of available spots.
@@ -138,7 +138,7 @@ const tools: ChatCompletionTool[] = [
     {
         type: "function",
         function: {
-            name: "confirmReservation",
+            name: "confirm_reservation",
             description: `
                 Create the reservation ONLY after the user has explicitly confirmed they want to proceed. 
                 Do NOT call this without an explicit user confirmation like 'yes', 'confirm', 'book it', etc.
@@ -320,14 +320,14 @@ export async function POST(req: NextRequest) {
                     You are a parking reservation assistant. Help the user find parking, select a vehicle, check availability, and confirm a reservation.
 
                     Follow this strict order:
-                    1. Help the user find a parking lot using getParkingLots if they haven't chosen one.
-                    2. Once a lot is chosen, call getUserVehicles to let them pick a car.
-                    3. Once a vehicle is chosen, call checkVehicleFitsLot to verify it fits the lot type.
-                    4. Ask the user for their desired start and end time, then call checkAvailability.
-                    5. Summarize all details (lot, vehicle, times, available spots) and ask the user to confirm.
-                    6. ONLY call confirmReservation after the user explicitly says yes/confirm/book.
+                        1. Help the user find a parking lot using get_parking_lots if they haven't chosen one.
+                        2. Once a lot is chosen, call get_user_vehicles to let them pick a car.
+                        3. Once a vehicle is chosen, call check_vehicle_fits_lot to verify it fits the lot type.
+                        4. Ask the user for their desired start and end time, then call check_availability.
+                        5. Summarize all details (lot, vehicle, times, available spots) and ask the user to confirm.
+                        6. ONLY call confirm_reservation after the user explicitly says yes/confirm/book.
 
-                    Never call confirmReservation without explicit user confirmation.
+                    Never call confirm_reservation without explicit user confirmation.
                     Never reveal latitude/longitude values in your responses.
                     Be concise and friendly.
                 `
@@ -351,7 +351,7 @@ export async function POST(req: NextRequest) {
                     let result: unknown;
 
                     switch (call.function.name) {
-                        case "getParkingLots":
+                        case "get_parking_lots":
                             result = await executeGetParkingLots({
                                 location: {
                                     latitude: lat,
@@ -361,11 +361,11 @@ export async function POST(req: NextRequest) {
                             })
                             break;
 
-                        case "getUserVehicles":
+                        case "get_user_vehicles":
                             result = await executeGetUserVehicles(driverId, args);
                             break;
 
-                        case "checkVehicleFitsLot":
+                        case "check_vehicle_fits_lot":
                             result = await executeCheckVehicleFitsLot(
                                 args.vehicleId,
                                 args.lotType,
@@ -373,7 +373,7 @@ export async function POST(req: NextRequest) {
                             )
                             break;
 
-                        case "checkAvailability":
+                        case "check_availability":
                             result = await executeCheckAvailability(
                                 args.lotId,
                                 args.startTime,
@@ -381,7 +381,7 @@ export async function POST(req: NextRequest) {
                             )
                             break;
 
-                        case "confirmReservation":
+                        case "confirm_reservation":
                             result = await executeConfirmReservation(
                                 driverId,
                                 args.lotId,
