@@ -5,8 +5,7 @@ import {
     ChatCompletionMessageParam
 } from "groq-sdk/resources/chat/completions";
 import { createReservationTool, getParkingLots } from "@/actions/lots.action";
-import { checkLotByTime } from "@/actions/lots.action";
-import { supabase } from "@/lib/supabase/client";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY! });
 
@@ -52,23 +51,22 @@ const tools: ChatCompletionTool[] = [
             name: "get_user_vehicles",
             description: `
                 Search the driver's registered vehicles by plate number, make, or model 
-                based on what the user described. 
-                At least one search field must be provided.
+                based on what the user described.
             `,
             parameters: {
                 type: "object",
                 properties: {
                     plateNumber: {
                         type: "string",
-                        description: "Full or partial plate number mentioned by the user e.g. 'ABC 123'"
+                        description: "Full or partial plate number mentioned by the user e.g ABC123"
                     },
                     make: {
                         type: "string",
-                        description: "Car brand mentioned by the user e.g. 'Toyota', 'Ford'"
+                        description: "Car brand mentioned by the user e.g Toyota, Honda, etc."
                     },
                     model: {
                         type: "string",
-                        description: "Car model mentioned by the user e.g. 'Corolla', 'Mustang'"
+                        description: "Car model mentioned by the user e.g Camry, Civic, etc."
                     }
                 }
             }
@@ -87,7 +85,7 @@ const tools: ChatCompletionTool[] = [
                 required: ["vehicleId", "lotType"],
                 properties: {
                     vehicleId: {
-                        type: "string",
+                        type: "number",
                         description: "The ID of the selected vehicle"
                     },
                     lotType: {
@@ -120,7 +118,7 @@ const tools: ChatCompletionTool[] = [
                 required: ["lotId", "startTime", "endTime"],
                 properties: {
                     lotId: {
-                        type: "string",
+                        type: "number",
                         description: "The ID of the parking lot to check"
                     },
                     startTime: {
@@ -148,11 +146,11 @@ const tools: ChatCompletionTool[] = [
                 required: ["lotId", "vehicleId", "startTime", "endTime"],
                 properties: {
                     lotId: {
-                        type: "string",
+                        type: "number",
                         description: "The ID of the parking lot"
                     },
                     vehicleId: {
-                        type: "string",
+                        type: "number",
                         description: "The ID of the vehicle to park"
                     },
                     startTime: {
@@ -184,7 +182,7 @@ async function executeGetUserVehicles(
         model?: string;
     }
 ) {
-    let query = supabase
+    let query = supabaseAdmin
         .from("vehicles")
         .select("id, plate_number, make, model, year, width, length, height")
         .eq("driver_id", driverId);
@@ -205,9 +203,9 @@ async function executeGetUserVehicles(
 }
 
 async function executeCheckVehicleFitsLot(
-    vehicleId: string,
+    vehicleId: number,
     lotType: {
-        id: string;
+        id: number;
         vehicleType: string;
         description: string;
         maxWidth: number;
@@ -216,7 +214,7 @@ async function executeCheckVehicleFitsLot(
     },
     driverId: string
 ) {
-    const { data: vehicle, error } = await supabase
+    const { data: vehicle, error } = await supabaseAdmin
         .from("vehicles")
         .select("width, length, height, make, model")
         .eq("id", vehicleId)
@@ -246,20 +244,49 @@ async function executeCheckVehicleFitsLot(
     }
 }
 
-async function executeCheckAvailability(lotId: string, startTime: string, endTime: string) {
-    const availableSpots = await checkLotByTime(
-        lotId,
-        new Date(startTime),
-        new Date(endTime)
-    )
-    return {
-        availableSpots,
-        lotId,
-        startTime,
-        endTime,
-        message: availableSpots > 0
-            ? `${availableSpots} spot(s) available.`
-            : "No spots available for this time range."
+async function executeCheckAvailability(lotId: number, startTime: string, endTime: string) {
+    try {
+        if (!lotId) throw new Error("Lot id is required");
+        if (!startTime || !endTime) throw new Error("Start time and end time are required");
+        if (startTime > endTime) throw new Error("Start time must be before end time");
+
+        const startDateTime = new Date(startTime);
+        const endDateTime = new Date(endTime);
+
+        const [lotResult, reservationsResult] = await Promise.all([
+            supabaseAdmin
+                .from("parking_lots")
+                .select("total_spots")
+                .eq("id", lotId)
+                .single(),
+            supabaseAdmin
+                .from("reservations")
+                .select("id")
+                .eq("lot_id", lotId)
+                .eq("status", "active")
+                .or(`and(start_time.lte.${endDateTime.toISOString()},end_time.gte.${startDateTime.toISOString()})`)
+        ])
+
+        if (lotResult.error) throw new Error(`Lot fetching error, ${lotResult.error.message}`);
+        if (reservationsResult.error) throw new Error(`Reservations fetching error, ${reservationsResult.error.message}`);
+        if (!lotResult.data) throw new Error("Lot not found");
+
+        const totalSpots = lotResult.data.total_spots;
+        const occupiedSpots = reservationsResult.data?.length || 0;
+
+        const availableSpots = totalSpots - occupiedSpots;
+
+        return {
+            availableSpots,
+            lotId,
+            startTime,
+            endTime,
+            message: availableSpots > 0
+                ? `${availableSpots} spot(s) available.`
+                : "No spots available for this time range."
+        }
+    } catch (error) {
+        throw error;
     }
 }
 
