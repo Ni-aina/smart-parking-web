@@ -1,7 +1,6 @@
 import { supabase } from "@/lib/supabase/client";
 import { LotInterface } from "@/types/lot";
-import { ReservationToolInterface } from "@/types/reservation";
-import { denormalizeData, normalizeData } from "@/utils/normalizeData";
+import { normalizeData } from "@/utils/normalizeData";
 import { rejectTimeout } from "@/utils/rejectTimeout";
 
 export async function getParkingLots(
@@ -67,30 +66,6 @@ export async function getParkingLots(
                     undefined
             }
         })()
-        return Promise.race([
-            request,
-            rejectTimeout()
-        ])
-    } catch (error) {
-        throw error;
-    }
-}
-
-export async function createReservationTool(reservation: ReservationToolInterface)
-    : Promise<ReservationToolInterface> {
-    try {
-        const { ...payload } = denormalizeData(reservation);
-
-        const request = (async () => {
-            const { data: newReservation, error } = await supabase.from("reservations")
-                .insert([payload])
-                .select();
-            if (!newReservation || error) throw new Error(`An error occured during reservation creation, 
-                ${error.message}`)
-
-            return normalizeData(newReservation) as ReservationToolInterface;
-        })()
-
         return Promise.race([
             request,
             rejectTimeout()

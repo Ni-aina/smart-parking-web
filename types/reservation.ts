@@ -25,13 +25,4 @@ export interface ReservationFormInterface {
   amount: number | string;
 }
 
-export interface ReservationToolInterface {
-    driverId: string;
-    lotId: string;
-    vehicleId: string;
-    startTime: string;
-    endTime: string;
-    status: StatusType;
-}
-
 export default ReservationInterface;
