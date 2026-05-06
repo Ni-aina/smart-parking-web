@@ -1,5 +1,6 @@
 "use client";
 
+import { downloadFile } from "@/utils/download";
 import {
     Crown,
     FileText,
@@ -14,10 +15,29 @@ import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
 
+const APK_URL = "https://files.catbox.moe/vo97bp.apk";
+
 const LandingPage = () => {
 
-    const handleDownload = () => {
-        toast.info("Download coming soon!");
+    const handleDownload = async () => {
+        toast.loading("Starting download...", { id: "apk-download" });
+
+        try {
+            const totalMB = await downloadFile(
+                APK_URL,
+                "Smart-Parking.apk",
+                (receivedMB, totalMB, percent, speed) => {
+                    toast.loading(
+                        `${receivedMB} MB / ${totalMB} MB — ${percent}% — ${speed}`,
+                        { id: "apk-download" }
+                    )
+                }
+            )
+
+            toast.success(`Download complete! (${totalMB} MB)`, { id: "apk-download" });
+        } catch {
+            toast.error("Download failed. Please try again.", { id: "apk-download" });
+        }
     }
 
     return (
