@@ -25,13 +25,12 @@ const LandingPage = () => {
         try {
             const totalMB = await downloadFile(
                 APK_URL,
-                "Smart Parking.apk",
+                "Smart-Parking.apk",
                 (receivedMB, totalMB, percent, speed, timeLeft) => {
                     toast.loading(
                         <div className="flex flex-col gap-1">
-                            <span className="font-semibold">Smart Parking.apk</span>
-                            <span className="text-sm">{receivedMB} MB / {totalMB} MB - {percent}%</span>
-                            <span className="text-sm">{speed} - {timeLeft}</span>
+                            <span className="font-semibold">Smart-Parking.apk - {receivedMB} MB / {totalMB} MB</span>
+                            <span className="text-sm">{percent}% - {speed} - {timeLeft}</span>
                         </div>,
                         { id: "apk-download" }
                     )
