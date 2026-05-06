@@ -1,7 +1,13 @@
 export const downloadFile = async (
     url: string,
     filename: string,
-    onProgress: (receivedMB: string, totalMB: string, percent: number, speed: string) => void
+    onProgress: (
+        receivedMB: string,
+        totalMB: string,
+        percent: number,
+        speed: string,
+        timeLeft: string
+    ) => void
 ) => {
     const response = await fetch(url);
     if (!response.ok) throw new Error();
@@ -29,6 +35,10 @@ export const downloadFile = async (
             const speed = bytePerSec > 1024 * 1024
                 ? `${(bytePerSec / (1024 * 1024)).toFixed(1)} MB/s`
                 : `${(bytePerSec / 1024).toFixed(0)} KB/s`;
+            const remaining = bytePerSec > 0 ? Math.round((total - received) / bytePerSec) : 0;
+            const timeLeft = remaining >= 60
+                ? `${Math.floor(remaining / 60)}m ${remaining % 60}s left`
+                : `${remaining}s left`;
 
             lastReceived = received;
             lastTime = now;
@@ -37,7 +47,8 @@ export const downloadFile = async (
                 (received / (1024 * 1024)).toFixed(1),
                 (total / (1024 * 1024)).toFixed(1),
                 Math.round((received / total) * 100),
-                speed
+                speed,
+                timeLeft
             )
         }
     }
