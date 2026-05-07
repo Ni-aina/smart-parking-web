@@ -30,7 +30,7 @@ const tools: ChatCompletionTool[] = [
                 properties: {
                     searchTerm: {
                         type: "string",
-                        description: "Keyword to search parking lots by name or address"
+                        description: "Keyword to search parking lots by name or address e.g 'CCI Ivato'"
                     },
                     filters: {
                         type: "object",
@@ -40,7 +40,7 @@ const tools: ChatCompletionTool[] = [
                                 items: { type: "number" },
                                 minItems: 2,
                                 maxItems: 2,
-                                description: "Price range as [min, max], in dollars"
+                                description: "Price range as [min, max]"
                             }
                         }
                     },
@@ -338,6 +338,20 @@ async function executeConfirmReservation(
     startTime: string,
     endTime: string
 ) {
+    const {
+        data: vehicle,
+        error: isNotMatch
+    } = await supabaseAdmin
+        .from("vehicles")
+        .select("id")
+        .eq("id", vehicleId)
+        .eq("driver_id", driverId)
+        .maybeSingle()
+
+    if (!vehicle || isNotMatch) {
+        throw new Error(`Vehicle not found or access denied, ${isNotMatch?.message}`);
+    }
+
     const parsedStartTime = parseUserTime(startTime)
     const parsedEndTime = parseUserTime(endTime)
 
@@ -468,10 +482,13 @@ export async function POST(req: NextRequest) {
                         5. Summarize all details (lot, vehicle, times, available spots) and ask the user to confirm.
                         6. ONLY call confirm_reservation after the user explicitly says yes/confirm/book.
 
-                    CRITICAL: Always use exact database IDs from tool results, never list position numbers.
+                    CRITICAL: 
+                    Always use exact database IDs from tool results, never list position numbers.
                     - lotId: use the "lotId" field from get_parking_lots (e.g. 35, 41, 78 — NOT 1, 2, 3...)
                     - vehicleId: use the "vehicleId" field from get_user_vehicles (e.g. 27, 30, 45 — NOT 1, 2, 3...)
                     These are database identifiers and can be any number.
+                    Don't jump any step, force user the follow these steps
+                    The price is in dollars only.
 
                     For times, accept any natural language the user provides such as "tomorrow at 2pm", "next Monday at 9am".
                     Pass the user's exact time phrasing to the tools — do NOT convert to ISO yourself.
