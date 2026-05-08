@@ -1,5 +1,6 @@
 "use client";
 
+import { supabase } from "@/lib/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 
 interface useOccupancyProps {
@@ -21,8 +22,14 @@ const useOccupancy = ({
     } = useQuery({
         queryKey: ["check-lot-availability", lotId, startTime, endTime],
         queryFn: async () => {
-            const res = await fetch("/api/check-lot", {
+            const { data: { session } } = await supabase.auth.getSession();
+            
+            const res = await fetch("/api/protected/check-lot", {
                 method: "POST",
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${session?.access_token}`
+                },
                 body: JSON.stringify({
                     lotId,
                     startTime,

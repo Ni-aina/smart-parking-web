@@ -9,6 +9,7 @@ import { SelectInterface } from "@/types/input";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { useProfileContext } from "@/context/ProfileContext";
+import { supabase } from "@/lib/supabase/client";
 
 export type trendType = "YES" | "NO";
 
@@ -40,9 +41,14 @@ const handleExport = async (
     occupancyLots: HeaderProps["occupancyLots"]
 ) => {
     try {
-        const res = await fetch("/api/export-dashboard", {
+        const { data: { session } } = await supabase.auth.getSession();
+
+        const res = await fetch("/api/protected/export-dashboard", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${session?.access_token}`
+            },
             body: JSON.stringify({
                 summaryData,
                 bookingsLastWeek,

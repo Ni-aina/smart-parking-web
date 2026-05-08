@@ -71,7 +71,7 @@ const useCheckoutStripe = ({
             password
         } = form;
 
-        fetch("/api/subscription/create-payment-intent", {
+        fetch("/api/public/subscription/create-payment-intent", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

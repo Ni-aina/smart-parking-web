@@ -61,7 +61,7 @@ const useSubscriptionCheckout = ({
     useEffect(() => {
         setLoading(true);
 
-        fetch("/api/subscription/update-payment-intent", {
+        fetch("/api/public/subscription/update-payment-intent", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
