@@ -29,8 +29,8 @@ const LandingPage = () => {
                 (receivedMB, totalMB, percent, speed, timeLeft) => {
                     toast.loading(
                         <div className="flex flex-col gap-1">
-                            <span className="font-semibold">Smart-Parking.apk - {receivedMB} MB / {totalMB} MB</span>
-                            <span className="text-sm">{percent}% - {speed} - {timeLeft}</span>
+                            <span className="font-semibold">Smart-Parking.apk - {percent}%</span>
+                            <span className="text-sm">{receivedMB} MB / {totalMB} MB - {speed} - {timeLeft}</span>
                         </div>,
                         { id: "apk-download" }
                     )
