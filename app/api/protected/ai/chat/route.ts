@@ -89,32 +89,45 @@ async function executeGetUserVehicles(driverId: string, args: { plateNumber?: st
     return { vehicles: data.map(item => ({ ...item, vehicleId: item.id })) }
 }
 
-async function executeCheckVehicleFitsLot(
+const executeCheckVehicleFitsLot = async (
     vehicleId: number,
-    lotType: { id: number; vehicleType: string; description: string; maxWidth: number; maxLength: number; maxHeight: number },
+    lotType: {
+        id: number,
+        description: string
+    },
     driverId: string
-) {
-    if (typeof lotType.maxWidth !== "number" || typeof lotType.maxLength !== "number" || typeof lotType.maxHeight !== "number") {
-        return { fits: false, reason: "Lot type dimension data is incomplete. Please re-select the parking lot." }
-    }
-    const { data: vehicle, error } = await supabaseAdmin
+) => {
+    const { data: vehicle, error: vehicleError } = await supabaseAdmin
         .from("vehicles")
         .select("width, length, height, make, model")
         .eq("id", vehicleId)
         .eq("driver_id", driverId)
         .maybeSingle();
-    if (error || !vehicle) throw new Error(`Vehicle not found: ${error?.message}`);
+    if (vehicleError || !vehicle) return { fits: false, reason: "Vehicle not found or access denied." }
+
+    const { data: lotTypeData, error: lotTypeError } = await supabaseAdmin
+        .from("lot_types")
+        .select("vehicle_type, max_width, max_length, max_height")
+        .eq("id", lotType.id)
+        .maybeSingle();
+    if (lotTypeError || !lotTypeData) return { fits: false, reason: `Lot type "${lotType.description}" not found or unavailable.` }
+
+    const widthFits = vehicle.width <= lotTypeData.max_width;
+    const lengthFits = vehicle.length <= lotTypeData.max_length;
+    const heightFits = vehicle.height <= lotTypeData.max_height;
+    const fits = widthFits && lengthFits && heightFits;
+
     const issues: string[] = [];
-    if (vehicle.width && vehicle.width > lotType.maxWidth) issues.push(`width ${vehicle.width}m exceeds max ${lotType.maxWidth}m`);
-    if (vehicle.length && vehicle.length > lotType.maxLength) issues.push(`length ${vehicle.length}m exceeds max ${lotType.maxLength}m`);
-    if (vehicle.height && vehicle.height > lotType.maxHeight) issues.push(`height ${vehicle.height}m exceeds max ${lotType.maxHeight}m`);
-    const fits = issues.length === 0;
+    if (!widthFits) issues.push(`width ${vehicle.width}m exceeds max ${lotTypeData.max_width}m`);
+    if (!lengthFits) issues.push(`length ${vehicle.length}m exceeds max ${lotTypeData.max_length}m`);
+    if (!heightFits) issues.push(`height ${vehicle.height}m exceeds max ${lotTypeData.max_height}m`);
+
     return {
         fits,
         vehicle: { make: vehicle.make, model: vehicle.model },
-        lotType: lotType.vehicleType,
+        lotType: lotTypeData.vehicle_type,
         reason: fits
-            ? `${vehicle.make} ${vehicle.model} fits within the ${lotType.vehicleType} lot constraints.`
+            ? `${vehicle.make} ${vehicle.model} fits within the ${lotTypeData.vehicle_type} lot constraints.`
             : `${vehicle.make} ${vehicle.model} does not fit: ${issues.join(", ")}.`
     }
 }
@@ -224,24 +237,50 @@ export async function POST(req: NextRequest) {
         if (isNaN(lat) || isNaN(lng))
             return Response.json({ error: "latitude and longitude must be valid numbers" }, { status: 400 });
 
-        const boundedMessages = messages.slice(-MAX_MESSAGE_COUNT) as ChatCompletionMessageParam[];
+        const boundedMessages = (messages.slice(-MAX_MESSAGE_COUNT) as (ChatCompletionMessageParam & { reasoning?: unknown; reasoning_content?: unknown })[]).map(
+            ({ reasoning, reasoning_content, ...rest }) => rest
+        )
 
         const allMessages: ChatCompletionMessageParam[] = [
             {
                 role: "system",
-                content: `You are a parking reservation assistant. Follow this strict order:
-                    1. find a lot (get_parking_lots)
-                    2. find a vehicle (get_user_vehicles)
-                    3. check fit (check_vehicle_fits_lot) — pass the full lotType object from the chosen lot
-                    4. check availability (check_availability) — ask user for start/end time first
-                    5. summarise and ask for confirmation
-                    6. only then call confirm_reservation
+                content: `
+                    You are a parking reservation assistant. 
+                    Today is ${new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}.
 
-                    Rules:
-                    - Always use the "lotId" / "vehicleId" database fields from tool results — never list positions.
-                    - Pass time exactly as the user wrote it; do NOT convert to ISO yourself.
-                    - Price is in USD. Be concise and friendly.
-                    - Never reveal lat/lng values.
+                    Follow this strict order to complete a reservation — NEVER skip or reorder steps:
+                    1. get_parking_lots — always call this first
+                    2. get_user_vehicles — always call this to fetch vehicles
+                    3. check_vehicle_fits_lot — MANDATORY; pass the full lotType object exactly as returned from get_parking_lots for the chosen lot; if fits is false, stop and inform the user — do NOT proceed
+                    4. check_availability — MANDATORY; NEVER assume or invent times; if user has not provided start and end time, ask before calling this tool
+                    5. Summarise and ask for confirmation
+                    6. confirm_reservation — only after explicit user confirmation ("yes", "book it", "confirm", etc.)
+
+                    Display rules — ALWAYS:
+                    - After get_parking_lots: list EVERY lot with its name, location, and price/hour under the heading "Here are some available parking lots:" — never show lotId
+                    - After get_user_vehicles: list EVERY vehicle with its make, model, and plate number under the heading "Here are your vehicles:" — never show vehicleId
+                    - After check_availability: show available spots, start time, and end time — never show lotId
+                    - After check_vehicle_fits_lot: confirm whether the vehicle fits or not with a reason
+                    - Never say "I found some options" without immediately listing them
+                    - Always use "your" when referring to the user's vehicles (e.g. "your vehicles", "your chevrolet cruze")
+                    - Always use neutral phrasing for parking lots (e.g. "available parking lots", "nearby parking lots")
+                    - NEVER display any database ID (lotId, vehicleId, reservationId) to the user under any circumstances
+
+                    Critical rules:
+                    - NEVER skip any step even if the user asks to "proceed" or "book it" directly
+                    - NEVER invent, assume, or default start/end times — always ask the user if not explicitly provided
+                    - NEVER call check_availability before the user has given a start time and end time in this conversation
+                    - NEVER call check_vehicle_fits_lot before the user has chosen a vehicle
+                    - NEVER call confirm_reservation if check_vehicle_fits_lot returned fits: false — inform the user and stop
+                    - NEVER repeat information already shown in a previous assistant message — only display new results from the current step
+                    - NEVER ask the user for data you can retrieve via a tool call
+                    - NEVER return an empty message — if you are blocked or missing information, always ask the user for what you need
+                    - If you need lotId or vehicleId to proceed, re-call the relevant tool silently — do NOT ask the user
+                    - Tool results from previous turns are not in your context; re-call tools silently when needed
+                    - Never use list positions as IDs — always use the database lotId/vehicleId from tool results internally
+                    - Pass time strings exactly as the user wrote them — never convert to ISO yourself
+                    - Price is in USD. Be concise and friendly
+                    - Never reveal lat/lng values
                 `
             },
             ...boundedMessages
@@ -276,7 +315,8 @@ export async function POST(req: NextRequest) {
             }
             iterations++;
 
-            allMessages.push(choice.message);
+            const { reasoning, reasoning_content, ...sanitizedMessage } = choice.message as typeof choice.message & { reasoning?: unknown; reasoning_content?: unknown };
+            allMessages.push(sanitizedMessage);
 
             const serialCalls = toolCalls.filter((c: ChatCompletionMessageToolCall) => SERIAL_TOOLS.has(c.function.name));
             const parallelCalls = toolCalls.filter((c: ChatCompletionMessageToolCall) => !SERIAL_TOOLS.has(c.function.name));
