@@ -35,7 +35,7 @@ function extractMalformedToolCalls(text: string): ChatCompletionMessageToolCall[
                 id: `synthetic_${Date.now()}_${calls.length}`,
                 type: "function",
                 function: { name, arguments: rawArgs }
-            });
+            })
         } catch {
             if (process.env.NODE_ENV !== "production") {
                 console.warn(`[groq] Malformed args for tool ${name}:`, rawArgs);
@@ -68,7 +68,14 @@ async function executeGetParkingLots(args: Parameters<typeof getParkingLots>[0],
             location: lot.location,
             totalSpots: lot.totalSpots,
             pricePerHour: lot.pricePerHour,
-            lotType: lot.lotType,
+            lotType: {
+                id: lot.lotType.id,
+                vehicleType: lot.lotType.vehicleType,
+                description: lot.lotType.description,
+                maxWidth: lot.lotType.maxWidth,
+                maxLength: lot.lotType.maxLength,
+                maxHeight: lot.lotType.maxHeight
+            },
             distance: lot.distance
         }))
     }
@@ -92,11 +99,19 @@ async function executeGetUserVehicles(driverId: string, args: { plateNumber?: st
 const executeCheckVehicleFitsLot = async (
     vehicleId: number,
     lotType: {
-        id: number,
-        description: string
+        id: number;
+        vehicleType: string;
+        description: string;
+        maxWidth: number;
+        maxLength: number;
+        maxHeight: number;
     },
     driverId: string
 ) => {
+    if (!lotType?.id || !lotType?.maxWidth || !lotType?.maxLength || !lotType?.maxHeight) {
+        return { fits: false, reason: "Lot type constraints are missing. Please retry." }
+    }
+
     const { data: vehicle, error: vehicleError } = await supabaseAdmin
         .from("vehicles")
         .select("width, length, height, make, model")
@@ -105,29 +120,22 @@ const executeCheckVehicleFitsLot = async (
         .maybeSingle();
     if (vehicleError || !vehicle) return { fits: false, reason: "Vehicle not found or access denied." }
 
-    const { data: lotTypeData, error: lotTypeError } = await supabaseAdmin
-        .from("lot_types")
-        .select("vehicle_type, max_width, max_length, max_height")
-        .eq("id", lotType.id)
-        .maybeSingle();
-    if (lotTypeError || !lotTypeData) return { fits: false, reason: `Lot type "${lotType.description}" not found or unavailable.` }
-
-    const widthFits = vehicle.width <= lotTypeData.max_width;
-    const lengthFits = vehicle.length <= lotTypeData.max_length;
-    const heightFits = vehicle.height <= lotTypeData.max_height;
+    const widthFits = vehicle.width <= lotType.maxWidth;
+    const lengthFits = vehicle.length <= lotType.maxLength;
+    const heightFits = vehicle.height <= lotType.maxHeight;
     const fits = widthFits && lengthFits && heightFits;
 
     const issues: string[] = [];
-    if (!widthFits) issues.push(`width ${vehicle.width}m exceeds max ${lotTypeData.max_width}m`);
-    if (!lengthFits) issues.push(`length ${vehicle.length}m exceeds max ${lotTypeData.max_length}m`);
-    if (!heightFits) issues.push(`height ${vehicle.height}m exceeds max ${lotTypeData.max_height}m`);
+    if (!widthFits) issues.push(`width ${vehicle.width}m exceeds max ${lotType.maxWidth}m`);
+    if (!lengthFits) issues.push(`length ${vehicle.length}m exceeds max ${lotType.maxLength}m`);
+    if (!heightFits) issues.push(`height ${vehicle.height}m exceeds max ${lotType.maxHeight}m`);
 
     return {
         fits,
         vehicle: { make: vehicle.make, model: vehicle.model },
-        lotType: lotTypeData.vehicle_type,
+        lotType: lotType.vehicleType,
         reason: fits
-            ? `${vehicle.make} ${vehicle.model} fits within the ${lotTypeData.vehicle_type} lot constraints.`
+            ? `${vehicle.make} ${vehicle.model} fits within the ${lotType.vehicleType} lot constraints.`
             : `${vehicle.make} ${vehicle.model} does not fit: ${issues.join(", ")}.`
     }
 }
