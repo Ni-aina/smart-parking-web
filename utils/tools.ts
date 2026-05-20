@@ -54,21 +54,10 @@ export const tools: ChatCompletionTool[] = [
             description: "Check if a vehicle fits a lot's size constraints. Returns fits (bool) and reason.",
             parameters: {
                 type: "object",
-                required: ["vehicleId", "lotType"],
+                required: ["vehicleId", "lotTypeId"],
                 properties: {
                     vehicleId: { type: "number" },
-                    lotType: {
-                        type: "object",
-                        required: ["id", "vehicleType", "maxWidth", "maxLength", "maxHeight"],
-                        properties: {
-                            id: { type: "number" },
-                            vehicleType: { type: "string" },
-                            description: { type: "string" },
-                            maxWidth: { type: "number" },
-                            maxLength: { type: "number" },
-                            maxHeight: { type: "number" }
-                        }
-                    }
+                    lotTypeId: { type: "number", description: "The lot type id as returned from get_parking_lots" }
                 }
             }
         }

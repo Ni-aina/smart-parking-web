@@ -68,14 +68,7 @@ async function executeGetParkingLots(args: Parameters<typeof getParkingLots>[0],
             location: lot.location,
             totalSpots: lot.totalSpots,
             pricePerHour: lot.pricePerHour,
-            lotType: {
-                id: lot.lotType.id,
-                vehicleType: lot.lotType.vehicleType,
-                description: lot.lotType.description,
-                maxWidth: lot.lotType.maxWidth,
-                maxLength: lot.lotType.maxLength,
-                maxHeight: lot.lotType.maxHeight
-            },
+            lotTypeId: lot.lotType.id,
             distance: lot.distance
         }))
     }
@@ -98,19 +91,15 @@ async function executeGetUserVehicles(driverId: string, args: { plateNumber?: st
 
 const executeCheckVehicleFitsLot = async (
     vehicleId: number,
-    lotType: {
-        id: number;
-        vehicleType: string;
-        description: string;
-        maxWidth: number;
-        maxLength: number;
-        maxHeight: number;
-    },
+    lotTypeId: number,
     driverId: string
 ) => {
-    if (!lotType?.id || !lotType?.maxWidth || !lotType?.maxLength || !lotType?.maxHeight) {
-        return { fits: false, reason: "Lot type constraints are missing. Please retry." }
-    }
+    const { data: lotType, error: lotTypeError } = await supabaseAdmin
+        .from("lot_types")
+        .select("id, vehicle_type, description, max_width, max_length, max_height")
+        .eq("id", lotTypeId)
+        .maybeSingle();
+    if (lotTypeError || !lotType) return { fits: false, reason: "Lot type not found or could not be fetched." }
 
     const { data: vehicle, error: vehicleError } = await supabaseAdmin
         .from("vehicles")
@@ -120,22 +109,22 @@ const executeCheckVehicleFitsLot = async (
         .maybeSingle();
     if (vehicleError || !vehicle) return { fits: false, reason: "Vehicle not found or access denied." }
 
-    const widthFits = vehicle.width <= lotType.maxWidth;
-    const lengthFits = vehicle.length <= lotType.maxLength;
-    const heightFits = vehicle.height <= lotType.maxHeight;
+    const widthFits = vehicle.width <= lotType.max_width;
+    const lengthFits = vehicle.length <= lotType.max_length;
+    const heightFits = vehicle.height <= lotType.max_height;
     const fits = widthFits && lengthFits && heightFits;
 
     const issues: string[] = [];
-    if (!widthFits) issues.push(`width ${vehicle.width}m exceeds max ${lotType.maxWidth}m`);
-    if (!lengthFits) issues.push(`length ${vehicle.length}m exceeds max ${lotType.maxLength}m`);
-    if (!heightFits) issues.push(`height ${vehicle.height}m exceeds max ${lotType.maxHeight}m`);
+    if (!widthFits) issues.push(`width ${vehicle.width}m exceeds max ${lotType.max_width}m`);
+    if (!lengthFits) issues.push(`length ${vehicle.length}m exceeds max ${lotType.max_length}m`);
+    if (!heightFits) issues.push(`height ${vehicle.height}m exceeds max ${lotType.max_height}m`);
 
     return {
         fits,
         vehicle: { make: vehicle.make, model: vehicle.model },
-        lotType: lotType.vehicleType,
+        lotType: lotType.vehicle_type,
         reason: fits
-            ? `${vehicle.make} ${vehicle.model} fits within the ${lotType.vehicleType} lot constraints.`
+            ? `${vehicle.make} ${vehicle.model} fits within the ${lotType.vehicle_type} lot constraints.`
             : `${vehicle.make} ${vehicle.model} does not fit: ${issues.join(", ")}.`
     }
 }
@@ -212,7 +201,7 @@ async function executeToolCall(
                 result = await executeGetUserVehicles(driverId, args);
                 break;
             case "check_vehicle_fits_lot":
-                result = await executeCheckVehicleFitsLot(args.vehicleId, args.lotType, driverId);
+                result = await executeCheckVehicleFitsLot(args.vehicleId, args.lotTypeId, driverId);
                 break;
             case "check_availability":
                 result = await executeCheckAvailability(args.lotId, args.startTime, args.endTime);
@@ -259,20 +248,20 @@ export async function POST(req: NextRequest) {
                     Follow this strict order to complete a reservation — NEVER skip or reorder steps:
                     1. get_parking_lots — always call this first
                     2. get_user_vehicles — always call this to fetch vehicles
-                    3. check_vehicle_fits_lot — MANDATORY; pass the full lotType object exactly as returned from get_parking_lots for the chosen lot; if fits is false, stop and inform the user — do NOT proceed
+                    3. check_vehicle_fits_lot — MANDATORY; pass vehicleId and the lotTypeId exactly as returned from get_parking_lots for the chosen lot; if fits is false, stop and inform the user — do NOT proceed
                     4. check_availability — MANDATORY; NEVER assume or invent times; if user has not provided start and end time, ask before calling this tool
                     5. Summarise and ask for confirmation
                     6. confirm_reservation — only after explicit user confirmation ("yes", "book it", "confirm", etc.)
 
                     Display rules — ALWAYS:
-                    - After get_parking_lots: list EVERY lot with its name, location, and price/hour under the heading "Here are some available parking lots:" — never show lotId
+                    - After get_parking_lots: list EVERY lot with its name, location, and price/hour under the heading "Here are some available parking lots:" — never show lotId or lotTypeId
                     - After get_user_vehicles: list EVERY vehicle with its make, model, and plate number under the heading "Here are your vehicles:" — never show vehicleId
                     - After check_availability: show available spots, start time, and end time — never show lotId
                     - After check_vehicle_fits_lot: confirm whether the vehicle fits or not with a reason
                     - Never say "I found some options" without immediately listing them
                     - Always use "your" when referring to the user's vehicles (e.g. "your vehicles", "your chevrolet cruze")
                     - Always use neutral phrasing for parking lots (e.g. "available parking lots", "nearby parking lots")
-                    - NEVER display any database ID (lotId, vehicleId, reservationId) to the user under any circumstances
+                    - NEVER display any database ID (lotId, lotTypeId, vehicleId, reservationId) to the user under any circumstances
 
                     Critical rules:
                     - NEVER skip any step even if the user asks to "proceed" or "book it" directly
@@ -283,9 +272,9 @@ export async function POST(req: NextRequest) {
                     - NEVER repeat information already shown in a previous assistant message — only display new results from the current step
                     - NEVER ask the user for data you can retrieve via a tool call
                     - NEVER return an empty message — if you are blocked or missing information, always ask the user for what you need
-                    - If you need lotId or vehicleId to proceed, re-call the relevant tool silently — do NOT ask the user
+                    - If you need lotId, lotTypeId, or vehicleId to proceed, re-call the relevant tool silently — do NOT ask the user
                     - Tool results from previous turns are not in your context; re-call tools silently when needed
-                    - Never use list positions as IDs — always use the database lotId/vehicleId from tool results internally
+                    - Never use list positions as IDs — always use the database lotId/vehicleId/lotTypeId from tool results internally
                     - Pass time strings exactly as the user wrote them — never convert to ISO yourself
                     - Price is in USD. Be concise and friendly
                     - Never reveal lat/lng values
