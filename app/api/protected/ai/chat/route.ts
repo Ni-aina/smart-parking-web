@@ -14,7 +14,7 @@ import { LotInterface } from "@/types/lot";
 
 const PRIMARY_MODEL = "llama-3.3-70b-versatile";
 const FALLBACK_MODEL = "openai/gpt-oss-20b";
-const MAX_TOOL_ITERATIONS = 10;
+const MAX_TOOL_ITERATIONS = 3;
 const MAX_MESSAGE_COUNT = 40;
 const SERIAL_TOOLS = new Set(["confirm_reservation"]);
 
