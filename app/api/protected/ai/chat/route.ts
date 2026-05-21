@@ -14,7 +14,7 @@ import { LotInterface } from "@/types/lot";
 
 const PRIMARY_MODEL = "llama-3.3-70b-versatile";
 const FALLBACK_MODEL = "openai/gpt-oss-20b";
-const MAX_TOOL_ITERATIONS = 3;
+const MAX_TOOL_ITERATIONS = 8;
 const MAX_MESSAGE_COUNT = 40;
 const SERIAL_TOOLS = new Set(["confirm_reservation"]);
 
@@ -59,7 +59,16 @@ async function groqCreate(messages: ChatCompletionMessageParam[], model = PRIMAR
 }
 
 async function executeGetParkingLots(args: Parameters<typeof getParkingLots>[0], lat: number, lng: number) {
-    const result = await getParkingLots({ location: { latitude: lat, longitude: lng }, ...args });
+    const rawTerm = args?.searchTerm?.trim();
+    const searchTerm = rawTerm?.includes(" ") ? rawTerm.split(" ")[0] : rawTerm;
+
+    const result = await getParkingLots(
+        {
+            location: { latitude: lat, longitude: lng },
+            ...args,
+            searchTerm
+        })
+
     return {
         ...result,
         data: result.data.map((lot: LotInterface) => ({
@@ -68,8 +77,7 @@ async function executeGetParkingLots(args: Parameters<typeof getParkingLots>[0],
             location: lot.location,
             totalSpots: lot.totalSpots,
             pricePerHour: lot.pricePerHour,
-            lotTypeId: lot.lotType.id,
-            distance: lot.distance
+            typeId: lot.typeId
         }))
     }
 }
@@ -91,13 +99,13 @@ async function executeGetUserVehicles(driverId: string, args: { plateNumber?: st
 
 const executeCheckVehicleFitsLot = async (
     vehicleId: number,
-    lotTypeId: number,
+    typeId: number,
     driverId: string
 ) => {
     const { data: lotType, error: lotTypeError } = await supabaseAdmin
         .from("lot_types")
         .select("id, vehicle_type, description, max_width, max_length, max_height")
-        .eq("id", lotTypeId)
+        .eq("id", typeId)
         .maybeSingle();
     if (lotTypeError || !lotType) return { fits: false, reason: "Lot type not found or could not be fetched." }
 
@@ -201,7 +209,7 @@ async function executeToolCall(
                 result = await executeGetUserVehicles(driverId, args);
                 break;
             case "check_vehicle_fits_lot":
-                result = await executeCheckVehicleFitsLot(args.vehicleId, args.lotTypeId, driverId);
+                result = await executeCheckVehicleFitsLot(args.vehicleId, args.typeId, driverId);
                 break;
             case "check_availability":
                 result = await executeCheckAvailability(args.lotId, args.startTime, args.endTime);
@@ -248,20 +256,20 @@ export async function POST(req: NextRequest) {
                     Follow this strict order to complete a reservation — NEVER skip or reorder steps:
                     1. get_parking_lots — always call this first
                     2. get_user_vehicles — always call this to fetch vehicles
-                    3. check_vehicle_fits_lot — MANDATORY; pass vehicleId and the lotTypeId exactly as returned from get_parking_lots for the chosen lot; if fits is false, stop and inform the user — do NOT proceed
+                    3. check_vehicle_fits_lot — MANDATORY; pass vehicleId and the typeId exactly as returned from get_parking_lots for the chosen lot; if fits is false, stop and inform the user — do NOT proceed
                     4. check_availability — MANDATORY; NEVER assume or invent times; if user has not provided start and end time, ask before calling this tool
                     5. Summarise and ask for confirmation
                     6. confirm_reservation — only after explicit user confirmation ("yes", "book it", "confirm", etc.)
 
                     Display rules — ALWAYS:
-                    - After get_parking_lots: list EVERY lot with its name, location, and price/hour under the heading "Here are some available parking lots:" — never show lotId or lotTypeId
+                    - After get_parking_lots: list EVERY lot with its name, location, and price/hour under the heading "Here are some available parking lots:" — never show lotId or typeId
                     - After get_user_vehicles: list EVERY vehicle with its make, model, and plate number under the heading "Here are your vehicles:" — never show vehicleId
                     - After check_availability: show available spots, start time, and end time — never show lotId
                     - After check_vehicle_fits_lot: confirm whether the vehicle fits or not with a reason
                     - Never say "I found some options" without immediately listing them
                     - Always use "your" when referring to the user's vehicles (e.g. "your vehicles", "your chevrolet cruze")
                     - Always use neutral phrasing for parking lots (e.g. "available parking lots", "nearby parking lots")
-                    - NEVER display any database ID (lotId, lotTypeId, vehicleId, reservationId) to the user under any circumstances
+                    - NEVER display any database ID (lotId, typeId, vehicleId, reservationId) to the user under any circumstances
 
                     Critical rules:
                     - NEVER skip any step even if the user asks to "proceed" or "book it" directly
@@ -272,9 +280,9 @@ export async function POST(req: NextRequest) {
                     - NEVER repeat information already shown in a previous assistant message — only display new results from the current step
                     - NEVER ask the user for data you can retrieve via a tool call
                     - NEVER return an empty message — if you are blocked or missing information, always ask the user for what you need
-                    - If you need lotId, lotTypeId, or vehicleId to proceed, re-call the relevant tool silently — do NOT ask the user
+                    - If you need lotId, typeId, or vehicleId to proceed, re-call the relevant tool silently — do NOT ask the user
                     - Tool results from previous turns are not in your context; re-call tools silently when needed
-                    - Never use list positions as IDs — always use the database lotId/vehicleId/lotTypeId from tool results internally
+                    - Never use list positions as IDs — always use the database lotId/vehicleId/typeId from tool results internally
                     - Pass time strings exactly as the user wrote them — never convert to ISO yourself
                     - Price is in USD. Be concise and friendly
                     - Never reveal lat/lng values
@@ -306,8 +314,8 @@ export async function POST(req: NextRequest) {
 
             if (iterations >= MAX_TOOL_ITERATIONS) {
                 return Response.json(
-                    { error: "The assistant reached the maximum number of steps. Please try a simpler request." },
-                    { status: 500 }
+                    { message: "I'm sorry, I'm having a bit of trouble processing your request right now. Could you try rephrasing or breaking it into smaller steps? I'm happy to help! 😊" },
+                    { status: 200 }
                 )
             }
             iterations++;
@@ -337,7 +345,26 @@ export async function POST(req: NextRequest) {
         return Response.json({ message: response.choices[0].message.content });
 
     } catch (error: unknown) {
-        const message = error instanceof Error ? error.message : String(error);
-        return Response.json({ error: message }, { status: 500 });
+        const raw = error instanceof Error ? error.message : String(error);
+
+        if (raw.includes("rate_limit_exceeded") || raw.includes("Rate limit")) {
+            const retryMatch = raw.match(/try again in ([^.]+)/i);
+            const retryIn = retryMatch ? ` Please try again in ${retryMatch[1]}.` : " Please try again in a few minutes.";
+            return Response.json({ message: `We've hit our request limit for now.${retryIn} Sorry for the inconvenience! 🙏` }, { status: 200 });
+        }
+        if (raw.includes("timeout") || raw.includes("Timeout")) {
+            return Response.json({ message: "The request took too long to complete. Please try again — it usually works on the next attempt! ⏱️" }, { status: 200 });
+        }
+        if (raw.includes("tool_use_failed") || raw.includes("Failed to call a function")) {
+            return Response.json({ message: "I ran into a small hiccup while processing your request. Could you try again? I'll do better! 😅" }, { status: 200 });
+        }
+        if (raw.includes("model_decommissioned")) {
+            return Response.json({ message: "I'm currently undergoing some updates. Please try again shortly! 🔧" }, { status: 200 });
+        }
+        if (raw.includes("invalid_request_error")) {
+            return Response.json({ message: "I received an unexpected input. Could you rephrase your request and try again? 😊" }, { status: 200 });
+        }
+
+        return Response.json({ error: raw }, { status: 500 });
     }
 }

@@ -5,7 +5,7 @@ export const tools: ChatCompletionTool[] = [
         type: "function",
         function: {
             name: "get_parking_lots",
-            description: "Search parking lots by name/address. Returns lotId, name, location, pricePerHour, lotType.",
+            description: "Search parking lots by name/address. Returns lotId, typeId, name, location, pricePerHour.",
             parameters: {
                 type: "object",
                 properties: {
@@ -54,10 +54,10 @@ export const tools: ChatCompletionTool[] = [
             description: "Check if a vehicle fits a lot's size constraints. Returns fits (bool) and reason.",
             parameters: {
                 type: "object",
-                required: ["vehicleId", "lotTypeId"],
+                required: ["vehicleId", "typeId"],
                 properties: {
                     vehicleId: { type: "number" },
-                    lotTypeId: { type: "number", description: "The lot type id as returned from get_parking_lots" }
+                    typeId: { type: "number", description: "The lot type id as returned from get_parking_lots" }
                 }
             }
         }
