@@ -83,15 +83,38 @@ async function executeGetParkingLots(args: Parameters<typeof getParkingLots>[0],
 }
 
 async function executeGetUserVehicles(driverId: string, args: { plateNumber?: string; make?: string; model?: string } | null) {
-    const { plateNumber, make, model } = args ?? {}
+    const clean = (value?: string) => {
+        if (!value) return undefined;
+
+        const v = value.trim().toLowerCase();
+
+        if (
+            v === "null" ||
+            v === "undefined" ||
+            v === "none" ||
+            v === ""
+        ) {
+            return undefined;
+        }
+
+        return value.trim();
+    }
+
+    const plate = clean(args?.plateNumber);
+    const make = clean(args?.make);
+    const model = clean(args?.model);
+
     let query = supabaseAdmin
         .from("vehicles")
         .select("id, plate_number, make, model, year, width, length, height")
         .eq("driver_id", driverId);
-    if (plateNumber) query = query.ilike("plate_number", `%${plateNumber}%`);
+
+    if (plate) query = query.ilike("plate_number", `%${plate}%`);
     if (make) query = query.ilike("make", `%${make}%`);
     if (model) query = query.ilike("model", `%${model}%`);
+
     const { data, error } = await query;
+
     if (error) throw new Error(`Failed to fetch vehicles: ${error.message}`);
     if (!data || data.length === 0) return { vehicles: [], message: "No matching vehicle found." }
     return { vehicles: data.map(item => ({ ...item, vehicleId: item.id })) }
@@ -246,26 +269,28 @@ export async function POST(req: NextRequest) {
             ({ reasoning, reasoning_content, ...rest }) => rest
         )
 
+        const today = new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })
+
         const allMessages: ChatCompletionMessageParam[] = [
             {
                 role: "system",
                 content: `
                     You are a parking reservation assistant. 
-                    Today is ${new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}.
+                    Today is ${today}.
 
                     Follow this strict order to complete a reservation — NEVER skip or reorder steps:
-                    1. get_parking_lots — always call this first
-                    2. get_user_vehicles — always call this to fetch vehicles
+                    1. get_parking_lots — only if no parking lot is selected yet. If only 1 lot is returned, automatically select it and proceed.
+                    2. get_user_vehicles — only if no vehicle is selected yet. If only 1 vehicle is returned, automatically select it and proceed.
                     3. check_vehicle_fits_lot — MANDATORY; pass vehicleId and the typeId exactly as returned from get_parking_lots for the chosen lot; if fits is false, stop and inform the user — do NOT proceed
                     4. check_availability — MANDATORY; NEVER assume or invent times; if user has not provided start and end time, ask before calling this tool
                     5. Summarise and ask for confirmation
                     6. confirm_reservation — only after explicit user confirmation ("yes", "book it", "confirm", etc.)
 
                     Display rules — ALWAYS:
-                    - After get_parking_lots: list EVERY lot with its name, location, and price/hour under the heading "Here are some available parking lots:" — never show lotId or typeId
-                    - After get_user_vehicles: list EVERY vehicle with its make, model, and plate number under the heading "Here are your vehicles:" — never show vehicleId
-                    - After check_availability: show available spots, start time, and end time — never show lotId
+                    - After get_parking_lots: list EVERY lot with its name, location, and price/hour. Use the heading "Here is an available parking lot:" if there is only 1 lot, or "Here are some available parking lots:" if there are multiple lots. Never show lotId or typeId.
+                    - After get_user_vehicles: list EVERY vehicle with its make, model, and plate number. Use the heading "Here is your vehicle:" if there is only 1 vehicle, or "Here are your vehicles:" if there are multiple vehicles. Never show vehicleId.
                     - After check_vehicle_fits_lot: confirm whether the vehicle fits or not with a reason
+                    - After check_availability: show available spots, start time, and end time. Match grammar to the count (e.g., "There is 1 spot available" vs "There are 3 spots available"). Never show lotId.
                     - Never say "I found some options" without immediately listing them
                     - Always use "your" when referring to the user's vehicles (e.g. "your vehicles", "your chevrolet cruze")
                     - Always use neutral phrasing for parking lots (e.g. "available parking lots", "nearby parking lots")
@@ -275,7 +300,7 @@ export async function POST(req: NextRequest) {
                     - NEVER skip any step even if the user asks to "proceed" or "book it" directly
                     - NEVER invent, assume, or default start/end times — always ask the user if not explicitly provided
                     - NEVER call check_availability before the user has given a start time and end time in this conversation
-                    - NEVER call check_vehicle_fits_lot before the user has chosen a vehicle
+                    - NEVER call check_vehicle_fits_lot before the user has chosen a vehicle (by the user or auto-selected)
                     - NEVER call confirm_reservation if check_vehicle_fits_lot returned fits: false — inform the user and stop
                     - NEVER repeat information already shown in a previous assistant message — only display new results from the current step
                     - NEVER ask the user for data you can retrieve via a tool call
