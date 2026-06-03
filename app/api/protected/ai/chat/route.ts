@@ -160,11 +160,16 @@ const executeCheckVehicleFitsLot = async (
     }
 }
 
-async function executeCheckAvailability(lotId: number, startTime: string, endTime: string) {
+async function executeCheckAvailability(
+    lotId: number,
+    startTime: string,
+    endTime: string,
+    timezoneOffset: number
+) {
     if (!lotId) throw new Error("Lot id is required");
     if (!startTime || !endTime) throw new Error("Start time and end time are required");
-    const parsedStartTime = parseUserTime(startTime);
-    const parsedEndTime = parseUserTime(endTime);
+    const parsedStartTime = parseUserTime(startTime, timezoneOffset);
+    const parsedEndTime = parseUserTime(endTime, timezoneOffset);
     const startDateTime = new Date(parsedStartTime);
     const endDateTime = new Date(parsedEndTime);
     if (startDateTime >= endDateTime) throw new Error("Start time must be before end time");
@@ -192,7 +197,14 @@ async function executeCheckAvailability(lotId: number, startTime: string, endTim
     }
 }
 
-async function executeConfirmReservation(driverId: string, lotId: number, vehicleId: number, startTime: string, endTime: string) {
+async function executeConfirmReservation(
+    driverId: string,
+    lotId: number,
+    vehicleId: number,
+    startTime: string,
+    endTime: string,
+    timezoneOffset: number
+) {
     const { data: vehicle, error: isNotMatch } = await supabaseAdmin
         .from("vehicles")
         .select("id")
@@ -200,8 +212,8 @@ async function executeConfirmReservation(driverId: string, lotId: number, vehicl
         .eq("driver_id", driverId)
         .maybeSingle();
     if (!vehicle || isNotMatch) throw new Error(`Vehicle not found or access denied, ${isNotMatch?.message}`);
-    const parsedStartTime = parseUserTime(startTime);
-    const parsedEndTime = parseUserTime(endTime);
+    const parsedStartTime = parseUserTime(startTime, timezoneOffset);
+    const parsedEndTime = parseUserTime(endTime, timezoneOffset);
     const payload = denormalizeData({
         driverId,
         lotId: String(lotId),
@@ -219,7 +231,8 @@ async function executeToolCall(
     call: ChatCompletionMessageToolCall,
     driverId: string,
     lat: number,
-    lng: number
+    lng: number,
+    timezoneOffset: number
 ): Promise<ChatCompletionMessageParam & { role: "tool" }> {
     let result: unknown;
     try {
@@ -235,10 +248,10 @@ async function executeToolCall(
                 result = await executeCheckVehicleFitsLot(args.vehicleId, args.typeId, driverId);
                 break;
             case "check_availability":
-                result = await executeCheckAvailability(args.lotId, args.startTime, args.endTime);
+                result = await executeCheckAvailability(args.lotId, args.startTime, args.endTime, timezoneOffset);
                 break;
             case "confirm_reservation":
-                result = await executeConfirmReservation(driverId, args.lotId, args.vehicleId, args.startTime, args.endTime);
+                result = await executeConfirmReservation(driverId, args.lotId, args.vehicleId, args.startTime, args.endTime, timezoneOffset);
                 break;
             default:
                 result = { error: `Unknown tool: ${call.function.name}` }
@@ -251,7 +264,13 @@ async function executeToolCall(
 
 export async function POST(req: NextRequest) {
     try {
-        const { messages, driverId, latitude, longitude } = await req.json();
+        const {
+            messages,
+            driverId,
+            latitude,
+            longitude,
+            timezoneOffset
+        } = await req.json();
 
         if (!messages || !Array.isArray(messages) || messages.length === 0)
             return Response.json({ error: "Messages array is required" }, { status: 400 });
@@ -259,9 +278,12 @@ export async function POST(req: NextRequest) {
             return Response.json({ error: "driverId is required" }, { status: 400 });
         if (latitude == null || longitude == null)
             return Response.json({ error: "latitude and longitude are required" }, { status: 400 });
+        if (typeof timezoneOffset !== "number")
+            return Response.json({ error: "timezoneOffset is required" }, { status: 400 });
 
         const lat = parseFloat(latitude);
         const lng = parseFloat(longitude);
+
         if (isNaN(lat) || isNaN(lng))
             return Response.json({ error: "latitude and longitude must be valid numbers" }, { status: 400 });
 
@@ -269,7 +291,14 @@ export async function POST(req: NextRequest) {
             ({ reasoning, reasoning_content, ...rest }) => rest
         )
 
-        const today = new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })
+        const offsetMs = timezoneOffset * 60 * 1000;
+        const localNow = new Date(Date.now() + offsetMs);
+        const today = localNow.toLocaleDateString("en-US", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+        })
 
         const allMessages: ChatCompletionMessageParam[] = [
             {
@@ -354,13 +383,13 @@ export async function POST(req: NextRequest) {
 
             if (parallelCalls.length > 0) {
                 const results = await Promise.all(
-                    parallelCalls.map((call: ChatCompletionMessageToolCall) => executeToolCall(call, driverId, lat, lng))
+                    parallelCalls.map((call: ChatCompletionMessageToolCall) => executeToolCall(call, driverId, lat, lng, timezoneOffset))
                 )
                 toolResults.push(...results);
             }
 
             for (const call of serialCalls) {
-                toolResults.push(await executeToolCall(call, driverId, lat, lng));
+                toolResults.push(await executeToolCall(call, driverId, lat, lng, timezoneOffset));
             }
 
             allMessages.push(...toolResults);
