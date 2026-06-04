@@ -15,7 +15,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
 
-const APK_URL = "https://files.catbox.moe/hhxcwb.apk";
+const APK_URL = "https://files.catbox.moe/7o0wqs.apk";
 
 const LandingPage = () => {
 
