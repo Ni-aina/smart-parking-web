@@ -43,7 +43,10 @@ const SignIn = () => {
                 onSubmit={handleSubmit}
             >
                 <div className="flex lg:justify-center">
-                    <div className="relative w-48 h-16">
+                    <Link
+                        href="/"
+                        className="relative w-48 h-16 hover:opacity-80 transition-opacity"
+                    >
                         <Image
                             src={"/images/smart-parking.png"}
                             alt="Smart parking"
@@ -51,7 +54,7 @@ const SignIn = () => {
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             priority
                         />
-                    </div>
+                    </Link>
                 </div>
                 <div className="mt-3 flex flex-col gap-3">
                     <h1 className="text-md font-semibold">Email</h1>

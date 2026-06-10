@@ -26,13 +26,13 @@ const SignUpPage = ({
     const [step, setStep] = useState(0);
     const [showPassword, setShowPassword] = useState(false);
     const [selectedPlan, setSelectedPlan] = useState<string>(plans.find(item => item.popular)?.id || "");
-    
-    const [form, setForm] = useState<SignUpForm>({ 
-        name: "", 
-        email: "", 
+
+    const [form, setForm] = useState<SignUpForm>({
+        name: "",
+        email: "",
         phone: "",
-        password: "", 
-        confirmPassword: "" 
+        password: "",
+        confirmPassword: ""
     })
 
     const activePlan = plans.find(p => p.id === selectedPlan);
@@ -88,7 +88,10 @@ const SignUpPage = ({
                 `}
             >
                 <div className="flex lg:justify-center mb-6">
-                    <div className="relative w-48 h-16">
+                    <Link
+                        href="/"
+                        className="relative w-48 h-16 hover:opacity-80 transition-opacity"
+                    >
                         <Image
                             src={"/images/smart-parking.png"}
                             alt="Smart parking"
@@ -96,7 +99,7 @@ const SignUpPage = ({
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             priority
                         />
-                    </div>
+                    </Link>
                 </div>
                 <div className="flex items-center justify-center gap-2 mb-4">
                     {
