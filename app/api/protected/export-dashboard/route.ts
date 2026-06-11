@@ -7,12 +7,13 @@ export async function POST(req: Request) {
         const { 
             summaryData, 
             bookingsLastWeek,
-            occupancyLots
+            occupancyLots,
+            sheetNames
         } = data;
 
         const workbook = new ExcelJS.Workbook();
 
-        const summarySheet = workbook.addWorksheet("Summary");
+        const summarySheet = workbook.addWorksheet(sheetNames?.summary || "Summary");
         if (summaryData && summaryData.length > 0) {
             summarySheet.columns = Object.keys(summaryData[0]).map(key => ({
                 header: key,
@@ -22,7 +23,7 @@ export async function POST(req: Request) {
             summarySheet.addRows(summaryData);
         }
 
-        const bookingsSheet = workbook.addWorksheet("Bookings Last Week");
+        const bookingsSheet = workbook.addWorksheet(sheetNames?.bookingsLastWeek || "Bookings Last Week");
         if (bookingsLastWeek && bookingsLastWeek.length > 0) {
             bookingsSheet.columns = Object.keys(bookingsLastWeek[0]).map(key => ({
                 header: key,
@@ -32,7 +33,7 @@ export async function POST(req: Request) {
             bookingsSheet.addRows(bookingsLastWeek);
         }
 
-        const pieChartSheet = workbook.addWorksheet("Occupancy Lots");
+        const pieChartSheet = workbook.addWorksheet(sheetNames?.occupancyLots || "Occupancy Lots");
         if (occupancyLots && occupancyLots.length > 0) {
             pieChartSheet.columns = Object.keys(occupancyLots[0]).map(key => ({
                 header: key,

@@ -2,6 +2,7 @@
 
 import MetricCard from "@/components/Dashboards/MetricCard";
 import { CalendarCheck, DollarSign, PieChart, XCircle } from "lucide-react";
+import { useTranslation } from "@/context/LanguageContext";
 
 interface DashboardMetrics {
     totalReservations: {
@@ -41,6 +42,7 @@ interface DashboardCardsProps {
 const DashboardCards = ({
     metrics
 }: DashboardCardsProps) => {
+    const { t } = useTranslation();
     const {
         totalReservations,
         revenue,
@@ -51,7 +53,7 @@ const DashboardCards = ({
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 my-8">
             <MetricCard
-                title="Total Reservations"
+                title={t("dashboard.metrics.totalReservations")}
                 value={totalReservations.value}
                 icon={CalendarCheck}
                 trend={totalReservations.trend}
@@ -60,7 +62,7 @@ const DashboardCards = ({
             />
 
             <MetricCard
-                title="Revenue"
+                title={t("dashboard.metrics.revenue")}
                 value={revenue.value}
                 icon={DollarSign}
                 trend={revenue.trend}
@@ -69,7 +71,7 @@ const DashboardCards = ({
             />
 
             <MetricCard
-                title="Completed"
+                title={t("dashboard.metrics.completed")}
                 value={completed.value}
                 icon={PieChart}
                 trend={completed.trend}
@@ -78,7 +80,7 @@ const DashboardCards = ({
             />
 
             <MetricCard
-                title="Cancelled"
+                title={t("dashboard.metrics.cancelled")}
                 value={cancelled.value}
                 icon={XCircle}
                 trend={cancelled.trend}

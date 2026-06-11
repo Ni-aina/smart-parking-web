@@ -89,25 +89,25 @@ const DashboardPage = async ({
 
     const summaryData = [
         {
-            Metric: "Total Reservations",
+            Metric: "totalReservations",
             Value: `${reservationCount}`,
             Rate: `${reservationRate}%`,
             Growing: reservationTrend ? "YES" : "NO" as trendType
         },
         {
-            Metric: "Revenue",
+            Metric: "revenue",
             Value: `$${revenue}`,
             Rate: `${revenueRate}%`,
             Growing: revenueTrend ? "YES" : "NO" as trendType
         },
         {
-            Metric: "Completed",
+            Metric: "completed",
             Value: `${completedReservation}`,
             Rate: `${completedRate}%`,
             Growing: completedTrend ? "YES" : "NO" as trendType
         },
         {
-            Metric: "Cancelled",
+            Metric: "cancelled",
             Value: `${cancelledReservation}`,
             Rate: `${rateCancelledReservation}%`,
             Growing: cancelledReservationTrend ? "YES" : "NO" as trendType
@@ -122,11 +122,11 @@ const DashboardPage = async ({
 
     const PieChartData = [
         {
-            name: "Occupied",
+            name: "occupied",
             value: occupiedSpots
         },
         {
-            name: "Available",
+            name: "available",
             value: availableSpots
         }
     ]
@@ -145,7 +145,7 @@ const DashboardPage = async ({
         Status: name,
         Count: `${value}`
     })).concat({
-        Status: "Total Spots",
+        Status: "totalSpots",
         Count: `${totalSpots}`
     })
 
@@ -159,33 +159,13 @@ const DashboardPage = async ({
             <DashboardCards
                 metrics={dashboardMetrics}
             />
-            <div className="grid grid-cols-1 lg:grid-cols-[auto_260px] gap-10">
-                <div className="space-y-5">
-                    <h1 className="text-white text-lg lg:text-3xl font-semibold">
-                        Bookings last week
-                    </h1>
-                    <AreaChartDashboard
-                        bookingsLastWeek={bookingsLastWeek}
-                    />
-                </div>
-                <div className="flex flex-col items-center space-y-2">
-                    <h1 className="text-white text-lg lg:text-3xl font-semibold">
-                        Occupancy Rate
-                    </h1>
-                    <PieChartDashboard
-                        piechartData={PieChartData}
-                    />
-                    <div className="flex flex-wrap gap-3">
-                        <div className="flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-[#5CFA90]" />
-                            <span className="text-white">Occupied</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-[#FF8042]" />
-                            <span className="text-white">Available</span>
-                        </div>
-                    </div>
-                </div>
+            <div className="grid grid-cols-1 lg:grid-cols-[auto_260px] gap-10 pb-5">
+                <AreaChartDashboard
+                    bookingsLastWeek={bookingsLastWeek}
+                />
+                <PieChartDashboard
+                    piechartData={PieChartData}
+                />
             </div>
         </>
     )

@@ -68,6 +68,54 @@ export const translationsFr = {
         account: "Compte",
         signOut: "Se déconnecter"
     },
+    dashboard: {
+        welcomeBack: "Bienvenue",
+        measureTraffic: "Mesurez le trafic de vos réservations",
+        exportData: "Exporter les données",
+        loadingData: "Chargement des données...",
+        bookingsLastWeek: "Réservations de la semaine",
+        occupancyRate: "Taux d'occupation",
+        filters: {
+            thisWeek: "Cette semaine",
+            thisMonth: "Ce mois-ci",
+            thisYear: "Cette année"
+        },
+        metrics: {
+            totalReservations: "Réservations totales",
+            revenue: "Revenus",
+            completed: "Terminées",
+            cancelled: "Annulées"
+        },
+        status: {
+            occupied: "Occupé",
+            available: "Disponible",
+            totalSpots: "Places totales"
+        },
+        days: {
+            sunday: "Dimanche",
+            monday: "Lundi",
+            tuesday: "Mardi",
+            wednesday: "Mercredi",
+            thursday: "Jeudi",
+            friday: "Vendredi",
+            saturday: "Samedi"
+        },
+        export: {
+            summary: "Résumé",
+            occupancyLots: "Occupation des parkings",
+            metric: "Indicateur",
+            value: "Valeur",
+            rate: "Taux",
+            growing: "En hausse",
+            day: "Jour",
+            booking: "Réservation",
+            status: "Statut",
+            count: "Nombre",
+            yes: "OUI",
+            no: "NON",
+            failed: "Échec de l'exportation du tableau de bord"
+        }
+    },
     auth: {
         email: "E-mail",
         password: "Mot de passe",

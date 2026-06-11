@@ -68,6 +68,54 @@ export const translationsEn = {
         account: "Account",
         signOut: "Sign Out"
     },
+    dashboard: {
+        welcomeBack: "Welcome back",
+        measureTraffic: "Measure your reservations traffic",
+        exportData: "Export data",
+        loadingData: "Loading data...",
+        bookingsLastWeek: "Bookings last week",
+        occupancyRate: "Occupancy Rate",
+        filters: {
+            thisWeek: "This week",
+            thisMonth: "This month",
+            thisYear: "This year"
+        },
+        metrics: {
+            totalReservations: "Total Reservations",
+            revenue: "Revenue",
+            completed: "Completed",
+            cancelled: "Cancelled"
+        },
+        status: {
+            occupied: "Occupied",
+            available: "Available",
+            totalSpots: "Total Spots"
+        },
+        days: {
+            sunday: "Sunday",
+            monday: "Monday",
+            tuesday: "Tuesday",
+            wednesday: "Wednesday",
+            thursday: "Thursday",
+            friday: "Friday",
+            saturday: "Saturday"
+        },
+        export: {
+            summary: "Summary",
+            occupancyLots: "Occupancy Lots",
+            metric: "Metric",
+            value: "Value",
+            rate: "Rate",
+            growing: "Growing",
+            day: "Day",
+            booking: "Booking",
+            status: "Status",
+            count: "Count",
+            yes: "YES",
+            no: "NO",
+            failed: "Failed to export dashboard"
+        }
+    },
     auth: {
         email: "Email",
         password: "Password",
