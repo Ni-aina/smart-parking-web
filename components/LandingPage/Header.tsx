@@ -7,21 +7,23 @@ export const Header = () => {
     const { t } = useTranslation()
 
     return (
-        <nav className="flex flex-wrap justify-between items-center px-6 py-4 border-b border-white/10 gap-4">
-            <div className="relative w-24 h-8 sm:w-36 sm:h-12">
-                <Image
-                    src="/images/smart-parking.png"
-                    alt="Smart parking"
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    loading="eager"
-                />
+        <nav className="grid grid-cols-1 lg:grid-cols-2 px-6 py-4 border-b border-white/10 gap-4">
+            <div className="flex justify-between items-center gap-5">
+                <div className="relative w-24 h-8 sm:w-36 sm:h-12">
+                    <Image
+                        src="/images/smart-parking.png"
+                        alt="Smart parking"
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        loading="eager"
+                    />
+                </div>
+                <div className="lg:hidden">
+                    <LanguageSwitcher />
+                </div>
             </div>
-            <div className="sm:hidden">
-                <LanguageSwitcher />
-            </div>
-            <div className="flex flex-1 justify-between sm:justify-end items-center gap-6">
-                <div className="hidden sm:block">
+            <div className="flex justify-end items-center gap-6">
+                <div className="hidden lg:block">
                     <LanguageSwitcher />
                 </div>
                 <Link
