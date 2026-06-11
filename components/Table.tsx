@@ -107,7 +107,7 @@ const Table = ({
 
     return (
         <>
-            <div className="my-5 lg:my-8 bg-white/5 rounded-md text-white/80">
+            <div className="my-5 lg:my-8 bg-white/10 rounded-md text-white/80">
                 <div className="flex justify-between items-center gap-5 p-5">
                     <div className="flex items-center gap-3">
                         <h1 className="capitalize font-semibold">
@@ -116,7 +116,7 @@ const Table = ({
                         {
                             isSelected &&
                             <button
-                                className="bg-white/5 text-white/40 text-xs rounded px-3 py-1.5
+                                className="bg-white/10 text-red-500 text-xs rounded px-3 py-1.5
                                 cursor-pointer hover:text-white/70 disabled:opacity-60 disabled:cursor-not-allowed"
                                 onClick={handleSetAllConfirmIds}
                             >
@@ -177,7 +177,7 @@ const Table = ({
                                     return (
                                         <tr
                                             key={item.id}
-                                            className={index % 2 === 0 ? "bg-black/5" : ""}
+                                            className={index % 2 === 0 ? "bg-black/10" : ""}
                                         >
                                             <td className="pl-5 w-0.5">
                                                 <div className="flex items-center">

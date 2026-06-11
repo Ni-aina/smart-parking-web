@@ -173,5 +173,97 @@ export const translationsFr = {
         comingSoon: "Bientôt disponible",
         finishingTouches: "Nous finalisons notre offre Entreprise. Restez à l'écoute.",
         notAvailable: "Pas encore disponible"
+    },
+    reservations: {
+        title: "Réservations",
+        titleSingular: "Réservation",
+        listTitle: "Liste des réservations",
+        searchPlaceholder: "Rechercher des réservations...",
+        addNew: "Ajouter une réservation",
+        noData: "Aucune réservation pour le moment",
+        pageActions: {
+            new: "Nouveau",
+            edit: "Modifier",
+            view: "Voir",
+            goBack: "Retour"
+        },
+        actions: {
+            cancel: "Annuler",
+            create: "Créer la réservation",
+            viewDetails: "Voir les détails de la réservation",
+            cancelReservation: "Annuler la réservation"
+        },
+        status: {
+            active: "Active",
+            pending: "En attente",
+            cancelled: "Annulée",
+            completed: "Terminée",
+            succeeded: "Réussi",
+            failed: "Échoué"
+        },
+        form: {
+            parkingLot: "Parking *",
+            selectParkingLot: "Sélectionnez un parking",
+            driver: "Conducteur *",
+            selectDriver: "Sélectionnez un conducteur",
+            vehicle: "Véhicule *",
+            selectVehicle: "Sélectionnez un véhicule",
+            loadingVehicles: "Chargement des véhicules...",
+            noVehicles: "Aucun véhicule trouvé pour ce conducteur",
+            selectDriverFirst: "Sélectionnez d'abord un conducteur",
+            startTime: "Heure de début *",
+            endTime: "Heure de fin *",
+            availableSpots: "Places disponibles",
+            checkingAvailability: "Vérification de la disponibilité...",
+            noSpots: "Aucune place disponible pour l'horaire sélectionné",
+            unavailable: "N/D",
+            availabilityError: "Échec de la vérification de disponibilité du parking",
+            paymentSummary: "Récapitulatif du paiement (Espèces)",
+            rate: "Tarif :",
+            duration: "Durée :",
+            total: "Total :",
+            perHour: "/h",
+            hour: "heure",
+            hours: "heures",
+            errors: {
+                selectParkingLot: "Veuillez sélectionner un parking",
+                selectDriver: "Veuillez sélectionner un conducteur",
+                selectVehicle: "Veuillez sélectionner un véhicule",
+                invalidTime: "L'heure de début doit être antérieure à l'heure de fin",
+                generic: "Une erreur est survenue"
+            }
+        },
+        detail: {
+            created: "Créée le",
+            parkingLot: "Parking",
+            parkingLotAlt: "Parking",
+            schedule: "Horaire",
+            arrival: "Arrivée",
+            exit: "Sortie",
+            duration: "Durée",
+            totalEstimate: "Total estimé",
+            driver: "Conducteur",
+            fullName: "Nom complet",
+            email: "E-mail",
+            phone: "Téléphone",
+            vehicle: "Véhicule",
+            plateNumber: "Numéro de plaque",
+            payment: "Paiement",
+            amount: "Montant",
+            status: "Statut",
+            method: "Méthode",
+            cash: "Espèces",
+            transactionId: "ID de transaction",
+            paymentDate: "Date de paiement",
+            noPayment: "Aucun paiement enregistré pour cette réservation",
+            at: "à"
+        },
+        confirm: {
+            title: "Annuler la réservation",
+            message: "Voulez-vous vraiment annuler cette réservation ? Seules les réservations en attente ou actives peuvent être annulées.",
+            goBack: "Retour",
+            confirm: "Confirmer",
+            cancelling: "Annulation..."
+        }
     }
 }

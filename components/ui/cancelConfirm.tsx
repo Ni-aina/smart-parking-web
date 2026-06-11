@@ -1,6 +1,7 @@
 "use client";
 
 import { Modal } from "./modal";
+import { useTranslation } from "@/context/LanguageContext";
 
 interface CancelConfirmProps {
     isOpen: boolean;
@@ -15,17 +16,17 @@ const CancelConfirm = ({
     handleCancel,
     handleConfirm
 }: CancelConfirmProps) => {
+    const { t } = useTranslation();
 
     return (
         <Modal
             isOpen={isOpen}
             onClose={handleCancel}
-            title="Cancel Reservation"
+            title={t("reservations.confirm.title")}
         >
             <div className="flex flex-col gap-3">
                 <p className="text-sm text-white/70">
-                    Are you sure you want to cancel this reservation?
-                    Only pending or active reservations can be cancelled.
+                    {t("reservations.confirm.message")}
                 </p>
                 <div className="mt-3 w-full flex justify-end gap-3">
                     <button
@@ -34,7 +35,7 @@ const CancelConfirm = ({
                         onClick={handleCancel}
                         type="button"
                     >
-                        Go back
+                        {t("reservations.confirm.goBack")}
                     </button>
                     <button
                         className="w-30 h-10 flex justify-center items-center gap-2
@@ -44,7 +45,7 @@ const CancelConfirm = ({
                         disabled={isLoading}
                         type="button"
                     >
-                        {isLoading ? "Cancelling..." : "Confirm"}
+                        {isLoading ? t("reservations.confirm.cancelling") : t("reservations.confirm.confirm")}
                     </button>
                 </div>
             </div>

@@ -110,8 +110,8 @@ const InputSelect = ({
                                 className={`
                                         flex items-center w-full gap-2 px-2 py-2 cursor-pointer 
                                         text-start text-sm
-                                        hover:bg-white/5 text-white/80 rounded-sm
-                                        ${item.id === value && "bg-white/5"}
+                                        hover:bg-white/10 text-white/80 rounded-sm
+                                        ${item.id === value && "bg-white/10"}
                                     `}
                             >
                                 {item.value}

@@ -48,8 +48,8 @@ const TransactionTable = ({
     }
 
     return (
-        <>
-            <div className="my-5 lg:my-8 bg-white/5 rounded-md text-white/80">
+        <div className="pb-5">
+            <div className="my-5 lg:my-8 bg-white/10 rounded-md text-white/80">
                 <div className="flex justify-between items-center gap-5 p-5">
                     <h1 className="capitalize font-semibold">
                         All {title}
@@ -110,7 +110,7 @@ const TransactionTable = ({
                                     return (
                                         <tr
                                             key={id}
-                                            className={index % 2 === 0 ? "bg-black/5" : ""}
+                                            className={index % 2 === 0 ? "bg-black/10" : ""}
                                         >
                                             <td className="px-5 py-4">
                                                 <div className="truncate max-w-35">
@@ -136,7 +136,7 @@ const TransactionTable = ({
                                                 <span
                                                     className={
                                                         `text-xs font-medium capitalize px-2.5 py-1 rounded-full
-                                                        ${statusStyles[status] || "text-white bg-white/5"}`
+                                                        ${statusStyles[status] || "text-white bg-white/10"}`
                                                     }
                                                 >
                                                     {status}
@@ -165,7 +165,7 @@ const TransactionTable = ({
                 showPage={+showPage}
                 count={count}
             />
-        </>
+        </div>
     )
 }
 

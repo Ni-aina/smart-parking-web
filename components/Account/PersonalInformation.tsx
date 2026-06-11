@@ -111,7 +111,7 @@ const PersonalInformation = ({
                                 className="object-cover"
                                 sizes="80px"
                             /> :
-                            <div className="w-full h-full bg-white/5 flex items-center justify-center 
+                            <div className="w-full h-full bg-white/10 flex items-center justify-center 
                                 text-xl uppercase"
                             >
                                 {fullName?.charAt(0) || "?"}

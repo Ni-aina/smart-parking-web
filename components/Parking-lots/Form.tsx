@@ -216,7 +216,7 @@ const FormParkingLots = ({
             <div className="flex flex-col gap-2">
                 <label htmlFor="agents">Agents *</label>
                 <div
-                    className="flex items-center gap-3 px-4 py-2 bg-white/5 rounded-md"
+                    className="flex items-center gap-3 px-4 py-2 bg-white/10 rounded-md"
                 >
                     <Search
                         size={16}
@@ -231,7 +231,7 @@ const FormParkingLots = ({
                         placeholder="Search ..."
                     />
                 </div>
-                <div className="flex flex-col gap-3 w-full max-h-80 overflow-y-scroll bg-white/5 rounded-lg p-5">
+                <div className="flex flex-col gap-3 w-full max-h-80 overflow-y-scroll bg-white/10 rounded-lg p-5">
                     {
                         !agentsFiltered.length ?
                             <div className="w-full h-40 grid place-items-center">
@@ -272,7 +272,7 @@ const FormParkingLots = ({
                 <CustomButton
                     title="Cancel"
                     type="button"
-                    className="bg-white/5 text-white w-48"
+                    className="bg-white/10 text-white w-48"
                     Icon={Undo2}
                     onClick={handleCancel}
                 />
@@ -293,7 +293,7 @@ const FormParkingLots = ({
                 <CustomButton
                     title="Cancel"
                     type="button"
-                    className="bg-white/5 text-white w-48"
+                    className="bg-white/10 text-white w-48"
                     Icon={Undo2}
                     onClick={handleCancel}
                 />

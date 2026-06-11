@@ -17,13 +17,19 @@ interface Navbarinterface {
     search: string;
     setSearch: Dispatch<SetStateAction<string>>;
     onAdd: ()=> void;
+    listTitle?: string;
+    searchPlaceholder?: string;
+    addLabel?: string;
 }
 
 const Navbar = ({
     title,
     search,
     setSearch,
-    onAdd
+    onAdd,
+    listTitle,
+    searchPlaceholder,
+    addLabel
 }: Navbarinterface) => {
     const router = useRouter();
     const pathname = usePathname();
@@ -64,7 +70,7 @@ const Navbar = ({
     return (  
         <div className="flex flex-wrap justify-between items-center text-white/90 gap-5">
             <div className="flex flex-wrap items-center gap-5">
-                <h1 className="font-semibold">{title} list</h1>
+                <h1 className="font-semibold">{listTitle || `${title} list`}</h1>
                 <div className="flex items-center border border-white/30 rounded-sm px-4 py-2 gap-2">
                     <Search size={14} />
                     <input 
@@ -72,7 +78,7 @@ const Navbar = ({
                         value={search}
                         onChange={handleSearchChange}
                         className="w-full text-sm outline-none"
-                        placeholder={`Search for ${title.toLowerCase()}...`}
+                        placeholder={searchPlaceholder || `Search for ${title.toLowerCase()}...`}
                     />
                 </div>
             </div>
@@ -81,7 +87,7 @@ const Navbar = ({
                     className="px-5 py-2 rounded-sm bg-white text-black cursor-pointer hover:opacity-80"
                     onClick={onAdd}
                 >
-                    Add new {title.toLowerCase()}
+                    {addLabel || `Add new ${title.toLowerCase()}`}
                 </button>
             </div>
         </div>

@@ -104,7 +104,7 @@ const ClientAgent = ({
                             value={emailAddress}
                             onChange={handleChange}
                             className="outline-none px-4 py-2 border border-white/10 rounded-sm
-                            disabled:bg-white/5 disabled:cursor-not-allowed" 
+                            disabled:bg-white/10 disabled:cursor-not-allowed" 
                             required
                             disabled={!!id}
                         />
@@ -136,7 +136,7 @@ const ClientAgent = ({
                             type="button"
                             onClick={handleOnClose}
                             className="w-30 h-10 flex justify-center items-center 
-                            bg-white/5 rounded-sm cursor-pointer hover:opacity-80"
+                            bg-white/10 rounded-sm cursor-pointer hover:opacity-80"
                         >
                             Cancel
                         </button>

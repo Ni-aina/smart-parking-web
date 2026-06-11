@@ -41,7 +41,7 @@ const ForgotPassword = () => {
 
     return (
         <div className="grid w-full h-dvh sm:place-items-center">
-            <div className="flex flex-col space-y-4 text-white rounded-xl p-8 sm:w-md sm:bg-white/5 sm:shadow-2xl">
+            <div className="flex flex-col space-y-4 text-white rounded-xl p-8 sm:w-md sm:bg-white/10 sm:shadow-2xl">
                 <div className="flex lg:justify-center">
                     <div className="relative w-48 h-16">
                         <Image

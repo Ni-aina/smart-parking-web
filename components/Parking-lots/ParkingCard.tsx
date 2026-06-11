@@ -40,7 +40,7 @@ const ParkingCard = ({
                 {
                     loadingImage &&
                     <Skeleton
-                        className="flex-shrink-0 w-30 h-25 bg-white/5"
+                        className="flex-shrink-0 w-30 h-25 bg-white/10"
                     />
                 }
                 <div

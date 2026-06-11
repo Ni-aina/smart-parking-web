@@ -7,6 +7,7 @@ import { ParkingInterface } from "@/types/parking";
 import { ProfileInterface } from "@/types/profile";
 import { VehicleInterface } from "@/types/vehicle";
 import { calculateDurationHours } from "@/utils/DateTimeAction";
+import { useTranslation } from "@/context/LanguageContext";
 import { useRouter } from "next/navigation";
 import {
     ChangeEvent,
@@ -32,6 +33,7 @@ const useReservationForm = ({
 }: UseReservationFormInterface) => {
 
     const router = useRouter();
+    const { t } = useTranslation();
     const [isPending, setIsPending] = useState(false);
     const [error, setError] = useState("");
 
@@ -97,15 +99,15 @@ const useReservationForm = ({
             setIsPending(true);
             setError("");
 
-            if (!formData.lotId) throw new Error("Please select a parking lot");
-            if (!formData.driverId) throw new Error("Please select a driver");
-            if (!formData.vehicleId) throw new Error("Please select a vehicle");
+            if (!formData.lotId) throw new Error(t("reservations.form.errors.selectParkingLot"));
+            if (!formData.driverId) throw new Error(t("reservations.form.errors.selectDriver"));
+            if (!formData.vehicleId) throw new Error(t("reservations.form.errors.selectVehicle"));
 
             const startDate = new Date(formData.startTime);
             const endDate = new Date(formData.endTime);
 
             if (startDate > endDate) {
-                throw new Error("Start time must be before end time");
+                throw new Error(t("reservations.form.errors.invalidTime"));
             }
 
             const newReservation = await createReservation({
@@ -120,7 +122,7 @@ const useReservationForm = ({
             if (!newReservation) return;
             router.push("/owner/reservations");
         } catch (err: any) {
-            setError(err?.message || "An error occurred");
+            setError(err?.message || t("reservations.form.errors.generic"));
         } finally {
             setIsPending(false);
         }

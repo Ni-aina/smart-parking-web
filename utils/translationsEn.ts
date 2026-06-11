@@ -173,5 +173,97 @@ export const translationsEn = {
         comingSoon: "Coming Soon",
         finishingTouches: "We're putting the finishing touches on our Enterprise tier. Stay tuned.",
         notAvailable: "Not available yet"
+    },
+    reservations: {
+        title: "Reservations",
+        titleSingular: "Reservation",
+        listTitle: "Reservations list",
+        searchPlaceholder: "Search for reservations...",
+        addNew: "Add new reservation",
+        noData: "No reservation yet",
+        pageActions: {
+            new: "New",
+            edit: "Edit",
+            view: "View",
+            goBack: "Go back"
+        },
+        actions: {
+            cancel: "Cancel",
+            create: "Create reservation",
+            viewDetails: "View reservation details",
+            cancelReservation: "Cancel reservation"
+        },
+        status: {
+            active: "Active",
+            pending: "Pending",
+            cancelled: "Cancelled",
+            completed: "Completed",
+            succeeded: "Succeeded",
+            failed: "Failed"
+        },
+        form: {
+            parkingLot: "Parking lot *",
+            selectParkingLot: "Select a parking lot",
+            driver: "Driver *",
+            selectDriver: "Select a driver",
+            vehicle: "Vehicle *",
+            selectVehicle: "Select a vehicle",
+            loadingVehicles: "Loading vehicles...",
+            noVehicles: "No vehicles found for this driver",
+            selectDriverFirst: "Select a driver first",
+            startTime: "Start time *",
+            endTime: "End time *",
+            availableSpots: "Available spots",
+            checkingAvailability: "Checking availability...",
+            noSpots: "No spots available for the selected time",
+            unavailable: "N/A",
+            availabilityError: "Failed to check parking lot availability",
+            paymentSummary: "Payment Summary (Cash)",
+            rate: "Rate:",
+            duration: "Duration:",
+            total: "Total:",
+            perHour: "/hr",
+            hour: "hour",
+            hours: "hours",
+            errors: {
+                selectParkingLot: "Please select a parking lot",
+                selectDriver: "Please select a driver",
+                selectVehicle: "Please select a vehicle",
+                invalidTime: "Start time must be before end time",
+                generic: "An error occurred"
+            }
+        },
+        detail: {
+            created: "Created",
+            parkingLot: "Parking Lot",
+            parkingLotAlt: "Parking lot",
+            schedule: "Schedule",
+            arrival: "Arrival",
+            exit: "Exit",
+            duration: "Duration",
+            totalEstimate: "Total Estimate",
+            driver: "Driver",
+            fullName: "Full Name",
+            email: "Email",
+            phone: "Phone",
+            vehicle: "Vehicle",
+            plateNumber: "Plate Number",
+            payment: "Payment",
+            amount: "Amount",
+            status: "Status",
+            method: "Method",
+            cash: "Cash",
+            transactionId: "Transaction ID",
+            paymentDate: "Payment Date",
+            noPayment: "No payment recorded for this reservation",
+            at: "at"
+        },
+        confirm: {
+            title: "Cancel Reservation",
+            message: "Are you sure you want to cancel this reservation? Only pending or active reservations can be cancelled.",
+            goBack: "Go back",
+            confirm: "Confirm",
+            cancelling: "Cancelling..."
+        }
     }
 }

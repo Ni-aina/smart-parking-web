@@ -35,6 +35,7 @@ const RootLayout = ({
                     ${geistMono.variable} 
                     bg-black/95
                     antialiased
+                    pb-10
                 `}
             >
                 <LanguageProvider>

@@ -18,7 +18,7 @@ export const Features = () => {
                 }
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div className="bg-white/5 rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-colors">
+                <div className="bg-white/10 rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-colors">
                     <Truck className="text-blue-400 mb-4" size={32} />
                     <h3 className="text-xl font-semibold text-white mb-2">
                         {
@@ -31,7 +31,7 @@ export const Features = () => {
                         }
                     </p>
                 </div>
-                <div className="bg-white/5 rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-colors">
+                <div className="bg-white/10 rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-colors">
                     <Crown className="text-yellow-400 mb-4" size={32} />
                     <h3 className="text-xl font-semibold text-white mb-2">
                         {
@@ -44,7 +44,7 @@ export const Features = () => {
                         }
                     </p>
                 </div>
-                <div className="bg-white/5 rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-colors">
+                <div className="bg-white/10 rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-colors">
                     <Wrench className="text-orange-400 mb-4" size={32} />
                     <h3 className="text-xl font-semibold text-white mb-2">
                         {
@@ -57,7 +57,7 @@ export const Features = () => {
                         }
                     </p>
                 </div>
-                <div className="bg-white/5 rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-colors">
+                <div className="bg-white/10 rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-colors">
                     <FileText className="text-purple-400 mb-4" size={32} />
                     <h3 className="text-xl font-semibold text-white mb-2">
                         {
@@ -70,7 +70,7 @@ export const Features = () => {
                         }
                     </p>
                 </div>
-                <div className="bg-white/5 rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-colors">
+                <div className="bg-white/10 rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-colors">
                     <UserCheck className="text-cyan-400 mb-4" size={32} />
                     <h3 className="text-xl font-semibold text-white mb-2">
                         {
@@ -83,7 +83,7 @@ export const Features = () => {
                         }
                     </p>
                 </div>
-                <div className="bg-white/5 rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-colors">
+                <div className="bg-white/10 rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-colors">
                     <Wrench className="text-red-400 mb-4" size={32} />
                     <h3 className="text-xl font-semibold text-white mb-2">
                         {

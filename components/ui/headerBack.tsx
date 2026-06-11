@@ -2,6 +2,7 @@
 
 import { ArrowLeftCircle, Eye, Pencil, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "@/context/LanguageContext";
 
 const HeaderBack = (
     { 
@@ -15,12 +16,23 @@ const HeaderBack = (
     }
 ) => {
     const router = useRouter();
+    const { t } = useTranslation();
+
+    const actionLabels = {
+        New: t("reservations.pageActions.new"),
+        Edit: t("reservations.pageActions.edit"),
+        View: t("reservations.pageActions.view")
+    }
+
+    const titleLabel = title === "Reservation"
+        ? t("reservations.titleSingular")
+        : title;
 
     return (
         <div className="flex justify-between items-center gap-5">
             <div className="flex items-center gap-3">
                 <button
-                    title="Go back"
+                    title={t("reservations.pageActions.goBack")}
                     className="cursor-pointer hover:opacity-80"
                     onClick={onBack || router.back}
                 >
@@ -29,7 +41,7 @@ const HeaderBack = (
                     />
                 </button>
                 <h1 className="font-semibold">
-                    {title}
+                    {titleLabel}
                 </h1>
             </div>
             <div className="flex items-center space-x-2">
@@ -55,7 +67,7 @@ const HeaderBack = (
                     />
                 }
                 <h1 className="font-semibold">
-                    {action}
+                    {actionLabels[action] || action}
                 </h1>
             </div>
         </div>

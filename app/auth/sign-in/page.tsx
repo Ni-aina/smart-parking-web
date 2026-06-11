@@ -46,7 +46,7 @@ const SignIn = () => {
     return (
         <div className="grid w-full h-dvh sm:place-items-center">
             <form
-                className="flex flex-col space-y-4 text-white rounded-xl p-8 sm:w-md sm:bg-white/5 sm:shadow-2xl"
+                className="flex flex-col space-y-4 text-white rounded-xl p-8 sm:w-md sm:bg-white/10 sm:shadow-2xl"
                 onSubmit={handleSubmit}
             >
                 <div className="flex lg:justify-center">

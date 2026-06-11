@@ -14,6 +14,7 @@ import { ReservationInterface } from '@/types/reservation';
 import { useState } from 'react';
 import { Skeleton } from '../ui/skeleton';
 import { getDateFormat, getTimeFormat } from '@/utils/DateTimeAction';
+import { useTranslation } from '@/context/LanguageContext';
 
 interface ReservationCardProps {
   reservation: ReservationInterface;
@@ -24,7 +25,7 @@ const statusStyles: Record<string, string> = {
   active: "text-green-500/70 bg-green-500/10",
   pending: "text-blue-500/70 bg-blue-500/10",
   cancelled: "text-red-500/70 bg-red-500/10",
-  completed: "text-white/70 bg-white/5"
+  completed: "text-white/70 bg-white/10"
 }
 
 const isCancellable = (status: string) =>
@@ -35,6 +36,7 @@ const ReservationCard = ({
   handleCancel
 }: ReservationCardProps) => {
   const [loadingImage, setLoadingImage] = useState(true);
+  const { t } = useTranslation();
 
   const {
     id,
@@ -62,6 +64,7 @@ const ReservationCard = ({
   const startTime = getTimeFormat(dateTimeStart);
 
   const imageSrc = urlImages?.[0] || '/images/default-parking.jpg';
+  const statusLabel = t(`reservations.status.${status}`);
 
   return (
     <div className="flex flex-col bg-white/2.5 rounded-md p-4 text-white gap-3">
@@ -69,16 +72,16 @@ const ReservationCard = ({
         <h1
           className={
             `text-xs font-medium capitalize p-2 rounded-full
-              ${statusStyles[status] || "text-white bg-white/5"}`
+              ${statusStyles[status] || "text-white bg-white/10"}`
           }
         >
-          {status}
+          {statusLabel}
         </h1>
         <div className="flex items-center">
           <Link
             href={`/owner/reservations/${id}`}
             className="text-yellow-500 hover:bg-yellow-500/10 p-2 rounded"
-            aria-label="View reservation details"
+            aria-label={t("reservations.actions.viewDetails")}
           >
             <Eye size={18} />
           </Link>
@@ -90,7 +93,7 @@ const ReservationCard = ({
                 () => handleCancel(id)
               }
               type="button"
-              aria-label="Cancel reservation"
+              aria-label={t("reservations.actions.cancelReservation")}
             >
               <Ban size={18} />
             </button>
@@ -101,7 +104,7 @@ const ReservationCard = ({
         {
           loadingImage &&
           <Skeleton
-            className="shrink-0 w-28 h-20 bg-white/5"
+            className="shrink-0 w-28 h-20 bg-white/10"
           />
         }
         <div
@@ -114,7 +117,7 @@ const ReservationCard = ({
         >
           <Image
             src={imageSrc}
-            alt={name || 'Parking Lot Image'}
+            alt={name || t("reservations.detail.parkingLotAlt")}
             fill
             className="object-cover"
             onLoadStart={
@@ -131,7 +134,7 @@ const ReservationCard = ({
               {name || '—'}
             </div>
             <div className="flex-1">
-              ${pricePerHour || 'N/A'} / hour
+              ${pricePerHour || t("reservations.form.unavailable")} {t("reservations.form.perHour")}
             </div>
           </div>
           <p className="text-sm text-white/60 truncate mt-1">

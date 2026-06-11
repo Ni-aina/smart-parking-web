@@ -123,7 +123,7 @@ const ClientType = ({
                             type="button"
                             onClick={handleOnClose}
                             className="w-30 h-10 flex justify-center items-center 
-                            bg-white/5 rounded-sm cursor-pointer hover:opacity-80"
+                            bg-white/10 rounded-sm cursor-pointer hover:opacity-80"
                         >
                             Cancel
                         </button>

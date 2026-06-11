@@ -22,6 +22,7 @@ import Image from "next/image";
 import { startTransition, useOptimistic, useState } from "react";
 import { Skeleton } from "../ui/skeleton";
 import CancelConfirm from "../ui/cancelConfirm";
+import { useTranslation } from "@/context/LanguageContext";
 
 interface ReservationDetailProps {
     reservation: ReservationInterface;
@@ -32,7 +33,7 @@ const statusStyles: Record<string, string> = {
     active: "text-green-500 bg-green-500/10 border-green-500/20",
     pending: "text-blue-500 bg-blue-500/10 border-blue-500/20",
     cancelled: "text-red-500 bg-red-500/10 border-red-500/20",
-    completed: "text-white/70 bg-white/5 border-white/10"
+    completed: "text-white/70 bg-white/10 border-white/10"
 }
 
 const paymentStatusStyles: Record<string, string> = {
@@ -50,6 +51,7 @@ const ReservationDetail = ({
 }: ReservationDetailProps) => {
     const [loadingImage, setLoadingImage] = useState(true);
     const [cancellingId, setCancellingId] = useState("");
+    const { t } = useTranslation();
 
     const [optimisticReservation, setOptimisticReservation] = useOptimistic(
         reservation,
@@ -70,6 +72,8 @@ const ReservationDetail = ({
 
     const durationHours = calculateDurationHours(startTime, endTime);
     const totalAmount = lot.pricePerHour * durationHours;
+    const statusLabel = t(`reservations.status.${status}`);
+    const paymentStatusLabel = payment ? t(`reservations.status.${payment.status}`) : "";
 
     const imageSrc = lot.urlImages?.[0] || "/images/default-parking.jpg";
 
@@ -92,15 +96,15 @@ const ReservationDetail = ({
                         <span
                             className={
                                 `text-sm font-medium capitalize px-4 py-1.5 rounded-full border
-                                ${statusStyles[status] || "text-white bg-white/5 border-white/10"}`
+                                ${statusStyles[status] || "text-white bg-white/10 border-white/10"}`
                             }
                         >
-                            {status}
+                            {statusLabel}
                         </span>
                         {
                             createdAt &&
                             <span className="text-xs text-white/40">
-                                Created {getDateFormat(new Date(createdAt))}
+                                {t("reservations.detail.created")} {getDateFormat(new Date(createdAt))}
                             </span>
                         }
                     </div>
@@ -115,25 +119,25 @@ const ReservationDetail = ({
                                 type="button"
                             >
                                 <Ban size={16} className="text-red-500" />
-                                Cancel
+                                {t("reservations.actions.cancel")}
                             </button>
                         }
                     </div>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div className="lg:col-span-1 flex flex-col gap-4 bg-white/5 backdrop-blur-sm rounded-lg p-5">
+                    <div className="lg:col-span-1 flex flex-col gap-4 bg-white/10 backdrop-blur-sm rounded-lg p-5">
                         <h2 className="text-sm font-semibold uppercase text-white/50 tracking-wide">
-                            Parking Lot
+                            {t("reservations.detail.parkingLot")}
                         </h2>
                         <div className="relative w-full h-40 rounded-md overflow-hidden">
                             {
                                 loadingImage &&
-                                <Skeleton className="w-full h-full bg-white/5" />
+                                <Skeleton className="w-full h-full bg-white/10" />
                             }
                             <Image
                                 src={imageSrc}
-                                alt={lot.name || "Parking lot"}
+                                alt={lot.name || t("reservations.detail.parkingLotAlt")}
                                 fill
                                 className="object-cover"
                                 onLoadStart={() => setLoadingImage(true)}
@@ -148,7 +152,7 @@ const ReservationDetail = ({
                             </div>
                             <div className="flex items-center gap-2 text-sm text-white/60">
                                 <DollarSign size={16} />
-                                <span>${lot.pricePerHour} / hour</span>
+                                <span>${lot.pricePerHour} {t("reservations.form.perHour")}</span>
                             </div>
                             {
                                 lot.lotType?.vehicleType &&
@@ -161,50 +165,50 @@ const ReservationDetail = ({
                     </div>
 
                     <div className="lg:col-span-2 flex flex-col gap-6">
-                        <div className="bg-white/5 backdrop-blur-sm rounded-lg p-5">
+                        <div className="bg-white/10 backdrop-blur-sm rounded-lg p-5">
                             <h2 className="text-sm font-semibold uppercase text-white/50 tracking-wide mb-4">
-                                Schedule
+                                {t("reservations.detail.schedule")}
                             </h2>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <InfoBlock
                                     icon={<Calendar size={16} />}
-                                    label="Arrival"
-                                    value={`${getDateFormat(new Date(startTime))} at ${getTimeFormat(new Date(startTime))}`}
+                                    label={t("reservations.detail.arrival")}
+                                    value={`${getDateFormat(new Date(startTime))} ${t("reservations.detail.at")} ${getTimeFormat(new Date(startTime))}`}
                                 />
                                 <InfoBlock
                                     icon={<Calendar size={16} />}
-                                    label="Exit"
-                                    value={`${getDateFormat(new Date(endTime))} at ${getTimeFormat(new Date(endTime))}`}
+                                    label={t("reservations.detail.exit")}
+                                    value={`${getDateFormat(new Date(endTime))} ${t("reservations.detail.at")} ${getTimeFormat(new Date(endTime))}`}
                                 />
                                 <InfoBlock
                                     icon={<Clock size={16} />}
-                                    label="Duration"
-                                    value={`${durationHours} hour${durationHours > 1 ? "s" : ""}`}
+                                    label={t("reservations.detail.duration")}
+                                    value={`${durationHours} ${t(durationHours > 1 ? "reservations.form.hours" : "reservations.form.hour")}`}
                                 />
                                 <InfoBlock
                                     icon={<DollarSign size={16} />}
-                                    label="Total Estimate"
+                                    label={t("reservations.detail.totalEstimate")}
                                     value={`$${totalAmount.toFixed(2)}`}
                                 />
                             </div>
                         </div>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            <div className="bg-white/5 backdrop-blur-sm rounded-lg p-5">
+                            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-5">
                                 <h2 className="text-sm font-semibold uppercase text-white/50 tracking-wide mb-4">
-                                    Driver
+                                    {t("reservations.detail.driver")}
                                 </h2>
                                 <div className="flex flex-col gap-3">
                                     <InfoBlock
                                         icon={<User size={16} />}
-                                        label="Full Name"
+                                        label={t("reservations.detail.fullName")}
                                         value={driver.fullName}
                                     />
                                     {
                                         driver.emailAddress &&
                                         <InfoBlock
                                             icon={<CreditCard size={16} />}
-                                            label="Email"
+                                            label={t("reservations.detail.email")}
                                             value={driver.emailAddress}
                                         />
                                     }
@@ -212,27 +216,27 @@ const ReservationDetail = ({
                                         driver.phoneNumber &&
                                         <InfoBlock
                                             icon={<CreditCard size={16} />}
-                                            label="Phone"
+                                            label={t("reservations.detail.phone")}
                                             value={driver.phoneNumber}
                                         />
                                     }
                                 </div>
                             </div>
-                            <div className="bg-white/5 backdrop-blur-sm rounded-lg p-5">
+                            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-5">
                                 <h2 className="text-sm font-semibold uppercase text-white/50 tracking-wide mb-4">
-                                    Vehicle
+                                    {t("reservations.detail.vehicle")}
                                 </h2>
                                 <div className="flex flex-col gap-3">
                                     <InfoBlock
                                         icon={<CarFront size={16} />}
-                                        label="Plate Number"
+                                        label={t("reservations.detail.plateNumber")}
                                         value={vehicle.plateNumber}
                                     />
                                     {
                                         vehicle.make &&
                                         <InfoBlock
                                             icon={<CarFront size={16} />}
-                                            label="Vehicle"
+                                            label={t("reservations.detail.vehicle")}
                                             value={`${vehicle.make} ${vehicle.model || ""}`}
                                         />
                                     }
@@ -240,41 +244,41 @@ const ReservationDetail = ({
                             </div>
                         </div>
 
-                        <div className="bg-white/5 backdrop-blur-sm rounded-lg p-5">
+                        <div className="bg-white/10 backdrop-blur-sm rounded-lg p-5">
                             <h2 className="text-sm font-semibold uppercase text-white/50 tracking-wide mb-4">
-                                Payment
+                                {t("reservations.detail.payment")}
                             </h2>
                             {
                                 payment ?
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <InfoBlock
                                             icon={<DollarSign size={16} />}
-                                            label="Amount"
+                                            label={t("reservations.detail.amount")}
                                             value={`$${Number(payment.amount).toFixed(2)}`}
                                         />
                                         <div className="flex flex-col gap-1">
                                             <span className="text-xs text-white/40 uppercase tracking-wide">
-                                                Status
+                                                {t("reservations.detail.status")}
                                             </span>
                                             <span
                                                 className={
                                                     `text-sm font-medium capitalize px-3 py-1 rounded-full w-fit
-                                                    ${paymentStatusStyles[payment.status] || "text-white bg-white/5"}`
+                                                    ${paymentStatusStyles[payment.status] || "text-white bg-white/10"}`
                                                 }
                                             >
-                                                {payment.status}
+                                                {paymentStatusLabel}
                                             </span>
                                         </div>
                                         <InfoBlock
                                             icon={<CreditCard size={16} />}
-                                            label="Method"
-                                            value={payment.method || "Cash"}
+                                            label={t("reservations.detail.method")}
+                                            value={payment.method || t("reservations.detail.cash")}
                                         />
                                         {
                                             payment.transactionId &&
                                             <InfoBlock
                                                 icon={<CreditCard size={16} />}
-                                                label="Transaction ID"
+                                                label={t("reservations.detail.transactionId")}
                                                 value={payment.transactionId}
                                             />
                                         }
@@ -282,14 +286,14 @@ const ReservationDetail = ({
                                             payment.createdAt &&
                                             <InfoBlock
                                                 icon={<Calendar size={16} />}
-                                                label="Payment Date"
+                                                label={t("reservations.detail.paymentDate")}
                                                 value={getDateFormat(new Date(payment.createdAt))}
                                             />
                                         }
                                     </div>
                                     :
                                     <p className="text-sm text-white/40">
-                                        No payment recorded for this reservation
+                                        {t("reservations.detail.noPayment")}
                                     </p>
 
                             }

@@ -11,7 +11,7 @@ export const Architecture = () => {
                     t("landing.platformArchitecture")
                 }
             </h2>
-            <div className="bg-white/5 backdrop-blur-sm rounded-xl p-8 border border-white/10">
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-8 border border-white/10">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
                     <div>
                         <h3 className="text-2xl font-semibold text-white mb-4">
@@ -86,7 +86,7 @@ export const Architecture = () => {
                             </li>
                         </ul>
                     </div>
-                    <div className="bg-white/5 rounded-xl p-6 border border-white/10">
+                    <div className="bg-white/10 rounded-xl p-6 border border-white/10">
                         <h4 className="text-xl font-semibold text-white mb-4">
                             {
                                 t("landing.systemFeatures")

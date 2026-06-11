@@ -4,7 +4,7 @@ export const LanguageSwitcher = () => {
     const { language, setLanguage } = useTranslation()
 
     return (
-        <div className="relative flex items-center bg-white/5 border border-white/10 rounded-full p-0.5 w-18 h-7 select-none">
+        <div className="relative flex items-center bg-white/10 border border-white/10 rounded-full p-0.5 w-18 h-7 select-none">
             <button
                 type="button"
                 onClick={() => {

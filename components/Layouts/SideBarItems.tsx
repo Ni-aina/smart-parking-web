@@ -45,7 +45,7 @@ export const SideBarItems = () => {
                     href="/owner/dashboard"
                     className={`
                         flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                        ${pathname === "/owner/dashboard" && "bg-white/5"}
+                        ${pathname === "/owner/dashboard" && "bg-white/10"}
                     `}
                 >
                     <Home />
@@ -57,7 +57,7 @@ export const SideBarItems = () => {
                     href="/owner/reservations"
                     className={`
                         flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                        ${pathname === "/owner/reservations" && "bg-white/5"}
+                        ${pathname === "/owner/reservations" && "bg-white/10"}
                     `}
                 >
                     <BookCheck />
@@ -69,7 +69,7 @@ export const SideBarItems = () => {
                     href="/owner/transactions"
                     className={`
                         flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                        ${pathname === "/owner/transactions" && "bg-white/5"}
+                        ${pathname === "/owner/transactions" && "bg-white/10"}
                     `}
                 >
                     <Euro />
@@ -81,7 +81,7 @@ export const SideBarItems = () => {
                     href="/owner/parking-lots"
                     className={`
                         flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                        ${pathname === "/owner/parking-lots" && "bg-white/5"}
+                        ${pathname === "/owner/parking-lots" && "bg-white/10"}
                     `}
                 >
                     <SquareParking />
@@ -93,7 +93,7 @@ export const SideBarItems = () => {
                     href="/owner/notifications"
                     className={`
                         flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                        ${pathname === "/owner/notifications" && "bg-white/5"}
+                        ${pathname === "/owner/notifications" && "bg-white/10"}
                     `}
                 >
                     <Bell />
@@ -105,7 +105,7 @@ export const SideBarItems = () => {
                     href="/owner/messages"
                     className={`
                         flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                        ${pathname === "/owner/messages" && "bg-white/5"}
+                        ${pathname === "/owner/messages" && "bg-white/10"}
                     `}
                 >
                     <MessageCircle />
@@ -134,7 +134,7 @@ export const SideBarItems = () => {
                             href="/owner/settings/agents"
                             className={`
                                 flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                                ${pathname === "/owner/settings/agents" && "bg-white/5"}
+                                ${pathname === "/owner/settings/agents" && "bg-white/10"}
                             `}
                         >
                             <UserPen />
@@ -144,7 +144,7 @@ export const SideBarItems = () => {
                             href="/owner/settings/types"
                             className={`
                                 flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                                ${pathname === "/owner/settings/types" && "bg-white/5"}
+                                ${pathname === "/owner/settings/types" && "bg-white/10"}
                             `}
                             prefetch
                         >
@@ -155,7 +155,7 @@ export const SideBarItems = () => {
                             href="/owner/settings/account"
                             className={`
                                 flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                                ${pathname === "/owner/settings/account" && "bg-white/5"}
+                                ${pathname === "/owner/settings/account" && "bg-white/10"}
                             `}
                         >
                             <UserStar />

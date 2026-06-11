@@ -28,7 +28,7 @@ const MetricCard = ({
     const TrendIcon = trend.isPositive ? ArrowUpRight : ArrowDownRight;
 
     return (
-        <div className="bg-white/5 rounded-md p-5 text-white">
+        <div className="bg-white/10 rounded-md p-5 text-white">
             <div className="flex items-start justify-between">
                 <div className="flex-1 space-y-2">
                     <p className="text-sm text-white/60 font-medium">

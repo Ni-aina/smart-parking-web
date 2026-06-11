@@ -94,7 +94,7 @@ const SignUpPage = ({
             <div
                 className={`
                     flex flex-col space-y-4 text-white rounded-xl p-8
-                    ${step === 0 ? "sm:w-xl" : "sm:w-md"} sm:bg-white/5 sm:shadow-2xl"
+                    ${step === 0 ? "sm:w-xl" : "sm:w-md"} sm:bg-white/10 sm:shadow-2xl"
                 `}
             >
                 <div className="flex lg:justify-center mb-6">
@@ -138,7 +138,7 @@ const SignUpPage = ({
                                     {
                                         i < stepsKeys.length - 1 &&
                                         <div
-                                            className={`w-8 h-px ${i < step ? "bg-white" : "bg-white/20"
+                                            className={`w-8 h-px ${i < step ? "bg-white" : "bg-white/10"
                                                 }`}
                                         />
                                     }

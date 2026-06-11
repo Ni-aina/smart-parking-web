@@ -126,7 +126,7 @@ const SubscriptionPage = ({
                                     {
                                         i < steps.length - 1 &&
                                         <div
-                                            className={`w-8 h-px ${i < step ? "bg-white" : "bg-white/20"}`}
+                                            className={`w-8 h-px ${i < step ? "bg-white" : "bg-white/10"}`}
                                         />
                                     }
                                 </div>

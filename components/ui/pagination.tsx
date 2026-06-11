@@ -71,7 +71,7 @@ const Pagination = ({
             </h1>
             <div className="flex items-center gap-3">
                 <button
-                    className="p-2 bg-white/5 rounded-sm cursor-pointer  
+                    className="p-2 bg-white/10 rounded-sm cursor-pointer  
                     hover:opacity-80 disabled:opacity-60 disabled:cursor-not-allowed"
                     onClick={handleDecreasePage}
                     disabled={activePage < 2 || isPending}
@@ -84,7 +84,7 @@ const Pagination = ({
                     {activePage}
                 </h1>
                 <button
-                    className="p-2 bg-white/5 rounded-sm cursor-pointer 
+                    className="p-2 bg-white/10 rounded-sm cursor-pointer 
                     hover:opacity-80 disabled:opacity-60 disabled:cursor-not-allowed"
                     onClick={handleIncreasePage}
                     disabled={activePage >= maxPage || isPending}

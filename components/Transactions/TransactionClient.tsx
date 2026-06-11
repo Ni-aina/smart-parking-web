@@ -59,11 +59,11 @@ const TransactionClient = ({
         <div className="flex flex-col gap-5">
             <div
                 className="flex flex-wrap justify-between items-center text-white gap-5 
-                bg-white/5 backdrop-blur-md rounded-lg px-6 py-4"
+                bg-white/10 backdrop-blur-md rounded-lg px-6 py-4"
             >
                 <h1 className="text-lg font-semibold tracking-wide">Transaction History</h1>
                 <div
-                    className="flex items-center bg-white/5 backdrop-blur-sm border 
+                    className="flex items-center bg-white/10 backdrop-blur-sm border 
                     border-white/5 rounded-lg px-4 py-2 gap-2"
                 >
                     <Search size={14} className="text-white/60" />

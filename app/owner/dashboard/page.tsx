@@ -159,7 +159,7 @@ const DashboardPage = async ({
             <DashboardCards
                 metrics={dashboardMetrics}
             />
-            <div className="grid grid-cols-1 lg:grid-cols-[auto_260px] gap-10 pb-5">
+            <div className="grid grid-cols-1 lg:grid-cols-[auto_260px] gap-10">
                 <AreaChartDashboard
                     bookingsLastWeek={bookingsLastWeek}
                 />
