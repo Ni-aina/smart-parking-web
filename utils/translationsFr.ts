@@ -3,7 +3,7 @@ export const translationsFr = {
         title: "Stationnement Intelligent",
         subtitle: "Rendu Simple",
         description: "Système complet de gestion du stationnement avec suivi des véhicules, plans d'abonnement et support multi-agents.",
-        downloadAndroid: "Télécharger pour Android",
+        downloadFor: "Télécharger pour",
         ownerDashboard: "Tableau de Bord Propriétaire",
         keyFeatures: "Fonctionnalités Clés",
         vehicleManagement: "Gestion des Véhicules",

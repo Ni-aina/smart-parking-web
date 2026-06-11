@@ -35,7 +35,7 @@ export const Hero = ({
                     <div className="flex items-center gap-2">
                         <span className="text-sm font-medium">
                             {
-                                t("landing.downloadAndroid")
+                                t("landing.downloadFor")
                             }
                         </span>
                         <h1 className="text-lg font-bold">Android</h1>

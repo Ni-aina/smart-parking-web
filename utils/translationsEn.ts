@@ -3,7 +3,7 @@ export const translationsEn = {
         title: "Smart Parking",
         subtitle: "Made Simple",
         description: "Complete parking management system with vehicle tracking, subscription plans, and multi-agent support.",
-        downloadAndroid: "Download for Android",
+        downloadFor: "Download for",
         ownerDashboard: "Owner Dashboard",
         keyFeatures: "Key Features",
         vehicleManagement: "Vehicle Management",
