@@ -8,20 +8,22 @@ import SubmitPayment from "./SubmitPayment";
 import { useState } from "react";
 import { Modal } from "../ui/modal";
 import { SignUpForm } from "@/types/auth";
+import { useTranslation } from "@/context/LanguageContext";
 
 interface StepPaymentProps {
-    plan: SubscriptionPlanInterface;
-    form: SignUpForm;
+    plan: SubscriptionPlanInterface
+    form: SignUpForm
 }
 
 const StepPayment = ({
     plan,
     form
 }: StepPaymentProps) => {
-    const [showStripeElement, setShowStripeElement] = useState<boolean>(false);
+    const [showStripeElement, setShowStripeElement] = useState<boolean>(false)
+    const { t } = useTranslation()
 
     const handleShowStripeElement = () => {
-        setShowStripeElement(prev => !prev);
+        setShowStripeElement(prev => !prev)
     }
 
     const {
@@ -29,12 +31,12 @@ const StepPayment = ({
         name,
         price,
         isActive
-    } = plan;
+    } = plan
 
     if (!isActive) return (
-        <ComingSoon 
-            name={name} 
-            price={price} 
+        <ComingSoon
+            name={name}
+            price={price}
         />
     )
 
@@ -45,36 +47,48 @@ const StepPayment = ({
                     <div className="flex justify-between items-center">
                         <div>
                             <h2 className="font-semibold text-sm">
-                                {name} Plan
+                                {name} {t("payment.planSuffix")}
                             </h2>
-                            <p className="text-xs text-white/40 mt-1">Billed monthly</p>
+                            <p className="text-xs text-white/40 mt-1">
+                                {
+                                    t("payment.billedMonthly")
+                                }
+                            </p>
                         </div>
                         <span className="text-lg font-semibold">
                             ${price}
-                            <span className="text-white/40 text-xs font-normal">/mo</span>
+                            <span className="text-white/40 text-xs font-normal">
+                                {
+                                    t("payment.mo")
+                                }
+                            </span>
                         </span>
                     </div>
                 </div>
                 <button
-                    className="w-full py-3 rounded-sm bg-blue-950 text-white 
-                    font-bold flex items-center justify-center gap-1 
-                    cursor-pointer hover:opacity-90 transition-opacity"
+                    className="w-full py-3 rounded-sm bg-blue-950 text-white font-bold flex items-center justify-center gap-1 cursor-pointer hover:opacity-90 transition-opacity"
                     onClick={handleShowStripeElement}
                 >
-                    <span>Pay with</span>
+                    <span>
+                        {
+                            t("payment.payWith")
+                        }
+                    </span>
                     <span className="italic font-semibold">Stripe</span>
                 </button>
                 <p className="text-[10px] text-white/30 text-center">
-                    Powered by Stripe — Secure payment processing
+                    {
+                        t("payment.poweredBy")
+                    }
                 </p>
             </div>
             <Modal
                 isOpen={showStripeElement}
                 onClose={handleShowStripeElement}
-                title="Payment"
+                title={t("payment.title")}
             >
                 <div className="max-h-[60dvh] overflow-x-hidden overflow-y-scroll">
-                    <Elements 
+                    <Elements
                         stripe={stripePromise}
                         options={{
                             mode: "payment",
@@ -86,7 +100,7 @@ const StepPayment = ({
                             }
                         }}
                     >
-                        <SubmitPayment 
+                        <SubmitPayment
                             planId={planId}
                             amount={price}
                             form={form}
@@ -99,4 +113,4 @@ const StepPayment = ({
     )
 }
 
-export default StepPayment;
+export default StepPayment

@@ -9,6 +9,7 @@ import { ChangeEvent, DragEvent, FormEvent, useEffect, useState } from "react";
 import CustomButton from "../ui/customButton";
 import { ProfileStateInterface } from "@/hooks/useAccountSettings";
 import SubmitForm from "../ui/submitForm";
+import { LanguageSwitcher } from "../ui/LanguageSwitcher";
 
 interface PersonalInformationInterface {
     formData: PersonalInfoFormInterface;
@@ -67,7 +68,7 @@ const PersonalInformation = ({
         }
     }, [personalState])
 
-    useEffect(()=> {
+    useEffect(() => {
         if (!state) return;
 
         const timeVisibility = setTimeout(() => {
@@ -117,7 +118,10 @@ const PersonalInformation = ({
                             </div>
                     }
                 </label>
-                <span className="text-xs">JPG, PNG or JPEG. 1MB max.</span>
+                <div className="flex flex-col gap-3">
+                    <span className="text-xs">JPG, PNG or JPEG. 1MB max.</span>
+                    <LanguageSwitcher />
+                </div>
             </div>
             <div className="flex flex-col gap-2">
                 <label htmlFor="fullName">Full name *</label>

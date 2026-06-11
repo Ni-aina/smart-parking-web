@@ -1,6 +1,7 @@
 import useCheckoutStripe from "@/hooks/useCheckoutStripe";
 import { SignUpForm } from "@/types/auth";
 import { PaymentElement } from "@stripe/react-stripe-js";
+import { useTranslation } from "@/context/LanguageContext";
 
 const SubmitPayment = ({
     planId,
@@ -8,12 +9,12 @@ const SubmitPayment = ({
     form,
     handleShowStripeElement
 }: {
-    planId: string,
-    amount: number,
-    form: SignUpForm,
+    planId: string
+    amount: number
+    form: SignUpForm
     handleShowStripeElement: () => void
 }) => {
-    const { 
+    const {
         onCheckoutStripe,
         loading,
         stripe,
@@ -25,9 +26,10 @@ const SubmitPayment = ({
         form,
         handleShowStripeElement
     })
+    const { t } = useTranslation()
 
-    return ( 
-        <form 
+    return (
+        <form
             onSubmit={onCheckoutStripe}
             className="flex flex-col gap-4"
         >
@@ -38,25 +40,25 @@ const SubmitPayment = ({
                 </p>
             }
 
-            <PaymentElement 
+            <PaymentElement
                 options={{
                     wallets: {
                         applePay: "never",
-                        googlePay: "never",
+                        googlePay: "never"
                     }
                 }}
             />
 
             <button
-                className="w-full py-3 rounded-sm bg-blue-950 text-white
-                font-bold cursor-pointer hover:opacity-90 transition-opacity
-                disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full py-3 rounded-sm bg-blue-950 text-white font-bold cursor-pointer hover:opacity-90 transition-opacity disabled:opacity-70 disabled:cursor-not-allowed"
                 disabled={loading || !stripe || !clientSecret}
             >
-                {loading ? "Processing..." : "Pay now"}
+                {
+                    loading ? t("payment.processing") : t("payment.payNow")
+                }
             </button>
         </form>
     )
 }
- 
-export default SubmitPayment;
+
+export default SubmitPayment

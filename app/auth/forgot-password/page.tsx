@@ -10,41 +10,42 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
+import { useTranslation } from "@/context/LanguageContext";
 
 const ForgotPassword = () => {
-    const [error, setError] = useState("");
-    const [isPending, setIsPending] = useState(false);
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [email, setEmail] = useState("");
+    const [error, setError] = useState("")
+    const [isPending, setIsPending] = useState(false)
+    const [isSuccess, setIsSuccess] = useState(false)
+    const [email, setEmail] = useState("")
+    const { t } = useTranslation()
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const formData = new FormData(e.currentTarget);
-        const emailValue = formData.get("email") + "";
-        if (!emailValue) return;
+        e.preventDefault()
+        const formData = new FormData(e.currentTarget)
+        const emailValue = formData.get("email") + ""
+        if (!emailValue) {
+            return
+        }
         try {
-            setIsPending(true);
-            setError("");
-            await resetPassword(emailValue);
-            setEmail(emailValue);
-            setIsSuccess(true);
+            setIsPending(true)
+            setError("")
+            await resetPassword(emailValue)
+            setEmail(emailValue)
+            setIsSuccess(true)
         } catch {
-            setError("Failed to send reset link. Please try again.");
+            setError(t("forgot.errorSend"))
         } finally {
-            setIsPending(false);
+            setIsPending(false)
         }
     }
 
     return (
         <div className="grid w-full h-dvh sm:place-items-center">
-            <div
-                className="flex flex-col space-y-4 text-white rounded-xl p-8
-                sm:w-md sm:bg-white/5 sm:shadow-2xl"
-            >
+            <div className="flex flex-col space-y-4 text-white rounded-xl p-8 sm:w-md sm:bg-white/5 sm:shadow-2xl">
                 <div className="flex lg:justify-center">
                     <div className="relative w-48 h-16">
                         <Image
-                            src={"/images/smart-parking.png"}
+                            src="/images/smart-parking.png"
                             alt="Smart parking"
                             fill
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -59,48 +60,70 @@ const ForgotPassword = () => {
                                 <Mail size={24} />
                             </div>
                             <h1 className="text-lg font-semibold text-center">
-                                Check your email
+                                {
+                                    t("forgot.checkEmail")
+                                }
                             </h1>
                             <p className="text-sm text-white/70 text-center">
-                                We sent a password reset link to
+                                {
+                                    t("forgot.sentLink")
+                                }
                             </p>
                             <p className="text-sm font-semibold text-center">
-                                {email}
+                                {
+                                    email
+                                }
                             </p>
                             <p className="text-xs text-white/50 text-center">
-                                Didn't receive the email? Check your spam folder or
+                                {
+                                    t("forgot.didNotReceive")
+                                }
                             </p>
                             <button
-                                onClick={() => setIsSuccess(false)}
+                                onClick={() => {
+                                    setIsSuccess(false)
+                                }}
                                 className="text-xs hover:underline cursor-pointer"
                             >
-                                try another email address
+                                {
+                                    t("forgot.tryAnother")
+                                }
                             </button>
                         </div>
                         :
-                        <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+                        <form
+                            onSubmit={handleSubmit}
+                            className="flex flex-col space-y-4"
+                        >
                             <div className="flex flex-col gap-2">
-                                <h1 className="text-lg font-semibold">Forgot password?</h1>
+                                <h1 className="text-lg font-semibold">
+                                    {
+                                        t("forgot.title")
+                                    }
+                                </h1>
                                 <p className="text-sm text-white/70">
-                                    No worries, we'll send you a reset link.
+                                    {
+                                        t("forgot.desc")
+                                    }
                                 </p>
                             </div>
                             <div className="flex flex-col gap-3">
-                                <h1 className="text-md font-semibold">Email</h1>
+                                <h1 className="text-md font-semibold">
+                                    {
+                                        t("forgot.email")
+                                    }
+                                </h1>
                                 <input
                                     type="email"
                                     name="email"
                                     className="p-2 focus-within:outline-none border border-white rounded-sm"
-                                    placeholder="Enter your email"
+                                    placeholder={t("forgot.enterEmail")}
                                     required
                                 />
                             </div>
                             <span className="text-xs text-red-400">{error}</span>
                             <button
-                                className="mt-3 flex justify-center items-center gap-3 
-                                bg-white text-black w-full py-2 rounded-sm 
-                                cursor-pointer hover:opacity-80 
-                                disabled:cursor-not-allowed disabled:opacity-80"
+                                className="mt-3 flex justify-center items-center gap-3 bg-white text-black w-full py-2 rounded-sm cursor-pointer hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-80"
                                 disabled={isPending}
                             >
                                 {
@@ -116,17 +139,23 @@ const ForgotPassword = () => {
                                             color="black"
                                         />
                                 }
-                                <h1>Send reset link</h1>
+                                <h1>
+                                    {
+                                        t("forgot.sendLink")
+                                    }
+                                </h1>
                             </button>
                         </form>
                 }
                 <div className="flex justify-center items-center gap-2">
                     <ArrowLeft size={14} />
                     <Link
-                        href={"/auth/sign-in"}
+                        href="/auth/sign-in"
                         className="text-sm hover:underline"
                     >
-                        Back to sign in
+                        {
+                            t("forgot.backToSignIn")
+                        }
                     </Link>
                 </div>
             </div>
@@ -134,4 +163,4 @@ const ForgotPassword = () => {
     )
 }
 
-export default ForgotPassword;
+export default ForgotPassword

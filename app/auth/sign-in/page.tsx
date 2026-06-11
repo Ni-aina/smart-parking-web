@@ -10,36 +10,43 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
+import { useTranslation } from "@/context/LanguageContext";
 
 const SignIn = () => {
-    const [showPassword, setShowPassword] = useState(false);
-    const [error, setError] = useState("");
-    const [isPending, setIsPending] = useState(false);
+    const [showPassword, setShowPassword] = useState(false)
+    const [error, setError] = useState("")
+    const [isPending, setIsPending] = useState(false)
+    const { t } = useTranslation()
 
-    const handleShowPassword = () => setShowPassword(prev => !prev);
+    const handleShowPassword = () => {
+        setShowPassword(prev => !prev)
+    }
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const formData = new FormData(e.currentTarget);
-        const [email, password] = [formData.get("email") + "", formData.get("password") + ""];
-        if (!email || !password) return;
+        e.preventDefault()
+        const formData = new FormData(e.currentTarget)
+        const [email, password] = [formData.get("email") + "", formData.get("password") + ""]
+        if (!email || !password) {
+            return
+        }
         try {
-            setIsPending(true);
-            setError("");
-            const { session } = await logIn(email, password);
-            if (!session) throw new Error();
+            setIsPending(true)
+            setError("")
+            const { session } = await logIn(email, password)
+            if (!session) {
+                throw new Error()
+            }
         } catch {
-            setError("Failed authentication");
+            setError(t("auth.failedAuth"))
         } finally {
-            setIsPending(false);
+            setIsPending(false)
         }
     }
 
     return (
         <div className="grid w-full h-dvh sm:place-items-center">
             <form
-                className="flex flex-col space-y-4 text-white rounded-xl p-8
-                sm:w-md sm:bg-white/5 sm:shadow-2xl"
+                className="flex flex-col space-y-4 text-white rounded-xl p-8 sm:w-md sm:bg-white/5 sm:shadow-2xl"
                 onSubmit={handleSubmit}
             >
                 <div className="flex lg:justify-center">
@@ -48,7 +55,7 @@ const SignIn = () => {
                         className="relative w-48 h-16 hover:opacity-80 transition-opacity"
                     >
                         <Image
-                            src={"/images/smart-parking.png"}
+                            src="/images/smart-parking.png"
                             alt="Smart parking"
                             fill
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -57,7 +64,11 @@ const SignIn = () => {
                     </Link>
                 </div>
                 <div className="mt-3 flex flex-col gap-3">
-                    <h1 className="text-md font-semibold">Email</h1>
+                    <h1 className="text-md font-semibold">
+                        {
+                            t("auth.email")
+                        }
+                    </h1>
                     <input
                         type="email"
                         name="email"
@@ -66,7 +77,11 @@ const SignIn = () => {
                     />
                 </div>
                 <div className="flex flex-col gap-3">
-                    <h1 className="text-md font-semibold">Password</h1>
+                    <h1 className="text-md font-semibold">
+                        {
+                            t("auth.password")
+                        }
+                    </h1>
                     <div className="flex items-center gap-2 w-full p-2 rounded-sm border border-white">
                         <input
                             type={showPassword ? "text" : "password"}
@@ -77,8 +92,14 @@ const SignIn = () => {
                         <div className="w-6 cursor-pointer">
                             {
                                 showPassword ?
-                                    <Eye onClick={handleShowPassword} size={16} /> :
-                                    <EyeClosed onClick={handleShowPassword} size={16} />
+                                    <Eye
+                                        onClick={handleShowPassword}
+                                        size={16}
+                                    /> :
+                                    <EyeClosed
+                                        onClick={handleShowPassword}
+                                        size={16}
+                                    />
                             }
                         </div>
                     </div>
@@ -87,18 +108,17 @@ const SignIn = () => {
                     <span className="text-xs text-red-400">{error}</span>
                     <div className="flex justify-end items-center gap-2">
                         <Link
-                            href={"/auth/forgot-password"}
+                            href="/auth/forgot-password"
                             className="text-xs hover:underline"
                         >
-                            Forgot password
+                            {
+                                t("auth.forgotPassword")
+                            }
                         </Link>
                     </div>
                 </div>
                 <button
-                    className="mt-3 flex justify-center items-center gap-3 
-                    bg-white text-black w-full py-2 rounded-sm 
-                    cursor-pointer hover:opacity-80 
-                    disabled:cursor-not-allowed disabled:opacity-80"
+                    className="mt-3 flex justify-center items-center gap-3 bg-white text-black w-full py-2 rounded-sm cursor-pointer hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-80"
                     disabled={isPending}
                 >
                     {
@@ -114,15 +134,25 @@ const SignIn = () => {
                                 color="black"
                             />
                     }
-                    <h1>Login</h1>
+                    <h1>
+                        {
+                            t("auth.login")
+                        }
+                    </h1>
                 </button>
                 <div className="flex flex-wrap justify-end items-center gap-2">
-                    <h1 className="text-sm">Don't have an account ?</h1>
+                    <h1 className="text-sm">
+                        {
+                            t("auth.dontHaveAccount")
+                        }
+                    </h1>
                     <Link
-                        href={"/auth/sign-up"}
+                        href="/auth/sign-up"
                         className="text-sm hover:underline"
                     >
-                        Create an account
+                        {
+                            t("auth.createAccount")
+                        }
                     </Link>
                 </div>
             </form>
@@ -130,4 +160,4 @@ const SignIn = () => {
     )
 }
 
-export default SignIn;
+export default SignIn
