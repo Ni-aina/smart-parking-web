@@ -39,7 +39,7 @@ export const Header = () => {
                 <LanguageSwitcher />
                 <Link
                     href="/auth/sign-in"
-                    className="text-white hover:text-blue-400 transition-colors"
+                    className="text-white hover:opacity-90 transition-opacity"
                 >
                     {t("landing.signIn")}
                 </Link>
@@ -71,14 +71,14 @@ export const Header = () => {
                         </div>
                         <Link
                             href="/auth/sign-in"
-                            className="text-white hover:text-blue-400 transition-colors text-center"
+                            className="text-white text-center"
                             onClick={() => setOpen(false)}
                         >
                             {t("landing.signIn")}
                         </Link>
                         <Link
                             href="/auth/sign-up"
-                            className="bg-blue-950 text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity text-center"
+                            className="bg-blue-950 text-white px-4 py-2 rounded-lg text-center"
                             onClick={() => setOpen(false)}
                         >
                             {t("landing.getStarted")}
