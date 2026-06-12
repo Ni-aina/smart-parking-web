@@ -36,6 +36,13 @@ const PaymentAccount = ({
         expiredDate = ""
     } = paymentAccount || {}
 
+    const [cardRevealed, setCardRevealed] = useState(false);
+    const [cardInputValue, setCardInputValue] = useState(cardNumber);
+
+    const maskedCard = cardInputValue
+        ? `**** **** **** ${cardInputValue.replace(/\s/g, "").slice(-4)}`
+        : "";
+
     const expiredDateObj = expiredDate ? new Date(expiredDate) : null;
     const formattedExpiredDate = expiredDateObj ?
         `${(expiredDateObj.getMonth() + 1).toString().padStart(2, '0')}/${expiredDateObj.getFullYear().toString().slice(2)}` : "";
@@ -94,19 +101,18 @@ const PaymentAccount = ({
             </div>
             <div className="flex flex-col gap-2">
                 <label htmlFor="cardNumber">{t("accountSettings.payment.cardNumber")}</label>
+                <input type="hidden" name="cardNumber" value={cardInputValue} />
                 <input
                     className="w-full outline-none px-4 py-2 border border-white/10 rounded-sm"
-                    name="cardNumber"
                     type="text"
-                    defaultValue={cardNumber}
-                    onInput={(e) => {
-                        const input = e.target as HTMLInputElement;
-                        let value = input.value.replace(/\D/g, '');
-                        if (value.length > 16) {
-                            value = value.slice(0, 16);
-                        }
-                        const formattedValue = value.replace(/(.{4})/g, '$1 ').trim();
-                        input.value = formattedValue;
+                    value={cardRevealed ? cardInputValue : maskedCard}
+                    onFocus={() => setCardRevealed(true)}
+                    onBlur={() => setCardRevealed(false)}
+                    onChange={(e) => {
+                        let value = e.target.value.replace(/\D/g, "");
+                        if (value.length > 16) value = value.slice(0, 16);
+                        const formatted = value.replace(/(.{4})/g, "$1 ").trim();
+                        setCardInputValue(formatted);
                     }}
                     placeholder="4242 4242 4242 4242"
                     required
