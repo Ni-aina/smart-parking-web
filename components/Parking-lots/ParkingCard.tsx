@@ -4,6 +4,7 @@ import Image from "next/image";
 import { DollarSign, Edit, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { Skeleton } from "../ui/skeleton";
+import { useTranslation } from "@/context/LanguageContext";
 
 interface ParkingCardProps {
     id: string;
@@ -32,6 +33,7 @@ const ParkingCard = ({
     onEdit,
     onDelete
 }: ParkingCardProps) => {
+    const { t } = useTranslation();
     const [loadingImage, setLoadingImage] = useState(true);
 
     return (
@@ -40,14 +42,14 @@ const ParkingCard = ({
                 {
                     loadingImage &&
                     <Skeleton
-                        className="flex-shrink-0 w-30 h-25 bg-white/10"
+                        className="shrink-0 w-30 h-25 bg-white/10"
                     />
                 }
                 <div
                     className={
                         `
-                            relative flex-shrink-0 rounded-md overflow-hidden
-                            ${loadingImage ? "w-0 h-0" : "w-30 h-25"}
+                            relative shrink-0 rounded-md overflow-hidden
+                            ${loadingImage ? "hidden" : "w-30 h-25"}
                         `
                     }
                 >
@@ -59,9 +61,10 @@ const ParkingCard = ({
                         onLoadStart={
                             () => setLoadingImage(true)
                         }
-                        onLoadingComplete={
+                        onLoad={
                             () => setLoadingImage(false)
                         }
+                        sizes="(max-width: 768px) 100vw, 33vw"
                     />
                 </div>
                 <div className="flex-1 flex flex-col gap-1 overflow-hidden">
@@ -70,18 +73,18 @@ const ParkingCard = ({
                         <p className="text-sm text-white">{type}</p>
                     </div>
                     <p className="text-sm text-white/60 truncate">{location}</p>
-                    <div className="text-md">Agents</div>
+                    <div className="text-md">{t("parkingLots.card.agents")}</div>
                     <div className="truncate text-sm text-white/50">{agents || "—"}</div>
                 </div>
             </div>
             <div className="mt-2 flex justify-between items-end gap-3">
                 <div className="grid grid-cols-2 gap-2 text-sm text-white/70">
                     <div>
-                        <div className="text-xs text-white/50">Capacity</div>
+                        <div className="text-xs text-white/50">{t("parkingLots.card.capacity")}</div>
                         <div>{occupiedSpots} / {totalSpots}</div>
                     </div>
                     <div>
-                        <div className="text-xs text-white/50">Price / hour</div>
+                        <div className="text-xs text-white/50">{t("parkingLots.card.pricePerHour")}</div>
                         <div className="flex items-center gap-1">
                             <DollarSign
                                 size={16}

@@ -10,6 +10,7 @@ import { deleteParking } from "@/actions/parkingLots.action";
 import Pagination from "../ui/pagination";
 import DeleteConfirm from "../ui/deleteConfirm";
 import NoData from "../ui/noData";
+import { useTranslation } from "@/context/LanguageContext";
 
 interface ClientParkingLotsInterface {
     parkings: ParkingInterface[];
@@ -24,6 +25,7 @@ const ClientParkingLots = ({
     count,
     searchTerm
 }: ClientParkingLotsInterface) => {
+    const { t } = useTranslation();
     const [search, setSearch] = useState(searchTerm);
     const [isConfirm, setIsConfirm] = useState("");
     const router = useRouter();
@@ -34,9 +36,6 @@ const ClientParkingLots = ({
             currentParkings.filter(item => item.id !== id)
         )
     )
-
-    const title = "Parking lots";
-
     const agentsNamesMap = Object.fromEntries(agents.map(a => [a.id, a.fullName]));
 
     const handleEdit = (id: string) => {
@@ -55,16 +54,20 @@ const ClientParkingLots = ({
     return (
         <div className="flex flex-col gap-5">
             <Navbar
-                title={title}
+                title={t("parkingLots.title")}
                 search={search}
                 setSearch={setSearch}
                 onAdd={() => router.push("/owner/parking-lots/form/new")}
+                listTitle={t("parkingLots.listTitle")}
+                searchPlaceholder={t("parkingLots.searchPlaceholder")}
+                addLabel={t("parkingLots.addNew")}
+                loadingLabel={t("parkingLots.loadingData")}
             />
             <div className="mt-5 lg:mt-10">
                 {
                     !count ?
                         <NoData
-                            message="No lot yet"
+                            message={t("parkingLots.noData")}
                         />
                     :
                         <ParkingCards
@@ -87,6 +90,10 @@ const ClientParkingLots = ({
                     () => setIsConfirm("")
                 }
                 handleConfirm={handleDelete}
+                title={t("parkingLots.confirm.title")}
+                message={t("parkingLots.confirm.message")}
+                cancelLabel={t("parkingLots.confirm.cancel")}
+                confirmLabel={t("parkingLots.confirm.confirm")}
             />
         </div>
     )

@@ -197,6 +197,50 @@ export const translationsFr = {
             failed: "Échoué"
         }
     },
+    parkingLots: {
+        title: "Parkings",
+        titleSingular: "Parking",
+        listTitle: "Liste des parkings",
+        searchPlaceholder: "Rechercher des parkings...",
+        addNew: "Ajouter un parking",
+        noData: "Aucun parking pour le moment",
+        loadingData: "Chargement des données...",
+        pageActions: {
+            new: "Nouveau",
+            edit: "Modifier",
+            view: "Voir",
+            goBack: "Retour"
+        },
+        card: {
+            agents: "Agents",
+            capacity: "Capacité",
+            pricePerHour: "Prix / heure"
+        },
+        form: {
+            name: "Nom du parking *",
+            location: "Emplacement du parking *",
+            vehicleType: "Type de véhicule *",
+            totalSpots: "Places totales *",
+            pricePerHour: "Prix/heure *",
+            images: "Images",
+            imageFormats: "(png, jpg, jpeg)",
+            agents: "Agents *",
+            searchPlaceholder: "Rechercher ...",
+            noResult: "Aucun résultat",
+            cancel: "Annuler",
+            update: "Modifier le parking",
+            add: "Ajouter un parking",
+            maxWidth: "largeur max.",
+            maxLength: "longueur max.",
+            maxHeight: "hauteur max."
+        },
+        confirm: {
+            title: "Cette action est irréversible !",
+            message: "Voulez-vous vraiment continuer ?",
+            cancel: "Annuler",
+            confirm: "Confirmer"
+        }
+    },
     reservations: {
         title: "Réservations",
         titleSingular: "Réservation",

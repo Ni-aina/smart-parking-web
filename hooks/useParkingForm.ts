@@ -7,6 +7,7 @@ import { ProfileInterface } from "@/types/profile";
 import { TypeInterface } from "@/types/type";
 import { getLatLng } from "@/utils/openstreetmap";
 import { urlToFile } from "@/utils/urlToFile";
+import { useTranslation } from "@/context/LanguageContext";
 import { useRouter } from "next/navigation";
 import {
     ChangeEvent,
@@ -31,13 +32,14 @@ const useParkingForm = ({
 }: FormParkingLotsInterface) => {
 
     const router = useRouter();
+    const { t } = useTranslation();
     const selectTypes = types.map(item => ({
         id: item.id,
         value: `
             ${item.vehicleType},
-            max width: ${item.maxWidth}, 
-            max length: ${item.maxLength}
-            max height: ${item.maxHeight}
+            ${t("parkingLots.form.maxWidth")}: ${item.maxWidth}, 
+            ${t("parkingLots.form.maxLength")}: ${item.maxLength}
+            ${t("parkingLots.form.maxHeight")}: ${item.maxHeight}
             ${item.description.trim() && `(${item.description})`}
         `
     }))

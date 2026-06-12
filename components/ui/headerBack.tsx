@@ -18,21 +18,27 @@ const HeaderBack = (
     const router = useRouter();
     const { t } = useTranslation();
 
+    const isParkingLot = title === "Parking lot";
+    const actionNamespace = isParkingLot ? "parkingLots" : "reservations";
+
     const actionLabels = {
-        New: t("reservations.pageActions.new"),
-        Edit: t("reservations.pageActions.edit"),
-        View: t("reservations.pageActions.view")
+        New: t(`${actionNamespace}.pageActions.new`),
+        Edit: t(`${actionNamespace}.pageActions.edit`),
+        View: t(`${actionNamespace}.pageActions.view`)
     }
 
-    const titleLabel = title === "Reservation"
-        ? t("reservations.titleSingular")
-        : title;
+    const titleLabels: Record<string, string> = {
+        Reservation: t("reservations.titleSingular"),
+        "Parking lot": t("parkingLots.titleSingular")
+    }
+
+    const titleLabel = titleLabels[title] || title;
 
     return (
         <div className="flex justify-between items-center gap-5">
             <div className="flex items-center gap-3">
                 <button
-                    title={t("reservations.pageActions.goBack")}
+                    title={t(`${actionNamespace}.pageActions.goBack`)}
                     className="cursor-pointer hover:opacity-80"
                     onClick={onBack || router.back}
                 >

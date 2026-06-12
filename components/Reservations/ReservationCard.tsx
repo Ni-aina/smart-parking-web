@@ -111,7 +111,7 @@ const ReservationCard = ({
           className={
             `
                 relative shrink-0 rounded-md overflow-hidden
-                ${loadingImage ? "w-0 h-0" : "w-28 h-20"}
+                ${loadingImage ? "hidden" : "w-28 h-20"}
               `
           }
         >
@@ -123,12 +123,14 @@ const ReservationCard = ({
             onLoadStart={
               () => setLoadingImage(true)
             }
-            onLoadingComplete={
+            onLoad={
               () => setLoadingImage(false)
             }
+            sizes="(max-width: 768px) 100vw, 33vw"
+            loading="eager"
           />
         </div>
-        <div className="flex flex-col gap-2 w-full">
+        <div className="flex flex-col gap-2 w-full overflow-hidden">
           <div className="flex items-center justify-between gap-3">
             <div className="w-20 font-semibold truncate">
               {name || '—'}

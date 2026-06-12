@@ -197,6 +197,50 @@ export const translationsEn = {
             failed: "Failed"
         }
     },
+    parkingLots: {
+        title: "Parking lots",
+        titleSingular: "Parking lot",
+        listTitle: "Parking lots list",
+        searchPlaceholder: "Search for parking lots...",
+        addNew: "Add new parking lot",
+        noData: "No lot yet",
+        loadingData: "Loading data...",
+        pageActions: {
+            new: "New",
+            edit: "Edit",
+            view: "View",
+            goBack: "Go back"
+        },
+        card: {
+            agents: "Agents",
+            capacity: "Capacity",
+            pricePerHour: "Price / hour"
+        },
+        form: {
+            name: "Parking name *",
+            location: "Parking location *",
+            vehicleType: "Vehicle type *",
+            totalSpots: "Total spots *",
+            pricePerHour: "Price/hour *",
+            images: "Images",
+            imageFormats: "(png, jpg, jpeg)",
+            agents: "Agents *",
+            searchPlaceholder: "Search ...",
+            noResult: "No result",
+            cancel: "Cancel",
+            update: "Update parking",
+            add: "Add new parking",
+            maxWidth: "max width",
+            maxLength: "max length",
+            maxHeight: "max height"
+        },
+        confirm: {
+            title: "This action is irreversible!",
+            message: "Are you sure you want to proceed?",
+            cancel: "Cancel",
+            confirm: "Confirm"
+        }
+    },
     reservations: {
         title: "Reservations",
         titleSingular: "Reservation",

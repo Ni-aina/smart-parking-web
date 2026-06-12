@@ -20,6 +20,7 @@ interface Navbarinterface {
     listTitle?: string;
     searchPlaceholder?: string;
     addLabel?: string;
+    loadingLabel?: string;
 }
 
 const Navbar = ({
@@ -29,7 +30,8 @@ const Navbar = ({
     onAdd,
     listTitle,
     searchPlaceholder,
-    addLabel
+    addLabel,
+    loadingLabel
 }: Navbarinterface) => {
     const router = useRouter();
     const pathname = usePathname();
@@ -46,7 +48,7 @@ const Navbar = ({
 
     const handleFilter = ()=> {
         startTransition(() => {
-            toast.loading("Loading data...", { id: "filter-loading" });
+            toast.loading(loadingLabel || "Loading data...", { id: "filter-loading" });
             router.push(`${pathname}?page=1&searchTerm=${debouncedSearch}`);
         })
     }

@@ -19,6 +19,7 @@ import useParkingForm from "@/hooks/useParkingForm";
 import Loading from "../ui/loading";
 import InputNumber from "../ui/inputNumber";
 import InputSelect from "../ui/inputSelect";
+import { useTranslation } from "@/context/LanguageContext";
 
 interface FormParkingLotsInterface {
     types: TypeInterface[];
@@ -31,6 +32,7 @@ const FormParkingLots = ({
     agents,
     parking
 }: FormParkingLotsInterface) => {
+    const { t } = useTranslation();
 
     const {
         selectTypes,
@@ -68,7 +70,7 @@ const FormParkingLots = ({
     return (
         <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             <div className="flex flex-col gap-2">
-                <label htmlFor="name">Parking name *</label>
+                <label htmlFor="name">{t("parkingLots.form.name")}</label>
                 <input
                     className="w-full outline-none px-4 py-2 border border-white/10 rounded-sm"
                     name="name"
@@ -79,7 +81,7 @@ const FormParkingLots = ({
                 />
             </div>
             <div className="flex flex-col gap-2">
-                <label htmlFor="location">Parking location *</label>
+                <label htmlFor="location">{t("parkingLots.form.location")}</label>
                 <input
                     className="w-full outline-none px-4 py-2 border border-white/10 rounded-sm"
                     name="location"
@@ -90,7 +92,7 @@ const FormParkingLots = ({
                 />
             </div>
             <div className="flex flex-col gap-2">
-                <label htmlFor="typeId">Vehicle type *</label>
+                <label htmlFor="typeId">{t("parkingLots.form.vehicleType")}</label>
                 <InputSelect
                     name="typeId"
                     value={typeId}
@@ -99,7 +101,7 @@ const FormParkingLots = ({
                 />
             </div>
             <div className="flex flex-col gap-2">
-                <label htmlFor="total-spots">Total spots *</label>
+                <label htmlFor="total-spots">{t("parkingLots.form.totalSpots")}</label>
                 <InputNumber
                     name="totalSpots"
                     value={`${totalSpots}`}
@@ -114,7 +116,7 @@ const FormParkingLots = ({
                         className="text-red-500"
                     />
                     <h1>
-                        Price/hour *
+                        {t("parkingLots.form.pricePerHour")}
                     </h1>
                 </label>
                 <InputNumber
@@ -133,7 +135,10 @@ const FormParkingLots = ({
                     accept="image/png, image/jpg, image/jpeg"
                     multiple
                 />
-                <h1>Images <span className="text-xs">(png, jpg, jpeg)</span></h1>
+                <h1>
+                    {t("parkingLots.form.images")}{" "}
+                    <span className="text-xs">{t("parkingLots.form.imageFormats")}</span>
+                </h1>
                 {
                     isImagesPending ?
                         <div
@@ -214,7 +219,7 @@ const FormParkingLots = ({
                 }
             </div>
             <div className="flex flex-col gap-2">
-                <label htmlFor="agents">Agents *</label>
+                <label htmlFor="agents">{t("parkingLots.form.agents")}</label>
                 <div
                     className="flex items-center gap-3 px-4 py-2 bg-white/10 rounded-md"
                 >
@@ -228,7 +233,7 @@ const FormParkingLots = ({
                         value={agentSearch}
                         onChange={e => setAgentSearch(e.target.value)}
                         className="w-full outline-none"
-                        placeholder="Search ..."
+                        placeholder={t("parkingLots.form.searchPlaceholder")}
                     />
                 </div>
                 <div className="flex flex-col gap-3 w-full max-h-80 overflow-y-scroll bg-white/10 rounded-lg p-5">
@@ -236,7 +241,7 @@ const FormParkingLots = ({
                         !agentsFiltered.length ?
                             <div className="w-full h-40 grid place-items-center">
                                 <h1>
-                                    No result
+                                    {t("parkingLots.form.noResult")}
                                 </h1>
                             </div>
                             :
@@ -270,30 +275,30 @@ const FormParkingLots = ({
             </div>
             <div className="hidden lg:flex justify-end gap-3 my-5 col-start-2">
                 <CustomButton
-                    title="Cancel"
+                    title={t("parkingLots.form.cancel")}
                     type="button"
-                    className="bg-white/10 text-white w-48"
+                    className="bg-white/10 text-white min-w-48"
                     Icon={Undo2}
                     onClick={handleCancel}
                 />
                 <CustomButton
-                    title={`${parking ? "Update parking" : "Add new parking"}`}
-                    className="w-48 text-black"
+                    title={parking ? t("parkingLots.form.update") : t("parkingLots.form.add")}
+                    className="text-black min-w-48"
                     isPending={isPending}
                     Icon={Upload}
                 />
             </div>
             <div className="lg:hidden my-5 space-y-3">
                 <CustomButton
-                    title={`${parking ? "Update parking" : "Add new parking"}`}
-                    className="w-48 text-black"
+                    title={parking ? t("parkingLots.form.update") : t("parkingLots.form.add")}
+                    className="text-black min-w-48"
                     isPending={isPending}
                     Icon={Upload}
                 />
                 <CustomButton
-                    title="Cancel"
+                    title={t("parkingLots.form.cancel")}
                     type="button"
-                    className="bg-white/10 text-white w-48"
+                    className="bg-white/10 text-white min-w-48"
                     Icon={Undo2}
                     onClick={handleCancel}
                 />
