@@ -1,6 +1,7 @@
 "use client";
 
 import { Check, Crown } from "lucide-react";
+import { useTranslation } from "@/context/LanguageContext";
 
 interface Plan {
     id: string;
@@ -21,6 +22,8 @@ const StepPlan = ({
     selectedPlan,
     setSelectedPlan
 }: StepPlanProps) => {
+    const { t } = useTranslation();
+
     return (
         <div className="mt-3 flex flex-col gap-3">
             {
@@ -41,14 +44,16 @@ const StepPlan = ({
                             text-[10px] font-semibold px-2 py-0.5 rounded-sm 
                             flex items-center gap-1"
                             >
-                                <Crown size={10} /> Popular
+                                <Crown size={10} /> {t("accountSettings.subscription.popular")}
                             </span>
                         }
                         <div className="flex justify-between items-center">
                             <h2 className="font-semibold text-sm">{plan.name}</h2>
                             <span className="text-sm font-semibold">
                                 ${plan.price}
-                                <span className="text-white/40 text-xs font-normal">/mo</span>
+                                <span className="text-white/40 text-xs font-normal">
+                                    {t("payment.mo")}
+                                </span>
                             </span>
                         </div>
                         <div className="mt-2 space-y-1">

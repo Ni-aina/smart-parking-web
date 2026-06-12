@@ -1,6 +1,7 @@
 import { useElements, useStripe } from "@stripe/react-stripe-js";
 import { FormEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useTranslation } from "@/context/LanguageContext";
 
 const useSubscriptionCheckout = ({
     planId,
@@ -12,6 +13,7 @@ const useSubscriptionCheckout = ({
     onSuccess: () => void
 }) => {
 
+    const { t } = useTranslation();
     const stripe = useStripe();
     const elements = useElements();
     const [errorMessage, setErrorMessage] = useState<string>("");
@@ -52,7 +54,7 @@ const useSubscriptionCheckout = ({
 
         if (paymentIntent.status === "succeeded") {
             onSuccess();
-            toast.success("Subscription updated successfully");
+            toast.success(t("accountSettings.messages.subscriptionUpdatedSuccessfully"));
             setLoading(false);
             return;
         }

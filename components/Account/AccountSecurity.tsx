@@ -6,6 +6,8 @@ import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import CustomButton from "../ui/customButton";
 import { ProfileStateInterface } from "@/hooks/useAccountSettings";
 import SubmitForm from "../ui/submitForm";
+import { useTranslation } from "@/context/LanguageContext";
+import { translateAccountMessage } from "@/utils/accountSettingsMessages";
 
 interface AccountSecurityInterface {
     formData: SecurityFormInterface;
@@ -62,6 +64,7 @@ const AccountSecurity = ({
     handleSubmit
 }: AccountSecurityInterface) => {
 
+    const { t } = useTranslation();
     const [stateVisible, setStateVisible] = useState(false);
 
     const {
@@ -70,18 +73,18 @@ const AccountSecurity = ({
         confirmPassword
     } = formData;
 
-    useEffect(()=> {
-        if(passwordState.error) {
+    useEffect(() => {
+        if (passwordState.error) {
             setStateVisible(true);
         }
-        if(passwordState.success) {
+        if (passwordState.success) {
             setStateVisible(true);
         }
     }, [passwordState])
 
-    useEffect(()=> {
+    useEffect(() => {
         if (!stateVisible) return;
-        
+
         const timer = setTimeout(() => {
             setStateVisible(false);
         }, 4000);
@@ -91,57 +94,51 @@ const AccountSecurity = ({
 
     return (
         <form
-            className="grid grid-cols-1 lg:grid-cols-2 gap-5"
+            className="flex flex-col gap-5"
             onSubmit={handleSubmit}
         >
-            <div className="lg:col-span-2 flex flex-col gap-2">
-                <PasswordInput
-                    name="currentPassword"
-                    value={currentPassword}
-                    label="Current password *"
-                    placeholder="Enter your current password"
-                    onChange={handleChange}
-                />
-            </div>
-            <div className="flex flex-col gap-2">
-                <PasswordInput
-                    name="newPassword"
-                    value={newPassword}
-                    label="New password *"
-                    placeholder="Min. 6 characters"
-                    onChange={handleChange}
-                />
-            </div>
-            <div className="flex flex-col gap-2">
-                <PasswordInput
-                    name="confirmPassword"
-                    value={confirmPassword}
-                    label="Confirm new password *"
-                    placeholder="Re-enter new password"
-                    onChange={handleChange}
-                />
-            </div>
+            <PasswordInput
+                name="currentPassword"
+                value={currentPassword}
+                label={t("accountSettings.security.currentPassword")}
+                placeholder={t("accountSettings.security.currentPasswordPlaceholder")}
+                onChange={handleChange}
+            />
+            <PasswordInput
+                name="newPassword"
+                value={newPassword}
+                label={t("accountSettings.security.newPassword")}
+                placeholder={t("accountSettings.security.newPasswordPlaceholder")}
+                onChange={handleChange}
+            />
+            <PasswordInput
+                name="confirmPassword"
+                value={confirmPassword}
+                label={t("accountSettings.security.confirmPassword")}
+                placeholder={t("accountSettings.security.confirmPasswordPlaceholder")}
+                onChange={handleChange}
+            />
             <div className="lg:col-span-2 text-xs">
-                Password must be at least 6 characters long
+                {t("accountSettings.security.passwordHelp")}
             </div>
-             {
+            {
                 stateVisible && passwordState.error &&
                 <div className="lg:col-span-2 text-red-500 text-sm bg-red-500/10 px-4 py-2 rounded-sm">
-                    {passwordState.error}
+                    {translateAccountMessage(t, passwordState.error)}
                 </div>
             }
             {
                 stateVisible && passwordState.success &&
                 <div className="lg:col-span-2 text-green-500 text-sm bg-green-500/10 px-4 py-2 rounded-sm">
-                    {passwordState.success}
+                    {translateAccountMessage(t, passwordState.success)}
                 </div>
             }
             <div className="lg:col-span-2 flex justify-end mt-3">
                 <SubmitForm
-                    pendingMessage="Updating password..."
+                    pendingMessage={t("accountSettings.security.updatingPassword")}
                 >
                     <CustomButton
-                        title="Update password"
+                        title={t("accountSettings.security.updatePassword")}
                         className="w-48"
                         Icon={ShieldCheck}
                     />

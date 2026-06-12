@@ -13,6 +13,8 @@ import {
     SubscriptionInterface,
     SubscriptionStateInterface
 } from "@/types/subscription";
+import { useTranslation } from "@/context/LanguageContext";
+import { translateAccountMessage } from "@/utils/accountSettingsMessages";
 
 const initialState: SubscriptionStateInterface = {
     error: null,
@@ -23,6 +25,7 @@ const useSubscription = (
     plans: SubscriptionPlanInterface[],
     currentSubscription: SubscriptionInterface | null
 ) => {
+    const { t } = useTranslation();
     const [step, setStep] = useState(currentSubscription ? -1 : 0);
     const [selectedPlan, setSelectedPlan] = useState(
         currentSubscription?.planId || plans.find(p => p.popular)?.id || plans[0]?.id || ""
@@ -36,7 +39,7 @@ const useSubscription = (
 
     const handleNext = () => {
         if (step === 0 && !selectedPlan) {
-            toast.error("Please select a plan");
+            toast.error(t("accountSettings.subscription.selectPlan"));
             return;
         }
         setStep(prev => prev + 1);
@@ -56,12 +59,12 @@ const useSubscription = (
 
     useEffect(() => {
         if (cancelState.success) {
-            toast.success(cancelState.success);
+            toast.success(translateAccountMessage(t, cancelState.success));
         }
         if (cancelState.error) {
-            toast.error(cancelState.error);
+            toast.error(translateAccountMessage(t, cancelState.error));
         }
-    }, [cancelState])
+    }, [cancelState, t])
 
     return {
         step,

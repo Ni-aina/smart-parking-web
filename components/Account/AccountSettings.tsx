@@ -2,13 +2,13 @@
 
 import { Landmark, Lock, Sparkles, User } from "lucide-react";
 import useAccountSettings from "@/hooks/useAccountSettings";
-import Loading from "../ui/loading";
 import PersonalInformation from "./PersonalInformation";
 import AccountSecurity from "./AccountSecurity";
 import PaymentAccount from "./PaymentAccount";
 import { BankAccountInterface } from "@/types/payment";
 import { SubscriptionInterface, SubscriptionPlanInterface } from "@/types/subscription";
 import SubscriptionPage from "../Subscription/SubscriptionPage";
+import { useTranslation } from "@/context/LanguageContext";
 
 const AccountSettings = ({
     paymentAccount,
@@ -19,6 +19,7 @@ const AccountSettings = ({
     plans: SubscriptionPlanInterface[];
     currentSubscription: SubscriptionInterface | null;
 }) => {
+    const { t } = useTranslation();
     const {
         personalForm,
         avatarState,
@@ -44,7 +45,9 @@ const AccountSettings = ({
                     <div className="flex flex-col gap-5">
                         <div className="flex items-center gap-3">
                             <User size={20} />
-                            <h1 className="text-lg font-semibold">Personal information</h1>
+                            <h1 className="text-lg font-semibold">
+                                {t("accountSettings.sections.personalInformation")}
+                            </h1>
                         </div>
                         <PersonalInformation
                             formData={personalForm}
@@ -63,7 +66,9 @@ const AccountSettings = ({
                     <div className="flex flex-col gap-5">
                         <div className="flex items-center gap-3">
                             <Sparkles size={20} />
-                            <h1 className="text-lg font-semibold">Subscription</h1>
+                            <h1 className="text-lg font-semibold">
+                                {t("accountSettings.sections.subscription")}
+                            </h1>
                         </div>
                         <SubscriptionPage
                             plans={plans}
@@ -79,7 +84,9 @@ const AccountSettings = ({
                     <div className="flex flex-col gap-5">
                         <div className="flex items-center gap-3">
                             <Lock size={20} />
-                            <h1 className="text-lg font-semibold">Account security</h1>
+                            <h1 className="text-lg font-semibold">
+                                {t("accountSettings.sections.accountSecurity")}
+                            </h1>
                         </div>
                         <AccountSecurity
                             formData={securityForm}
@@ -91,7 +98,9 @@ const AccountSettings = ({
                     <div className="flex flex-col gap-5">
                         <div className="flex items-center gap-3">
                             <Landmark size={20} />
-                            <h1 className="text-lg font-semibold">Bank account</h1>
+                            <h1 className="text-lg font-semibold">
+                                {t("accountSettings.sections.bankAccount")}
+                            </h1>
                         </div>
                         <PaymentAccount
                             paymentAccount={paymentAccount}

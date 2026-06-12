@@ -20,6 +20,7 @@ import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { isValidPhoneNumber } from "react-phone-number-input";
 import { useProfileContext } from "@/context/ProfileContext";
+import { useTranslation } from "@/context/LanguageContext";
 
 export interface ProfileStateInterface {
     error: string | null,
@@ -40,6 +41,7 @@ const initialProfileState: ProfileStateInterface = {
 }
 
 const useAccountSettings = () => {
+    const { t } = useTranslation();
     const queryClient = useQueryClient();
 
     const { currentProfile } = useProfileContext();
@@ -131,7 +133,7 @@ const useAccountSettings = () => {
         const { phoneNumber } = personalForm;
 
         if (!isValidPhoneNumber(phoneNumber)) {
-            toast.error("Invalid phone number");
+            toast.error(t("accountSettings.messages.invalidPhone"));
             return;
         }
 
@@ -153,7 +155,7 @@ const useAccountSettings = () => {
         } = securityForm;
 
         if (!currentProfile) {
-            toast.error("You have to be authenticated");
+            toast.error(t("accountSettings.messages.authRequired"));
             return;
         }
 
@@ -161,7 +163,7 @@ const useAccountSettings = () => {
             const { user } = await logIn(currentProfile.emailAddress, currentPassword);
             
             if (!user) {
-                toast.error("Your current password is incorrect");
+                toast.error(t("accountSettings.messages.currentPasswordIncorrect"));
                 return;
             }
 
@@ -207,4 +209,3 @@ const useAccountSettings = () => {
 }
 
 export default useAccountSettings;
-

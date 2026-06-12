@@ -174,6 +174,87 @@ export const translationsEn = {
         finishingTouches: "We're putting the finishing touches on our Enterprise tier. Stay tuned.",
         notAvailable: "Not available yet"
     },
+    accountSettings: {
+        sections: {
+            personalInformation: "Personal information",
+            subscription: "Subscription",
+            accountSecurity: "Account security",
+            bankAccount: "Bank account"
+        },
+        personal: {
+            profileAlt: "Profile",
+            imageHelp: "JPG, PNG or JPEG. 1MB max.",
+            fullName: "Full name *",
+            emailAddress: "Email address",
+            emailLocked: "Email cannot be changed from here",
+            phoneNumber: "Phone number",
+            savingProfile: "Saving profile...",
+            saveChanges: "Save changes"
+        },
+        security: {
+            currentPassword: "Current password *",
+            currentPasswordPlaceholder: "Enter your current password",
+            newPassword: "New password *",
+            newPasswordPlaceholder: "Min. 6 characters",
+            confirmPassword: "Confirm new password *",
+            confirmPasswordPlaceholder: "Re-enter new password",
+            passwordHelp: "Password must be at least 6 characters long",
+            updatingPassword: "Updating password...",
+            updatePassword: "Update password"
+        },
+        payment: {
+            bankName: "Bank name *",
+            accountHolder: "Account holder *",
+            accountNumber: "Account number *",
+            routingNumber: "Routing number *",
+            cardNumber: "Card number *",
+            expiredDate: "Expired date *",
+            savingBankAccount: "Saving bank account...",
+            saveAccount: "Save account"
+        },
+        subscription: {
+            steps: {
+                plan: "Plan",
+                payment: "Payment"
+            },
+            noActiveSubscription: "No active subscription",
+            choosePlanToStart: "Choose a plan to get started",
+            choosePlan: "Choose a plan",
+            back: "Back",
+            backToStatus: "Back to status",
+            next: "Next",
+            popular: "Popular",
+            card: "Card",
+            started: "Started",
+            renews: "Renews",
+            ended: "Ended",
+            newSubscription: "New subscription",
+            cancelSubscription: "Cancel subscription",
+            confirmCancelTitle: "Cancel subscription payment?",
+            confirmCancelMessage: "Are you sure you want to cancel this subscription payment? Your current access may end when the active period expires.",
+            keepSubscription: "Keep subscription",
+            selectPlan: "Please select a plan"
+        },
+        messages: {
+            invalidPhone: "Invalid phone number",
+            authRequired: "You have to be authenticated",
+            currentPasswordIncorrect: "Your current password is incorrect",
+            Unauthorized: "Unauthorized",
+            "The avatar cannot be updated": "The avatar cannot be updated",
+            "Avatar updated successfully": "Avatar updated successfully",
+            "Profile updated successfully": "Profile updated successfully",
+            "Old password, new password and confirm password are required": "Old password, new password and confirm password are required",
+            "Old password and new password must be different": "Old password and new password must be different",
+            "New password and confirm password must be the same": "New password and confirm password must be the same",
+            "Password updated successfully": "Password updated successfully",
+            "All fields are required": "All fields are required",
+            "Invalid card number": "Invalid card number",
+            "Invalid expired date": "Invalid expired date",
+            "Payment account updated successfully": "Payment account updated successfully",
+            "Subscription cancelled successfully": "Subscription cancelled successfully",
+            subscriptionUpdatedSuccessfully: "Subscription updated successfully"
+        }
+    },
     transactions: {
         title: "Transactions",
         history: "Transaction History",

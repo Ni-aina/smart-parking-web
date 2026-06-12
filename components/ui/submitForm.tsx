@@ -11,7 +11,7 @@ const SubmitForm = ({ children, pendingMessage }: { children: ReactNode, pending
         if (pending) {
             toast.loading(pendingMessage, {
                 id: `toast-${pendingMessage}`,
-            });
+            })
         } else {
             toast.dismiss(`toast-${pendingMessage}`);
         }

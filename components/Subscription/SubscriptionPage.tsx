@@ -18,18 +18,22 @@ import { useState } from "react";
 import DeleteConfirm from "../ui/deleteConfirm";
 import StepPlan from "./StepPlan";
 import { revalidateAuthSubscription } from "@/actions/subscription.action";
+import { useTranslation } from "@/context/LanguageContext";
 
 interface SubscriptionPageProps {
     plans: SubscriptionPlanInterface[];
     currentSubscription: SubscriptionInterface | null;
 }
 
-const steps = ["Plan", "Payment"];
-
 const SubscriptionPage = ({
     plans,
     currentSubscription
 }: SubscriptionPageProps) => {
+    const { t } = useTranslation();
+    const steps = [
+        t("accountSettings.subscription.steps.plan"),
+        t("accountSettings.subscription.steps.payment")
+    ];
     const {
         step,
         selectedPlan,
@@ -80,9 +84,11 @@ const SubscriptionPage = ({
                 <div className="flex flex-col items-center gap-4 py-10">
                     <Sparkles size={32} className="text-white/30" />
                     <div className="text-center">
-                        <h2 className="text-lg font-semibold">No active subscription</h2>
+                        <h2 className="text-lg font-semibold">
+                            {t("accountSettings.subscription.noActiveSubscription")}
+                        </h2>
                         <p className="text-sm text-white/40 mt-1">
-                            Choose a plan to get started
+                            {t("accountSettings.subscription.choosePlanToStart")}
                         </p>
                     </div>
                     <button
@@ -93,7 +99,7 @@ const SubscriptionPage = ({
                         disabled:cursor-not-allowed disabled:opacity-80"
                     >
                         <CreditCard size={16} />
-                        Choose a plan
+                        {t("accountSettings.subscription.choosePlan")}
                     </button>
                 </div>
             }
@@ -159,7 +165,7 @@ const SubscriptionPage = ({
                                     className="flex items-center gap-1 text-sm 
                                     cursor-pointer hover:opacity-80"
                                 >
-                                    <ChevronLeft size={16} /> Back
+                                    <ChevronLeft size={16} /> {t("accountSettings.subscription.back")}
                                 </button>
                                 :
                                 currentSubscription ?
@@ -169,7 +175,7 @@ const SubscriptionPage = ({
                                         className="flex items-center gap-1 text-sm 
                                         cursor-pointer hover:opacity-80"
                                     >
-                                        <ChevronLeft size={16} /> Back to status
+                                        <ChevronLeft size={16} /> {t("accountSettings.subscription.backToStatus")}
                                     </button>
                                     :
                                     <div />
@@ -183,7 +189,7 @@ const SubscriptionPage = ({
                                 px-4 py-2 rounded-sm text-sm font-semibold
                                 cursor-pointer hover:opacity-80"
                             >
-                                Next <ChevronRight size={14} />
+                                {t("accountSettings.subscription.next")} <ChevronRight size={14} />
                             </button>
                         }
                     </div>
@@ -194,6 +200,10 @@ const SubscriptionPage = ({
                 handleConfirm={handleConfirm}
                 handleCancel={() => setIsConfirmCancel(false)}
                 isOpen={isConfirmCancel}
+                title={t("accountSettings.subscription.confirmCancelTitle")}
+                message={t("accountSettings.subscription.confirmCancelMessage")}
+                cancelLabel={t("accountSettings.subscription.keepSubscription")}
+                confirmLabel={t("accountSettings.subscription.cancelSubscription")}
             />
         </>
     )

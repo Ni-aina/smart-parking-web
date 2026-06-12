@@ -10,6 +10,8 @@ import CustomButton from "../ui/customButton";
 import { ProfileStateInterface } from "@/hooks/useAccountSettings";
 import SubmitForm from "../ui/submitForm";
 import { LanguageSwitcher } from "../ui/LanguageSwitcher";
+import { useTranslation } from "@/context/LanguageContext";
+import { translateAccountMessage } from "@/utils/accountSettingsMessages";
 
 interface PersonalInformationInterface {
     formData: PersonalInfoFormInterface;
@@ -39,6 +41,7 @@ const PersonalInformation = ({
     handleSubmit
 }: PersonalInformationInterface) => {
 
+    const { t } = useTranslation();
     const [state, setState] = useState<ProfileStateInterface | null>(null);
 
     const {
@@ -106,7 +109,7 @@ const PersonalInformation = ({
                         displayImage ?
                             <Image
                                 src={displayImage}
-                                alt="Profile"
+                                alt={t("accountSettings.personal.profileAlt")}
                                 fill
                                 className="object-cover"
                                 sizes="80px"
@@ -119,12 +122,14 @@ const PersonalInformation = ({
                     }
                 </label>
                 <div className="flex flex-col gap-3">
-                    <span className="text-xs">JPG, PNG or JPEG. 1MB max.</span>
+                    <span className="text-xs">
+                        {t("accountSettings.personal.imageHelp")}
+                    </span>
                     <LanguageSwitcher />
                 </div>
             </div>
             <div className="flex flex-col gap-2">
-                <label htmlFor="fullName">Full name *</label>
+                <label htmlFor="fullName">{t("accountSettings.personal.fullName")}</label>
                 <input
                     className="w-full outline-none px-4 py-2 border border-white/10 rounded-sm"
                     name="fullName"
@@ -135,7 +140,7 @@ const PersonalInformation = ({
                 />
             </div>
             <div className="flex flex-col gap-2">
-                <label htmlFor="emailAddress">Email address</label>
+                <label htmlFor="emailAddress">{t("accountSettings.personal.emailAddress")}</label>
                 <input
                     className="w-full outline-none px-4 py-2 border border-white/10 rounded-sm 
                         opacity-50 cursor-not-allowed"
@@ -144,10 +149,12 @@ const PersonalInformation = ({
                     value={emailAddress}
                     disabled
                 />
-                <span className="text-xs">Email cannot be changed from here</span>
+                <span className="text-xs">
+                    {t("accountSettings.personal.emailLocked")}
+                </span>
             </div>
             <div className="flex flex-col gap-2">
-                <label htmlFor="phoneNumber">Phone number</label>
+                <label htmlFor="phoneNumber">{t("accountSettings.personal.phoneNumber")}</label>
                 <PhoneInput
                     defaultCountry="US"
                     value={phoneNumber}
@@ -173,21 +180,21 @@ const PersonalInformation = ({
             {
                 state?.error &&
                 <div className="lg:col-span-2 text-red-500 text-sm bg-red-500/10 px-4 py-2 rounded-sm">
-                    {state.error}
+                    {translateAccountMessage(t, state.error)}
                 </div>
             }
             {
                 state?.success &&
                 <div className="lg:col-span-2 text-green-500 text-sm bg-green-500/10 px-4 py-2 rounded-sm">
-                    {state.success}
+                    {translateAccountMessage(t, state.success)}
                 </div>
             }
             <div className="lg:col-span-2 flex justify-end mt-3">
                 <SubmitForm
-                    pendingMessage="Saving profile..."
+                    pendingMessage={t("accountSettings.personal.savingProfile")}
                 >
                     <CustomButton
-                        title="Save changes"
+                        title={t("accountSettings.personal.saveChanges")}
                         className="w-48"
                         Icon={Save}
                     />

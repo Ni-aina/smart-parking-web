@@ -33,14 +33,14 @@ const DeleteConfirm = ({
                 <div className="mt-3 w-full flex justify-end gap-3">
                     <button
                         type="button"
-                        className="w-30 h-10 flex justify-center items-center 
+                        className="p-2 flex justify-center items-center 
                                 bg-white/10 rounded-sm cursor-pointer hover:opacity-80"
                         onClick={handleCancel}
                     >
                         {cancelLabel}
                     </button>
                     <button
-                        className="w-30 h-10 flex justify-center items-center gap-2
+                        className="p-2 flex justify-center items-center gap-2
                                 bg-white text-black rounded-sm cursor-pointer hover:opacity-80
                                 disabled:cursor-not-allowed disabled:opacity-80"
                         onClick={handleConfirm}

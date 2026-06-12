@@ -7,6 +7,7 @@ import SubmitSubscription from "./SubmitSubscription";
 import { useState } from "react";
 import { Modal } from "../ui/modal";
 import ComingSoon from "./ComingSoon";
+import { useTranslation } from "@/context/LanguageContext";
 
 interface StepCardProps {
     activePlan: SubscriptionPlanInterface;
@@ -17,6 +18,7 @@ const StepCard = ({
     activePlan,
     onSuccess
 }: StepCardProps) => {
+    const { t } = useTranslation();
     const [showStripeElement, setShowStripeElement] = useState<boolean>(false);
 
     const handleShowStripeElement = () => {
@@ -49,13 +51,17 @@ const StepCard = ({
                     <div className="flex justify-between items-center">
                         <div>
                             <h2 className="font-semibold text-sm">
-                                {name} Plan
+                                {name}{t("payment.planSuffix")}
                             </h2>
-                            <p className="text-xs text-white/40 mt-1">Billed monthly</p>
+                            <p className="text-xs text-white/40 mt-1">
+                                {t("payment.billedMonthly")}
+                            </p>
                         </div>
                         <span className="text-lg font-semibold">
                             ${price}
-                            <span className="text-white/40 text-xs font-normal">/mo</span>
+                            <span className="text-white/40 text-xs font-normal">
+                                {t("payment.mo")}
+                            </span>
                         </span>
                     </div>
                 </div>
@@ -65,17 +71,17 @@ const StepCard = ({
                     cursor-pointer hover:opacity-90 transition-opacity"
                     onClick={handleShowStripeElement}
                 >
-                    <span>Pay with</span>
+                    <span>{t("payment.payWith")}</span>
                     <span className="italic font-semibold">Stripe</span>
                 </button>
                 <p className="text-[10px] text-white/30 text-center">
-                    Powered by Stripe — Secure payment processing
+                    {t("payment.poweredBy")}
                 </p>
             </div>
             <Modal
                 isOpen={showStripeElement}
                 onClose={handleShowStripeElement}
-                title="Payment"
+                title={t("payment.title")}
             >
                 <div className="max-h-[60dvh] overflow-x-hidden overflow-y-scroll">
                     <Elements

@@ -174,6 +174,87 @@ export const translationsFr = {
         finishingTouches: "Nous finalisons notre offre Entreprise. Restez à l'écoute.",
         notAvailable: "Pas encore disponible"
     },
+    accountSettings: {
+        sections: {
+            personalInformation: "Informations personnelles",
+            subscription: "Abonnement",
+            accountSecurity: "Sécurité du compte",
+            bankAccount: "Compte bancaire"
+        },
+        personal: {
+            profileAlt: "Profil",
+            imageHelp: "JPG, PNG ou JPEG. 1 Mo max.",
+            fullName: "Nom complet *",
+            emailAddress: "Adresse e-mail",
+            emailLocked: "L'e-mail ne peut pas être modifié ici",
+            phoneNumber: "Numéro de téléphone",
+            savingProfile: "Enregistrement du profil...",
+            saveChanges: "Enregistrer"
+        },
+        security: {
+            currentPassword: "Mot de passe actuel *",
+            currentPasswordPlaceholder: "Entrez votre mot de passe actuel",
+            newPassword: "Nouveau mot de passe *",
+            newPasswordPlaceholder: "Min. 6 caractères",
+            confirmPassword: "Confirmer le nouveau mot de passe *",
+            confirmPasswordPlaceholder: "Saisissez à nouveau le nouveau mot de passe",
+            passwordHelp: "Le mot de passe doit comporter au moins 6 caractères",
+            updatingPassword: "Mise à jour du mot de passe...",
+            updatePassword: "Mettre à jour"
+        },
+        payment: {
+            bankName: "Nom de la banque *",
+            accountHolder: "Titulaire du compte *",
+            accountNumber: "Numéro de compte *",
+            routingNumber: "Numéro d'acheminement *",
+            cardNumber: "Numéro de carte *",
+            expiredDate: "Date d'expiration *",
+            savingBankAccount: "Enregistrement du compte bancaire...",
+            saveAccount: "Enregistrer"
+        },
+        subscription: {
+            steps: {
+                plan: "Formule",
+                payment: "Paiement"
+            },
+            noActiveSubscription: "Aucun abonnement actif",
+            choosePlanToStart: "Choisissez une formule pour commencer",
+            choosePlan: "Choisir une formule",
+            back: "Retour",
+            backToStatus: "Retour au statut",
+            next: "Suivant",
+            popular: "Populaire",
+            card: "Carte",
+            started: "Commencé le",
+            renews: "Renouvellement",
+            ended: "Terminé",
+            newSubscription: "Nouvel abonnement",
+            cancelSubscription: "Annuler l'abonnement",
+            confirmCancelTitle: "Annuler le paiement de l'abonnement ?",
+            confirmCancelMessage: "Voulez-vous vraiment annuler ce paiement d'abonnement ? Votre accès actuel peut prendre fin à l'expiration de la période active.",
+            keepSubscription: "Conserver l'abonnement",
+            selectPlan: "Veuillez sélectionner une formule"
+        },
+        messages: {
+            invalidPhone: "Numéro de téléphone invalide",
+            authRequired: "Vous devez être authentifié",
+            currentPasswordIncorrect: "Votre mot de passe actuel est incorrect",
+            Unauthorized: "Non autorisé",
+            "The avatar cannot be updated": "L'avatar ne peut pas être mis à jour",
+            "Avatar updated successfully": "Avatar mis à jour avec succès",
+            "Profile updated successfully": "Profil mis à jour avec succès",
+            "Old password, new password and confirm password are required": "L'ancien mot de passe, le nouveau mot de passe et la confirmation sont obligatoires",
+            "Old password and new password must be different": "L'ancien mot de passe et le nouveau mot de passe doivent être différents",
+            "New password and confirm password must be the same": "Le nouveau mot de passe et la confirmation doivent être identiques",
+            "Password updated successfully": "Mot de passe mis à jour avec succès",
+            "All fields are required": "Tous les champs sont obligatoires",
+            "Invalid card number": "Numéro de carte invalide",
+            "Invalid expired date": "Date d'expiration invalide",
+            "Payment account updated successfully": "Compte de paiement mis à jour avec succès",
+            "Subscription cancelled successfully": "Abonnement annulé avec succès",
+            subscriptionUpdatedSuccessfully: "Abonnement mis à jour avec succès"
+        }
+    },
     transactions: {
         title: "Transactions",
         history: "Historique des transactions",

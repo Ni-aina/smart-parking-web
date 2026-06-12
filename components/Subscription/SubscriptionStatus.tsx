@@ -9,6 +9,7 @@ import {
     Crown
 } from "lucide-react";
 import { SubscriptionInterface, SubscriptionPlanInterface } from "@/types/subscription";
+import { useTranslation } from "@/context/LanguageContext";
 
 interface SubscriptionStatusProps {
     subscription: SubscriptionInterface;
@@ -25,6 +26,7 @@ const SubscriptionStatus = ({
     onNewSubscription,
     isCancelling
 }: SubscriptionStatusProps) => {
+    const { language, t } = useTranslation();
 
     const plan = plans.find(p => p.id === subscription.planId) || subscription.plan;
     const isActive = subscription.status === "active";
@@ -32,7 +34,11 @@ const SubscriptionStatus = ({
     const startDate = new Date(subscription.startDate);
 
     const formatDate = (date: Date) =>
-        date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+        date.toLocaleDateString(language === "fr" ? "fr-FR" : "en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric"
+        });
 
     return (
         <div className="flex flex-col gap-5">
@@ -40,7 +46,9 @@ const SubscriptionStatus = ({
                 <div className="flex justify-between items-start">
                     <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-2">
-                            <h2 className="font-semibold text-lg">{plan?.name} Plan</h2>
+                            <h2 className="font-semibold text-lg">
+                                {plan?.name}{t("payment.planSuffix")}
+                            </h2>
                             <span
                                 className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm
                                 ${isActive
@@ -53,7 +61,9 @@ const SubscriptionStatus = ({
                         </div>
                         <span className="text-2xl font-bold">
                             ${plan?.price}
-                            <span className="text-white/40 text-sm font-normal">/mo</span>
+                            <span className="text-white/40 text-sm font-normal">
+                                {t("payment.mo")}
+                            </span>
                         </span>
                     </div>
                     {
@@ -62,7 +72,7 @@ const SubscriptionStatus = ({
                             className="bg-white text-black text-[10px] font-semibold px-2 py-0.5 
                             rounded-sm flex items-center gap-1"
                         >
-                            <Crown size={10} /> Popular
+                            <Crown size={10} /> {t("accountSettings.subscription.popular")}
                         </span>
                     }
                 </div>
@@ -87,14 +97,18 @@ const SubscriptionStatus = ({
                 <div className="flex items-center gap-3 p-3 rounded-sm border border-white/10">
                     <CreditCard size={16} className="text-white/50" />
                     <div>
-                        <p className="text-[10px] text-white/40 uppercase tracking-wider">Card</p>
+                        <p className="text-[10px] text-white/40 uppercase tracking-wider">
+                            {t("accountSettings.subscription.card")}
+                        </p>
                         <p className="text-sm font-semibold">•••• {subscription.cardLastFour}</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-3 p-3 rounded-sm border border-white/10">
                     <Calendar size={16} className="text-white/50" />
                     <div>
-                        <p className="text-[10px] text-white/40 uppercase tracking-wider">Started</p>
+                        <p className="text-[10px] text-white/40 uppercase tracking-wider">
+                            {t("accountSettings.subscription.started")}
+                        </p>
                         <p className="text-sm font-semibold">{formatDate(startDate)}</p>
                     </div>
                 </div>
@@ -102,7 +116,10 @@ const SubscriptionStatus = ({
                     <Calendar size={16} className="text-white/50" />
                     <div>
                         <p className="text-[10px] text-white/40 uppercase tracking-wider">
-                            {isActive ? "Renews" : "Ended"}
+                            {isActive ?
+                                t("accountSettings.subscription.renews") :
+                                t("accountSettings.subscription.ended")
+                            }
                         </p>
                         <p className="text-sm font-semibold">{formatDate(endDate)}</p>
                     </div>
@@ -119,7 +136,7 @@ const SubscriptionStatus = ({
                         bg-white text-neutral-900 rounded-sm cursor-pointer hover:opacity-80
                         disabled:cursor-not-allowed disabled:opacity-80"
                     >
-                        New subscription
+                        {t("accountSettings.subscription.newSubscription")}
                     </button>
                 }
                 {
@@ -138,7 +155,7 @@ const SubscriptionStatus = ({
                                 <Loader2 size={14} className="animate-spin" /> :
                                 <XCircle size={14} />
                         }
-                        Cancel subscription
+                        {t("accountSettings.subscription.cancelSubscription")}
                     </button>
                 }
             </div>
