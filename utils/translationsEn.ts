@@ -322,6 +322,87 @@ export const translationsEn = {
             confirm: "Confirm"
         }
     },
+    types: {
+        title: "Lot types",
+        listTitle: "Lot types list",
+        searchPlaceholder: "Search for lot types...",
+        addNew: "Add new lot type",
+        noData: "No vehicle type yet",
+        loadingData: "Loading data...",
+        headers: {
+            vehicle: "Vehicle",
+            maxWidth: "Max width",
+            maxLength: "Max length",
+            maxHeight: "Max height",
+            description: "Description"
+        },
+        table: {
+            all: "All lot types",
+            delete: "Delete",
+            rowsPerPage: "Rows per page",
+            actions: "Actions"
+        },
+        form: {
+            addTitle: "Add lot type",
+            updateTitle: "Update lot type",
+            vehicleType: "Vehicle type *",
+            maxWidth: "Max width (m) *",
+            maxLength: "Max length (m) *",
+            maxHeight: "Max height (m) *",
+            description: "Description",
+            cancel: "Cancel",
+            add: "Add",
+            update: "Update"
+        },
+        confirm: {
+            title: "Delete lot type",
+            message: "Are you sure you want to delete the selected lot type?",
+            cancel: "Cancel",
+            confirm: "Confirm"
+        }
+    },
+    agents: {
+        title: "Agents",
+        listTitle: "Agents list",
+        searchPlaceholder: "Search for agents...",
+        addNew: "Add new agent",
+        noData: "No agent yet",
+        loadingData: "Loading data...",
+        headers: {
+            fullName: "Full name",
+            email: "Email",
+            phone: "Phone",
+            roles: "Roles",
+            createdAt: "Created at"
+        },
+        table: {
+            all: "All agents",
+            delete: "Delete",
+            rowsPerPage: "Rows per page",
+            actions: "Actions"
+        },
+        form: {
+            addTitle: "Add agent",
+            updateTitle: "Update agent",
+            fullName: "Full name *",
+            emailAddress: "Email address *",
+            emailLocked: "(You can't change email address)",
+            phoneNumber: "Phone number *",
+            cancel: "Cancel",
+            add: "Add",
+            update: "Update"
+        },
+        confirm: {
+            title: "Delete agent",
+            message: "Are you sure you want to delete the selected agent?",
+            cancel: "Cancel",
+            confirm: "Confirm"
+        },
+        messages: {
+            invalidPhone: "Invalid phone number",
+            onlyAgentsDeleted: "Only agents can be deleted"
+        }
+    },
     reservations: {
         title: "Reservations",
         titleSingular: "Reservation",

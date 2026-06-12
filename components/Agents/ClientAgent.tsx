@@ -10,6 +10,7 @@ import { Flag } from "lucide-react";
 import useAgent from "@/hooks/useAgent";
 import { ChangeEvent } from "react";
 import NoData from "../ui/noData";
+import { useTranslation } from "@/context/LanguageContext";
 
 const ClientAgent = ({ 
     agents,
@@ -20,6 +21,7 @@ const ClientAgent = ({
     count: number,
     searchTerm: string
  }) => {
+    const { t } = useTranslation();
 
     const {
         formData,
@@ -29,6 +31,7 @@ const ClientAgent = ({
         setIsModalOpen,
         title,
         headers,
+        tableLabels,
         body,
         handleChange,
         handleSubmit,
@@ -54,11 +57,16 @@ const ClientAgent = ({
                 search={search}
                 setSearch={setSearch}
                 onAdd={() => setIsModalOpen(true)}
+                listTitle={t("agents.listTitle")}
+                searchPlaceholder={t("agents.searchPlaceholder")}
+                addLabel={t("agents.addNew")}
+                loadingLabel={t("agents.loadingData")}
             />
             {
                 !count ?
                     <NoData
-                        message="No agent yet"
+                        message={t("agents.noData")}
+                        description=""
                     />
                 :
                     <Table
@@ -68,19 +76,20 @@ const ClientAgent = ({
                         handleEdit={handleEdit}
                         handleDelete={handleDelete}
                         count={count}
+                        labels={tableLabels}
                     />
             }
             <Modal
                 isOpen={isModalOpen}
                 onClose={handleOnClose}
-                title={`${id ? "Update" : "Add"} agent`}
+                title={id ? t("agents.form.updateTitle") : t("agents.form.addTitle")}
             >
                 <form
                     className="flex flex-col gap-3"
                     onSubmit={handleSubmit}
                 >
                     <div className="flex flex-col gap-3">
-                        <label htmlFor="fullName">Full name *</label>
+                        <label htmlFor="fullName">{t("agents.form.fullName")}</label>
                         <input
                             type="text"
                             name="fullName"
@@ -90,11 +99,11 @@ const ClientAgent = ({
                             className="outline-none px-4 py-2 border border-white/10 rounded-sm" 
                         />
                         <label htmlFor="emailAddress">
-                            Email address *
+                            {t("agents.form.emailAddress")}
                             {
                                 id &&
                                 <span className="ml-1 text-xs text-white/40">
-                                    (You can't change email address)
+                                    {t("agents.form.emailLocked")}
                                 </span>
                             }
                         </label>
@@ -108,7 +117,7 @@ const ClientAgent = ({
                             required
                             disabled={!!id}
                         />
-                        <label htmlFor="phoneNumber">Phone number *</label>
+                        <label htmlFor="phoneNumber">{t("agents.form.phoneNumber")}</label>
                         <PhoneInput
                             defaultCountry="US"
                             value={phoneNumber}
@@ -138,14 +147,14 @@ const ClientAgent = ({
                             className="w-30 h-10 flex justify-center items-center 
                             bg-white/10 rounded-sm cursor-pointer hover:opacity-80"
                         >
-                            Cancel
+                            {t("agents.form.cancel")}
                         </button>
                         <button
                             className="w-30 h-10 flex justify-center items-center gap-2
                             bg-white text-black rounded-sm cursor-pointer hover:opacity-80
                             disabled:cursor-not-allowed disabled:opacity-80"
                         >
-                            <span>{id ? "Update" : "Add"}</span>
+                            <span>{id ? t("agents.form.update") : t("agents.form.add")}</span>
                         </button>
                     </div>
                 </form>

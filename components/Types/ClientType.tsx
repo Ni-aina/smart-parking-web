@@ -8,6 +8,7 @@ import { Loader2 } from "lucide-react";
 import useType from "@/hooks/useType";
 import InputNumber from "../ui/inputNumber";
 import NoData from "../ui/noData";
+import { useTranslation } from "@/context/LanguageContext";
 
 const ClientType = ({ 
     types,
@@ -18,6 +19,7 @@ const ClientType = ({
     count: number,
     searchTerm: string
  }) => {
+    const { t } = useTranslation();
 
     const {
         formData,
@@ -28,6 +30,7 @@ const ClientType = ({
         isPending,
         title,
         headers,
+        tableLabels,
         body,
         handleChange,
         handleSubmit,
@@ -55,11 +58,16 @@ const ClientType = ({
                 search={search}
                 setSearch={setSearch}
                 onAdd={() => setIsModalOpen(true)}
+                listTitle={t("types.listTitle")}
+                searchPlaceholder={t("types.searchPlaceholder")}
+                addLabel={t("types.addNew")}
+                loadingLabel={t("types.loadingData")}
             />
             {
                 !count ?
                     <NoData
-                        message="No vehicle type yet"
+                        message={t("types.noData")}
+                        description=""
                     />
                 :
                     <Table
@@ -69,19 +77,20 @@ const ClientType = ({
                         handleEdit={handleEdit}
                         handleDelete={handleDelete}
                         count={count}
+                        labels={tableLabels}
                     />
             }
             <Modal
                 isOpen={isModalOpen}
                 onClose={handleOnClose}
-                title={`${id ? "Update" : "Add"} lot type`}
+                title={id ? t("types.form.updateTitle") : t("types.form.addTitle")}
             >
                 <form
                     className="flex flex-col gap-3"
                     onSubmit={handleSubmit}
                 >
                     <div className="flex flex-col gap-3">
-                        <label htmlFor="type">Vehicle type *</label>
+                        <label htmlFor="type">{t("types.form.vehicleType")}</label>
                         <input
                             type="text"
                             name="vehicleType"
@@ -89,28 +98,28 @@ const ClientType = ({
                             onChange={handleChange}
                             required
                             className="outline-none px-4 py-2 border border-white/10 rounded-sm" />
-                        <label htmlFor="type">Max width (m) *</label>
+                        <label htmlFor="type">{t("types.form.maxWidth")}</label>
                         <InputNumber
                             name="maxWidth"
                             value={`${maxWidth}`}
                             handleChange={handleChange}
                             min={0}
                         />
-                        <label htmlFor="type">Max length (m) *</label>
+                        <label htmlFor="type">{t("types.form.maxLength")}</label>
                         <InputNumber
                             name="maxLength"
                             value={`${maxLength}`}
                             handleChange={handleChange}
                             min={0}
                         />
-                        <label htmlFor="type">Max height (m) *</label>
+                        <label htmlFor="type">{t("types.form.maxHeight")}</label>
                         <InputNumber
                             name="maxHeight"
                             value={`${maxHeight}`}
                             handleChange={handleChange}
                             min={0}
                         />
-                        <label htmlFor="description">Description</label>
+                        <label htmlFor="description">{t("types.form.description")}</label>
                         <textarea
                             name="description"
                             value={description}
@@ -125,7 +134,7 @@ const ClientType = ({
                             className="w-30 h-10 flex justify-center items-center 
                             bg-white/10 rounded-sm cursor-pointer hover:opacity-80"
                         >
-                            Cancel
+                            {t("types.form.cancel")}
                         </button>
                         <button
                             className="w-30 h-10 flex justify-center items-center gap-2
@@ -140,7 +149,9 @@ const ClientType = ({
                                     className="animate-spin"
                                 />
                             }
-                            <span>{id ? "Update" : "Add"}</span>
+                            <span>
+                                {id ? t("types.form.update") : t("types.form.add")}
+                            </span>
                         </button>
                     </div>
                 </form>

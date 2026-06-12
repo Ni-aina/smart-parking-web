@@ -4,6 +4,7 @@ import { AgentFormInterface, ProfileInterface } from "@/types/profile";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { isValidPhoneNumber } from "react-phone-number-input";
 import { toast } from "sonner";
+import { useTranslation } from "@/context/LanguageContext";
 
 const initForm = {
     fullName: "",
@@ -15,6 +16,7 @@ const useAgent = (
     { agents, searchTerm }: 
     { agents: ProfileInterface[], searchTerm: string }
 ) => {
+    const { language, t } = useTranslation();
 
     const [localAgents, setLocalAgents] = useState(agents);
 
@@ -22,8 +24,24 @@ const useAgent = (
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [formData, setFormData] = useState<AgentFormInterface>(initForm);
 
-    const title = "Agents";
-    const headers = ["Full name", "Email", "Phone", "Roles", "Created at"];
+    const title = t("agents.title");
+    const headers = [
+        t("agents.headers.fullName"),
+        t("agents.headers.email"),
+        t("agents.headers.phone"),
+        t("agents.headers.roles"),
+        t("agents.headers.createdAt")
+    ];
+    const tableLabels = {
+        all: t("agents.table.all"),
+        delete: t("agents.table.delete"),
+        rowsPerPage: t("agents.table.rowsPerPage"),
+        actions: t("agents.table.actions"),
+        confirmTitle: t("agents.confirm.title"),
+        confirmMessage: t("agents.confirm.message"),
+        confirmCancel: t("agents.confirm.cancel"),
+        confirmConfirm: t("agents.confirm.confirm")
+    };
 
         const isAgentOnly = (roles: string[]) =>
             roles.length === 1 && roles.includes("agent");
@@ -36,7 +54,7 @@ const useAgent = (
             phoneNumber: item.phoneNumber,
             roles: item.roles.join(", "),
             createdAt: item.createdAt ?
-                new Date(item.createdAt).toLocaleDateString([], {
+                new Date(item.createdAt).toLocaleDateString(language === "fr" ? "fr-FR" : "en-US", {
                     day: "2-digit",
                     month: "short",
                     year: "numeric"
@@ -70,7 +88,7 @@ const useAgent = (
         const { id, phoneNumber } = formData;
 
         if (!isValidPhoneNumber(phoneNumber)) {
-            toast.error("Invalid phone number");
+            toast.error(t("agents.messages.invalidPhone"));
             return;
         }
 
@@ -128,7 +146,7 @@ const useAgent = (
     const handleDelete = (id: string) => {
         const agent = localAgents.find(item => item.id === id);
         if (!agent || !isAgentOnly(agent.roles)){
-            toast.error("Only agents can be deleted");
+            toast.error(t("agents.messages.onlyAgentsDeleted"));
             return;
         }
 
@@ -147,6 +165,7 @@ const useAgent = (
         setIsModalOpen,
         title,
         headers,
+        tableLabels,
         body,
         handleChange,
         handleSubmit,

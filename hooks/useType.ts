@@ -1,6 +1,7 @@
 "use client";
 
 import { createType, deleteType, updateType } from "@/actions/type.action";
+import { useTranslation } from "@/context/LanguageContext";
 import { FormTypeInterface, TypeInterface } from "@/types/type";
 import { ChangeEvent, FormEvent, startTransition, useOptimistic, useState } from "react";
 
@@ -18,6 +19,7 @@ const initForm = {
 }
 
 const useType = ({ types, searchTerm }: { types: TypeInterface[], searchTerm: string }) => {
+    const { t } = useTranslation();
 
     const [optimisticTypes, addOptimisticTypes] = useOptimistic(
         types,
@@ -47,8 +49,24 @@ const useType = ({ types, searchTerm }: { types: TypeInterface[], searchTerm: st
     const [isPending, setIsPending] = useState(false);
     const [formData, setFormData] = useState<FormTypeInterface>(initForm);
 
-    const title = "Lot types";
-    const headers = ["Vehicle", "Max width", "Max length", "Max height", "Description"];
+    const title = t("types.title");
+    const headers = [
+        t("types.headers.vehicle"),
+        t("types.headers.maxWidth"),
+        t("types.headers.maxLength"),
+        t("types.headers.maxHeight"),
+        t("types.headers.description")
+    ]
+    const tableLabels = {
+        all: t("types.table.all"),
+        delete: t("types.table.delete"),
+        rowsPerPage: t("types.table.rowsPerPage"),
+        actions: t("types.table.actions"),
+        confirmTitle: t("types.confirm.title"),
+        confirmMessage: t("types.confirm.message"),
+        confirmCancel: t("types.confirm.cancel"),
+        confirmConfirm: t("types.confirm.confirm")
+    }
 
     const body = {
         rows: optimisticTypes.map(item => ({
@@ -150,6 +168,7 @@ const useType = ({ types, searchTerm }: { types: TypeInterface[], searchTerm: st
         isPending,
         title,
         headers,
+        tableLabels,
         body,
         handleChange,
         handleSubmit,

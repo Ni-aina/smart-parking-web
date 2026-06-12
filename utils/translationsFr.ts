@@ -322,6 +322,87 @@ export const translationsFr = {
             confirm: "Confirmer"
         }
     },
+    types: {
+        title: "Types de places",
+        listTitle: "Liste des types de places",
+        searchPlaceholder: "Rechercher des types de places...",
+        addNew: "Ajouter un type de place",
+        noData: "Aucun type de véhicule pour le moment",
+        loadingData: "Chargement des données...",
+        headers: {
+            vehicle: "Véhicule",
+            maxWidth: "Largeur max.",
+            maxLength: "Longueur max.",
+            maxHeight: "Hauteur max.",
+            description: "Description"
+        },
+        table: {
+            all: "Tous les types de places",
+            delete: "Supprimer",
+            rowsPerPage: "Lignes par page",
+            actions: "Actions"
+        },
+        form: {
+            addTitle: "Ajouter un type de place",
+            updateTitle: "Modifier le type de place",
+            vehicleType: "Type de véhicule *",
+            maxWidth: "Largeur max. (m) *",
+            maxLength: "Longueur max. (m) *",
+            maxHeight: "Hauteur max. (m) *",
+            description: "Description",
+            cancel: "Annuler",
+            add: "Ajouter",
+            update: "Modifier"
+        },
+        confirm: {
+            title: "Supprimer le type de place",
+            message: "Voulez-vous vraiment supprimer le type de place sélectionné ?",
+            cancel: "Annuler",
+            confirm: "Confirmer"
+        }
+    },
+    agents: {
+        title: "Agents",
+        listTitle: "Liste des agents",
+        searchPlaceholder: "Rechercher des agents...",
+        addNew: "Ajouter un agent",
+        noData: "Aucun agent pour le moment",
+        loadingData: "Chargement des données...",
+        headers: {
+            fullName: "Nom complet",
+            email: "E-mail",
+            phone: "Téléphone",
+            roles: "Rôles",
+            createdAt: "Créé le"
+        },
+        table: {
+            all: "Tous les agents",
+            delete: "Supprimer",
+            rowsPerPage: "Lignes par page",
+            actions: "Actions"
+        },
+        form: {
+            addTitle: "Ajouter un agent",
+            updateTitle: "Modifier l'agent",
+            fullName: "Nom complet *",
+            emailAddress: "Adresse e-mail *",
+            emailLocked: "(Vous ne pouvez pas modifier l'adresse e-mail)",
+            phoneNumber: "Numéro de téléphone *",
+            cancel: "Annuler",
+            add: "Ajouter",
+            update: "Modifier"
+        },
+        confirm: {
+            title: "Supprimer l'agent",
+            message: "Voulez-vous vraiment supprimer l'agent sélectionné ?",
+            cancel: "Annuler",
+            confirm: "Confirmer"
+        },
+        messages: {
+            invalidPhone: "Numéro de téléphone invalide",
+            onlyAgentsDeleted: "Seuls les agents peuvent être supprimés"
+        }
+    },
     reservations: {
         title: "Réservations",
         titleSingular: "Réservation",

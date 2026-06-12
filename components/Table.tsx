@@ -3,7 +3,6 @@
 import { Edit, Trash2 } from "lucide-react";
 import Order from "./ui/order";
 import { useEffect, useState } from "react";
-import { Modal } from "./ui/modal";
 import { customCheckStyle } from "@/lib/customChexBoxStyle";
 import Image from "next/image";
 import InputSelect from "./ui/inputSelect";
@@ -22,6 +21,16 @@ interface TabelInterface {
     count: number;
     handleEdit: (id: string) => void;
     handleDelete: (id: string) => void;
+    labels?: {
+        all?: string;
+        delete?: string;
+        rowsPerPage?: string;
+        actions?: string;
+        confirmTitle?: string;
+        confirmMessage?: string;
+        confirmCancel?: string;
+        confirmConfirm?: string;
+    };
 }
 
 const Table = ({
@@ -30,7 +39,8 @@ const Table = ({
     body,
     handleEdit,
     handleDelete,
-    count
+    count,
+    labels
 }: TabelInterface) => {
 
     const [showPage, setShowPage] = useState("10");
@@ -111,7 +121,7 @@ const Table = ({
                 <div className="flex justify-between items-center gap-5 p-5">
                     <div className="flex items-center gap-3">
                         <h1 className="capitalize font-semibold">
-                            All {title}
+                            {labels?.all || `All ${title}`}
                         </h1>
                         {
                             isSelected &&
@@ -120,12 +130,14 @@ const Table = ({
                                 cursor-pointer hover:text-white/70 disabled:opacity-60 disabled:cursor-not-allowed"
                                 onClick={handleSetAllConfirmIds}
                             >
-                                Delete
+                                {labels?.delete || "Delete"}
                             </button>
                         }
                     </div>
                     <div className="flex items-center gap-3">
-                        <h1 className="hidden lg:flex">Rows per pages</h1>
+                        <h1 className="hidden lg:flex">
+                            {labels?.rowsPerPage || "Rows per pages"}
+                        </h1>
                         <div className="w-20">
                             <InputSelect
                                 value={showPage}
@@ -166,7 +178,7 @@ const Table = ({
                                     )
                                 }
                                 <td className="text-end pr-5 py-3 lg:pr-8">
-                                    Actions
+                                    {labels?.actions || "Actions"}
                                 </td>
                             </tr>
                         </thead>
@@ -248,6 +260,10 @@ const Table = ({
                     setIsConfirmId("")
                 }}
                 handleConfirm={handleConfirm}
+                title={labels?.confirmTitle}
+                message={labels?.confirmMessage}
+                cancelLabel={labels?.confirmCancel}
+                confirmLabel={labels?.confirmConfirm}
             />
         </>
     )
