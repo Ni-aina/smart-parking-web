@@ -494,5 +494,13 @@ export const translationsEn = {
             confirm: "Confirm",
             cancelling: "Cancelling..."
         }
+    },
+    notifications: {
+        title: "Notifications",
+        noData: "No notification yet"
+    },
+    messages: {
+        title: "Messages",
+        noData: "No message yet"
     }
 }

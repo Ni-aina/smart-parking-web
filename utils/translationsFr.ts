@@ -494,5 +494,13 @@ export const translationsFr = {
             confirm: "Confirmer",
             cancelling: "Annulation..."
         }
+    },
+    notifications: {
+        title: "Notifications",
+        noData: "Aucune notification pour le moment"
+    },
+    messages: {
+        title: "Messages",
+        noData: "Aucun message pour le moment"
     }
 }
