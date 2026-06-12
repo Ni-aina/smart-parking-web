@@ -174,6 +174,29 @@ export const translationsFr = {
         finishingTouches: "Nous finalisons notre offre Entreprise. Restez à l'écoute.",
         notAvailable: "Pas encore disponible"
     },
+    transactions: {
+        title: "Transactions",
+        history: "Historique des transactions",
+        all: "Toutes les transactions",
+        rowsPerPage: "Lignes par page",
+        searchPlaceholder: "Rechercher des transactions...",
+        noData: "Aucune transaction pour le moment",
+        loadingData: "Chargement des données...",
+        headers: {
+            driver: "Conducteur",
+            parkingLot: "Parking",
+            amount: "Montant",
+            method: "Méthode",
+            status: "Statut",
+            transactionId: "ID de transaction",
+            date: "Date"
+        },
+        status: {
+            succeeded: "Réussi",
+            pending: "En attente",
+            failed: "Échoué"
+        }
+    },
     reservations: {
         title: "Réservations",
         titleSingular: "Réservation",

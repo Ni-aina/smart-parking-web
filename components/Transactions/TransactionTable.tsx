@@ -8,9 +8,9 @@ import InputSelect from "../ui/inputSelect";
 import Pagination from "../ui/pagination";
 import { PAGINATION } from "@/lib/pagination";
 import { SelectInterface } from "@/types/input";
+import { useTranslation } from "@/context/LanguageContext";
 
 interface  TransactionTableInterface {
-    title: string;
     transactions: PaymentInterface[];
     count: number;
 }
@@ -25,22 +25,22 @@ const statusStyles: StatusStylesInterface = {
     failed: "text-red-500/70 bg-red-500/10"
 }
 
-const headers = [
-    "Driver",
-    "Parking Lot",
-    "Amount",
-    "Method",
-    "Status",
-    "Transaction ID",
-    "Date"
-]
-
 const TransactionTable = ({
-    title,
     transactions,
     count
 }: TransactionTableInterface) => {
+    const { t } = useTranslation();
     const [showPage, setShowPage] = useState("10");
+
+    const headers = [
+        t("transactions.headers.driver"),
+        t("transactions.headers.parkingLot"),
+        t("transactions.headers.amount"),
+        t("transactions.headers.method"),
+        t("transactions.headers.status"),
+        t("transactions.headers.transactionId"),
+        t("transactions.headers.date")
+    ]
 
     const handlePaginationChange = (e: SelectInterface) => {
         const { value } = e.target;
@@ -52,10 +52,10 @@ const TransactionTable = ({
             <div className="my-5 lg:my-8 bg-white/10 rounded-md text-white/80">
                 <div className="flex justify-between items-center gap-5 p-5">
                     <h1 className="capitalize font-semibold">
-                        All {title}
+                        {t("transactions.all")}
                     </h1>
                     <div className="flex items-center gap-3">
-                        <h1 className="hidden lg:flex">Rows per pages</h1>
+                        <h1 className="hidden lg:flex">{t("transactions.rowsPerPage")}</h1>
                         <div className="w-20">
                             <InputSelect
                                 value={showPage}
@@ -106,6 +106,7 @@ const TransactionTable = ({
                                     const dateTimeCreated = new Date(createdAt);
                                     const createdDate = getDateFormat(dateTimeCreated);
                                     const createdTime = getTimeFormat(dateTimeCreated);
+                                    const statusLabel = t(`transactions.status.${status}`);
 
                                     return (
                                         <tr
@@ -139,7 +140,7 @@ const TransactionTable = ({
                                                         ${statusStyles[status] || "text-white bg-white/10"}`
                                                     }
                                                 >
-                                                    {status}
+                                                    {statusLabel === `transactions.status.${status}` ? status : statusLabel}
                                                 </span>
                                             </td>
                                             <td className="px-5 py-4">

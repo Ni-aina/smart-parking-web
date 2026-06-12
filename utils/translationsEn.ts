@@ -174,6 +174,29 @@ export const translationsEn = {
         finishingTouches: "We're putting the finishing touches on our Enterprise tier. Stay tuned.",
         notAvailable: "Not available yet"
     },
+    transactions: {
+        title: "Transactions",
+        history: "Transaction History",
+        all: "All transactions",
+        rowsPerPage: "Rows per page",
+        searchPlaceholder: "Search for transactions...",
+        noData: "No transaction yet",
+        loadingData: "Loading data...",
+        headers: {
+            driver: "Driver",
+            parkingLot: "Parking Lot",
+            amount: "Amount",
+            method: "Method",
+            status: "Status",
+            transactionId: "Transaction ID",
+            date: "Date"
+        },
+        status: {
+            succeeded: "Succeeded",
+            pending: "Pending",
+            failed: "Failed"
+        }
+    },
     reservations: {
         title: "Reservations",
         titleSingular: "Reservation",
