@@ -300,6 +300,13 @@ export async function POST(req: NextRequest) {
             day: "numeric"
         })
 
+        const lastUserMessage = boundedMessages.filter(m => m.role === "user").at(-1);
+        const lastUserText = typeof lastUserMessage?.content === "string"
+            ? lastUserMessage.content
+            : Array.isArray(lastUserMessage?.content)
+                ? lastUserMessage.content.filter((b): b is { type: "text"; text: string } => b.type === "text").map(b => b.text).join(" ")
+                : "";
+
         const allMessages: ChatCompletionMessageParam[] = [
             {
                 role: "system",
@@ -339,6 +346,8 @@ export async function POST(req: NextRequest) {
                     - Never use list positions as IDs — always use the database lotId/vehicleId/typeId from tool results internally
                     - Pass time strings exactly as the user wrote them — never convert to ISO yourself
                     - Price is in USD. Be concise and friendly
+                    - Detect the language of the user's last message and always reply in that same language. If the user writes in French, respond in French. If the user writes in English, respond in English.
+                    - Last user message language hint: "${lastUserText.slice(0, 200)}"
                     - Never reveal lat/lng values
                 `
             },
