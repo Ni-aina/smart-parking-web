@@ -263,6 +263,8 @@ async function executeToolCall(
 }
 
 export async function POST(req: NextRequest) {
+    let isFr = false;
+
     try {
         const {
             messages,
@@ -273,7 +275,7 @@ export async function POST(req: NextRequest) {
             i18nLanguage
         } = await req.json();
 
-        const isFr = i18nLanguage === "fr";
+        isFr = i18nLanguage === "fr";
 
         if (!messages || !Array.isArray(messages) || messages.length === 0)
             return Response.json({ error: isFr ? "Le tableau de messages est requis" : "Messages array is required" }, { status: 400 });
@@ -408,14 +410,6 @@ export async function POST(req: NextRequest) {
 
     } catch (error: unknown) {
         const raw = error instanceof Error ? error.message : String(error);
-        const isFr = (() => {
-            try {
-                const body = (error as { body?: string }).body;
-                return body ? JSON.parse(body)?.i18nLanguage === "fr" : false
-            } catch {
-                return false
-            }
-        })();
 
         if (raw.includes("rate_limit_exceeded") || raw.includes("Rate limit")) {
             const retryMatch = raw.match(/try again in ([^.]+)/i);
