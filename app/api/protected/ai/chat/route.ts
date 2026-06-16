@@ -273,20 +273,22 @@ export async function POST(req: NextRequest) {
             i18nLanguage
         } = await req.json();
 
+        const isFr = i18nLanguage === "fr";
+
         if (!messages || !Array.isArray(messages) || messages.length === 0)
-            return Response.json({ error: "Messages array is required" }, { status: 400 });
+            return Response.json({ error: isFr ? "Le tableau de messages est requis" : "Messages array is required" }, { status: 400 });
         if (!driverId || typeof driverId !== "string")
-            return Response.json({ error: "driverId is required" }, { status: 400 });
+            return Response.json({ error: isFr ? "L'identifiant du conducteur est requis" : "driverId is required" }, { status: 400 });
         if (latitude == null || longitude == null)
-            return Response.json({ error: "latitude and longitude are required" }, { status: 400 });
+            return Response.json({ error: isFr ? "La latitude et la longitude sont requises" : "latitude and longitude are required" }, { status: 400 });
         if (typeof timezoneOffset !== "number")
-            return Response.json({ error: "timezoneOffset is required" }, { status: 400 });
+            return Response.json({ error: isFr ? "Le décalage horaire est requis" : "timezoneOffset is required" }, { status: 400 });
 
         const lat = parseFloat(latitude);
         const lng = parseFloat(longitude);
 
         if (isNaN(lat) || isNaN(lng))
-            return Response.json({ error: "latitude and longitude must be valid numbers" }, { status: 400 });
+            return Response.json({ error: isFr ? "La latitude et la longitude doivent être des nombres valides" : "latitude and longitude must be valid numbers" }, { status: 400 });
 
         const boundedMessages = (messages.slice(-MAX_MESSAGE_COUNT) as (ChatCompletionMessageParam & { reasoning?: unknown; reasoning_content?: unknown })[]).map(
             ({ reasoning, reasoning_content, ...rest }) => rest
@@ -340,8 +342,8 @@ export async function POST(req: NextRequest) {
                     - Never use list positions as IDs — always use the database lotId/vehicleId/typeId from tool results internally
                     - Pass time strings exactly as the user wrote them — never convert to ISO yourself
                     - Price is in USD. Be concise and friendly
-                    - Always reply in this language: "${i18nLanguage === "fr" ? "French" : "English"}". Never switch languages regardless of what the user writes.
                     - Never reveal lat/lng values
+                    - Always reply in ${isFr ? "French" : "English"}. Never switch languages regardless of what the user writes.
                 `
             },
             ...boundedMessages
@@ -370,7 +372,11 @@ export async function POST(req: NextRequest) {
 
             if (iterations >= MAX_TOOL_ITERATIONS) {
                 return Response.json(
-                    { message: "I'm sorry, I'm having a bit of trouble processing your request right now. Could you try rephrasing or breaking it into smaller steps? I'm happy to help! 😊" },
+                    {
+                        message: isFr
+                            ? "Je rencontre quelques difficultés à traiter votre demande. Pourriez-vous reformuler ou la diviser en étapes plus simples ? Je suis là pour vous aider ! 😊"
+                            : "I'm sorry, I'm having a bit of trouble processing your request right now. Could you try rephrasing or breaking it into smaller steps? I'm happy to help! 😊"
+                    },
                     { status: 200 }
                 )
             }
@@ -402,23 +408,31 @@ export async function POST(req: NextRequest) {
 
     } catch (error: unknown) {
         const raw = error instanceof Error ? error.message : String(error);
+        const isFr = (() => {
+            try {
+                const body = (error as { body?: string }).body;
+                return body ? JSON.parse(body)?.i18nLanguage === "fr" : false
+            } catch {
+                return false
+            }
+        })();
 
         if (raw.includes("rate_limit_exceeded") || raw.includes("Rate limit")) {
             const retryMatch = raw.match(/try again in ([^.]+)/i);
-            const retryIn = retryMatch ? ` Please try again in ${retryMatch[1]}.` : " Please try again in a few minutes.";
-            return Response.json({ message: `We've hit our request limit for now.${retryIn} Sorry for the inconvenience! 🙏` }, { status: 200 });
+            const retryIn = retryMatch ? ` ${isFr ? "Veuillez réessayer dans" : "Please try again in"} ${retryMatch[1]}.` : isFr ? " Veuillez réessayer dans quelques minutes." : " Please try again in a few minutes.";
+            return Response.json({ message: isFr ? `Nous avons atteint notre limite de requêtes.${retryIn} Désolé pour la gêne occasionnée ! 🙏` : `We've hit our request limit for now.${retryIn} Sorry for the inconvenience! 🙏` }, { status: 200 });
         }
         if (raw.includes("timeout") || raw.includes("Timeout")) {
-            return Response.json({ message: "The request took too long to complete. Please try again — it usually works on the next attempt! ⏱️" }, { status: 200 });
+            return Response.json({ message: isFr ? "La requête a pris trop de temps. Veuillez réessayer — cela fonctionne généralement au prochain essai ! ⏱️" : "The request took too long to complete. Please try again — it usually works on the next attempt! ⏱️" }, { status: 200 });
         }
         if (raw.includes("tool_use_failed") || raw.includes("Failed to call a function")) {
-            return Response.json({ message: "I ran into a small hiccup while processing your request. Could you try again? I'll do better! 😅" }, { status: 200 });
+            return Response.json({ message: isFr ? "J'ai rencontré un petit problème lors du traitement de votre demande. Pourriez-vous réessayer ? Je ferai mieux ! 😅" : "I ran into a small hiccup while processing your request. Could you try again? I'll do better! 😅" }, { status: 200 });
         }
         if (raw.includes("model_decommissioned")) {
-            return Response.json({ message: "I'm currently undergoing some updates. Please try again shortly! 🔧" }, { status: 200 });
+            return Response.json({ message: isFr ? "Je suis actuellement en cours de mise à jour. Veuillez réessayer dans un instant ! 🔧" : "I'm currently undergoing some updates. Please try again shortly! 🔧" }, { status: 200 });
         }
         if (raw.includes("invalid_request_error")) {
-            return Response.json({ message: "I received an unexpected input. Could you rephrase your request and try again? 😊" }, { status: 200 });
+            return Response.json({ message: isFr ? "J'ai reçu une entrée inattendue. Pourriez-vous reformuler votre demande et réessayer ? 😊" : "I received an unexpected input. Could you rephrase your request and try again? 😊" }, { status: 200 });
         }
 
         return Response.json({ error: raw }, { status: 500 });
