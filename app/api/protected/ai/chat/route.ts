@@ -269,7 +269,8 @@ export async function POST(req: NextRequest) {
             driverId,
             latitude,
             longitude,
-            timezoneOffset
+            timezoneOffset,
+            i18nLanguage
         } = await req.json();
 
         if (!messages || !Array.isArray(messages) || messages.length === 0)
@@ -339,8 +340,7 @@ export async function POST(req: NextRequest) {
                     - Never use list positions as IDs — always use the database lotId/vehicleId/typeId from tool results internally
                     - Pass time strings exactly as the user wrote them — never convert to ISO yourself
                     - Price is in USD. Be concise and friendly
-                    - Detect the language of the user's last message and always reply in that same language. 
-                    If the user writes in French, respond in French. If the user writes in English, respond in English.
+                    - Always reply in this language: "${i18nLanguage === "fr" ? "French" : "English"}". Never switch languages regardless of what the user writes.
                     - Never reveal lat/lng values
                 `
             },
