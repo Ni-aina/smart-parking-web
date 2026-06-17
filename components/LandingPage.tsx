@@ -16,7 +16,7 @@ const APK_URL = "https://files.catbox.moe/djl52t.apk";
 
 const LandingPage = () => {
 
-    const { t } = useTranslation();
+    const { t, language } = useTranslation();
     const isDownloading = useRef(false);
 
     useEffect(() => {
@@ -43,6 +43,7 @@ const LandingPage = () => {
             const totalMB = await downloadFile(
                 APK_URL,
                 "Smart-Parking.apk",
+                language,
                 (receivedMB, totalMB, percent, speed, timeLeft) => {
                     toast.loading(
                         <div className="flex flex-col gap-1">

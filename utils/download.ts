@@ -1,6 +1,7 @@
 export const downloadFile = async (
     url: string,
     filename: string,
+    language: "en" | "fr",
     onProgress: (
         receivedMB: string,
         totalMB: string,
@@ -37,8 +38,12 @@ export const downloadFile = async (
                 : `${(bytePerSec / 1024).toFixed(0)} KB/s`;
             const remaining = bytePerSec > 0 ? Math.round((total - received) / bytePerSec) : 0;
             const timeLeft = remaining >= 60
-                ? `${Math.floor(remaining / 60)}m ${remaining % 60}s left`
-                : `${remaining}s left`;
+                ? language === "fr"
+                    ? `${Math.floor(remaining / 60)}m ${remaining % 60}s restantes`
+                    : `${Math.floor(remaining / 60)}m ${remaining % 60}s left`
+                : language === "fr"
+                    ? `${remaining}s restantes`
+                    : `${remaining}s left`;
 
             lastReceived = received;
             lastTime = now;
