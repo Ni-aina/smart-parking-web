@@ -9,15 +9,35 @@ import { HowItWorks } from "./LandingPage/HowItWorks";
 import { Architecture } from "./LandingPage/Architecture";
 import { CTA } from "./LandingPage/CTA";
 import { Footer } from "./LandingPage/Footer";
+import { useEffect, useRef } from "react";
+import { useTranslation } from "@/context/LanguageContext";
 
-const APK_URL = "https://files.catbox.moe/djl52t.apk"
+const APK_URL = "https://files.catbox.moe/djl52t.apk";
 
 const LandingPage = () => {
 
+    const { t } = useTranslation();
+    const isDownloading = useRef(false);
+
+    useEffect(() => {
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            if (!isDownloading.current) return;
+            e.preventDefault();
+        }
+
+        window.addEventListener("beforeunload", handleBeforeUnload);
+
+        return () => {
+            window.removeEventListener("beforeunload", handleBeforeUnload)
+        }
+    }, [])
+
     const handleDownload = async () => {
-        toast.loading("Starting download...", {
+        toast.loading(t("landing.downloadStarting"), {
             id: "apk-download"
         })
+
+        isDownloading.current = true;
 
         try {
             const totalMB = await downloadFile(
@@ -36,13 +56,15 @@ const LandingPage = () => {
                 }
             )
 
-            toast.success(`Download complete! (${totalMB} MB)`, {
+            toast.success(t("landing.downloadComplete", { totalMB }), {
                 id: "apk-download"
             })
         } catch {
-            toast.error("Download failed. Please try again.", {
+            toast.error(t("landing.downloadFailed"), {
                 id: "apk-download"
             })
+        } finally {
+            isDownloading.current = false
         }
     }
 
@@ -65,4 +87,4 @@ const LandingPage = () => {
     )
 }
 
-export default LandingPage
+export default LandingPage;

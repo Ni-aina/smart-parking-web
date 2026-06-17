@@ -9,12 +9,12 @@ import {
 } from "react";
 import { translations } from "@/utils/translations";
 
-type Language = "en" | "fr"
+type Language = "en" | "fr";
 
 interface LanguageContextProps {
-    language: Language
-    setLanguage: (lang: Language) => void
-    t: (key: string) => string
+    language: Language;
+    setLanguage: (lang: Language) => void;
+    t: (key: string, params?: Record<string, string | number>) => string;
 }
 
 const LanguageContext = createContext<LanguageContextProps | undefined>(undefined)
@@ -43,7 +43,7 @@ export const LanguageProvider = ({
         localStorage.setItem("language", lang)
     }
 
-    const t = (key: string) => {
+    const t = (key: string, params?: Record<string, string | number>) => {
         const keys = key.split(".")
         let current: any = translations[language]
         for (const k of keys) {
@@ -51,7 +51,13 @@ export const LanguageProvider = ({
                 current = current[k]
             }
         }
-        return current || key
+        let result = current || key
+        if (params) {
+            Object.entries(params).forEach(([k, v]) => {
+                result = result.replace(`{${k}}`, String(v))
+            })
+        }
+        return result
     }
 
     return (
@@ -74,5 +80,5 @@ export const useTranslation = () => {
     if (!context) {
         throw new Error("useTranslation must be used within a LanguageProvider")
     }
-    return context
+    return context;
 }
