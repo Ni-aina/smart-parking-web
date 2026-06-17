@@ -10,7 +10,7 @@ import { Architecture } from "./LandingPage/Architecture";
 import { CTA } from "./LandingPage/CTA";
 import { Footer } from "./LandingPage/Footer";
 
-const APK_URL = "https://files.catbox.moe/ah4k66.apk"
+const APK_URL = "https://files.catbox.moe/djl52t.apk"
 
 const LandingPage = () => {
 
