@@ -54,7 +54,7 @@ export const translationsEn = {
         signIn: "Sign In",
         getStarted: "Get Started",
         copyright: "© 2025 Smart Parking. All rights reserved.",
-        downloadStarting: "Starting download...",
+        downloadStarting: "Download Starting...",
         downloadComplete: "Download complete! ({totalMB} MB)",
         downloadFailed: "Download failed. Please try again."
     },
