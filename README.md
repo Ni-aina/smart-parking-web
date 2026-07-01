@@ -6,12 +6,17 @@ Owner dashboard for the Smart Parking system, built with Next.js and Supabase.
 
 ## Stack
 
-- Next.js (App Router)
+- Next.js (App Router, Turbopack)
 - TypeScript
-- Supabase (PostgreSQL + Auth + Storage)
+- Supabase (PostgreSQL + Auth + Storage, via @supabase/ssr)
+- TanStack Query
 - Stripe (payments)
-- Groq (AI features)
-- React Context + SSR for state
+- Groq (AI chatbot support)
+- Radix UI
+- Tailwind CSS
+- Recharts (analytics/charts)
+- ExcelJS (export)
+- chrono-node (natural language date parsing)
 
 ## Features
 
@@ -25,6 +30,8 @@ Owner dashboard for the Smart Parking system, built with Next.js and Supabase.
 - View reviews and ratings per parking lot
 - Notifications and messaging with drivers/agents
 - Vehicle and maintenance history overview
+- Analytics dashboard with charts
+- Export data to Excel
 
 ## Data Model
 
