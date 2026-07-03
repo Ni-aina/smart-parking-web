@@ -12,8 +12,8 @@ import parseUserTime from "@/utils/DateConverstion";
 import { denormalizeData, normalizeData } from "@/utils/normalizeData";
 import { LotInterface } from "@/types/lot";
 
-const PRIMARY_MODEL = "llama-3.3-70b-versatile";
-const FALLBACK_MODEL = "openai/gpt-oss-20b";
+const PRIMARY_MODEL = "openai/gpt-oss-120b";
+const FALLBACK_MODEL = "qwen/qwen3.6-27b";
 const MAX_TOOL_ITERATIONS = 8;
 const MAX_MESSAGE_COUNT = 40;
 const SERIAL_TOOLS = new Set(["confirm_reservation"]);
