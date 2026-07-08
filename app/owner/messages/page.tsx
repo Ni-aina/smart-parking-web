@@ -1,19 +1,5 @@
-"use client";
+import MessagesClient from "@/components/Messages/MessagesClient";
 
-import NoData from "@/components/ui/noData";
-import { useTranslation } from "@/context/LanguageContext";
-
-const MessagesPage = () => {
-    const { t } = useTranslation();
-
-    return (
-        <div className="mt-5 lg:mt-10">
-            <NoData
-                message={t("messages.title")}
-                description={t("messages.noData")}
-            />
-        </div>
-    )
-}
+const MessagesPage = () => <MessagesClient />
 
 export default MessagesPage;

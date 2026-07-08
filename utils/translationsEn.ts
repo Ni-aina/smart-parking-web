@@ -504,6 +504,38 @@ export const translationsEn = {
     },
     messages: {
         title: "Messages",
-        noData: "No message yet"
+        subtitle: "Chat with drivers, agents, and parking owners.",
+        noData: "No conversation yet",
+        noDataDescription: "Start a conversation to keep parking updates in one place.",
+        newConversation: "New conversation",
+        searchPeople: "Search people",
+        noPeopleFound: "No people found",
+        defaultUser: "User",
+        you: "You",
+        noMessagesYet: "No messages yet",
+        selectConversation: "Select a conversation",
+        selectConversationDesc: "Choose a thread from the inbox or start a new conversation.",
+        startChat: "Start the conversation with a first message.",
+        typePlaceholder: "Type a message",
+        send: "Send message",
+        backToInbox: "Back to inbox",
+        conversation: "Conversation",
+        errorSending: "Message could not be sent",
+        errorConversation: "Conversation could not be opened",
+        roles: {
+            all: "All",
+            owner: "Owner",
+            driver: "Driver",
+            agent: "Agent"
+        },
+        time: {
+            now: "Now",
+            minuteAgo: "1 minute ago",
+            minutesAgo: "{count} minutes ago",
+            hourAgo: "1 hour ago",
+            hoursAgo: "{count} hours ago",
+            dayAgo: "1 day ago",
+            daysAgo: "{count} days ago"
+        }
     }
 }

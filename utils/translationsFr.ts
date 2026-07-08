@@ -504,6 +504,38 @@ export const translationsFr = {
     },
     messages: {
         title: "Messages",
-        noData: "Aucun message pour le moment"
+        subtitle: "Discutez avec les conducteurs, agents et propriétaires.",
+        noData: "Aucune conversation pour le moment",
+        noDataDescription: "Démarrez une conversation pour garder les échanges au même endroit.",
+        newConversation: "Nouvelle conversation",
+        searchPeople: "Rechercher une personne",
+        noPeopleFound: "Aucune personne trouvée",
+        defaultUser: "Utilisateur",
+        you: "Vous",
+        noMessagesYet: "Aucun message",
+        selectConversation: "Sélectionnez une conversation",
+        selectConversationDesc: "Choisissez une discussion dans la boîte de réception ou démarrez une nouvelle conversation.",
+        startChat: "Commencez la conversation avec un premier message.",
+        typePlaceholder: "Écrire un message",
+        send: "Envoyer le message",
+        backToInbox: "Retour à la boîte de réception",
+        conversation: "Conversation",
+        errorSending: "Le message n'a pas pu être envoyé",
+        errorConversation: "La conversation n'a pas pu être ouverte",
+        roles: {
+            all: "Tous",
+            owner: "Propriétaire",
+            driver: "Conducteur",
+            agent: "Agent"
+        },
+        time: {
+            now: "Maintenant",
+            minuteAgo: "Il y a 1 minute",
+            minutesAgo: "Il y a {count} minutes",
+            hourAgo: "Il y a 1 heure",
+            hoursAgo: "Il y a {count} heures",
+            dayAgo: "Il y a 1 jour",
+            daysAgo: "Il y a {count} jours"
+        }
     }
 }
