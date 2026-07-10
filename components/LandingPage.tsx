@@ -12,7 +12,7 @@ import { Footer } from "./LandingPage/Footer";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "@/context/LanguageContext";
 
-const APK_URL = "https://files.catbox.moe/492tyh.apk";
+const APK_URL = "https://files.catbox.moe/vox3na.apk";
 
 const LandingPage = () => {
 
