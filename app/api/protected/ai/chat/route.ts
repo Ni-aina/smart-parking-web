@@ -214,6 +214,11 @@ async function executeConfirmReservation(
     if (!vehicle || isNotMatch) throw new Error(`Vehicle not found or access denied, ${isNotMatch?.message}`);
     const parsedStartTime = parseUserTime(startTime, timezoneOffset);
     const parsedEndTime = parseUserTime(endTime, timezoneOffset);
+
+    if (parsedStartTime >= parsedEndTime) {
+        throw new Error("Start time must be before end time");
+    }
+
     const payload = denormalizeData({
         driverId,
         lotId: String(lotId),
@@ -361,6 +366,7 @@ export async function POST(req: NextRequest) {
                     - If the user volunteers information for a future step, store it mentally — do NOT act on it or skip ahead
                     - Price is in USD. Be concise and friendly.
                     - Never reveal lat/lng values.
+                    - Never transform the time format provided by the user.
                     - Always reply in ${isFr ? "French" : "English"}. Never switch languages regardless of what the user writes.
                 `
             },
