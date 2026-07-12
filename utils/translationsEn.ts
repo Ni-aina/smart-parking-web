@@ -53,7 +53,7 @@ export const translationsEn = {
         termsOfService: "Terms of Service",
         signIn: "Sign In",
         getStarted: "Get Started",
-        copyright: "© 2025 Smart Parking. All rights reserved.",
+        copyright: "© 2026 Smart Parking. All rights reserved.",
         downloadStarting: "Download Starting...",
         downloadComplete: "Download complete! ({totalMB} MB)",
         downloadFailed: "Download failed. Please try again."
