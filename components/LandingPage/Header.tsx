@@ -45,7 +45,7 @@ export const Header = () => {
                 </Link>
                 <Link
                     href="/auth/sign-up"
-                    className="bg-blue-950 text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity"
+                    className="bg-white text-neutral-900 px-4 py-2 rounded-lg hover:opacity-90 transition-opacity"
                 >
                     {t("landing.getStarted")}
                 </Link>
