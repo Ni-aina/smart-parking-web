@@ -66,7 +66,7 @@ const StepCard = ({
                     </div>
                 </div>
                 <button
-                    className="w-full py-3 rounded-sm bg-blue-950 text-white 
+                    className="w-full py-3 rounded-sm bg-white text-neutral-900 
                     font-bold flex items-center justify-center gap-1 
                     cursor-pointer hover:opacity-90 transition-opacity"
                     onClick={handleShowStripeElement}
