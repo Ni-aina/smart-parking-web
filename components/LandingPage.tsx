@@ -1,6 +1,6 @@
 "use client";
 
-import { downloadFile } from "@/utils/download";
+import { downloadFile } from "@/utils/downloads/index";
 import { toast } from "sonner";
 import { Header } from "./LandingPage/Header";
 import { Hero } from "./LandingPage/Hero";
