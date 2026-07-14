@@ -44,7 +44,7 @@ const SubmitSubscription = ({
             />
 
             <button
-                className="w-full py-3 rounded-sm bg-blue-950 text-white
+                className="w-full py-3 rounded-sm bg-white text-neutral-900
                 font-bold cursor-pointer hover:opacity-90 transition-opacity
                 disabled:opacity-70 disabled:cursor-not-allowed"
                 disabled={loading || !stripe || !clientSecret}
