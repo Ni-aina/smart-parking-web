@@ -12,8 +12,6 @@ import { Footer } from "./LandingPage/Footer";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "@/context/LanguageContext";
 
-const APK_URL = "https://files.catbox.moe/vox3na.apk";
-
 const LandingPage = () => {
 
     const { t, language } = useTranslation();
@@ -41,7 +39,7 @@ const LandingPage = () => {
 
         try {
             const totalMB = await downloadFile(
-                APK_URL,
+                "/api/public/apk",
                 "Smart-Parking.apk",
                 language,
                 (receivedMB, totalMB, percent, speed, timeLeft) => {
