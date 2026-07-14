@@ -1,5 +1,7 @@
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import { NextResponse } from "next/server";
+import { NodeHttpHandler } from "@smithy/node-http-handler";
+import https from "https";
 
 const client = new S3Client({
     endpoint: process.env.B2_ENDPOINT,
@@ -7,7 +9,12 @@ const client = new S3Client({
     credentials: {
         accessKeyId: process.env.B2_KEY_ID as string,
         secretAccessKey: process.env.B2_APPLICATION_KEY as string
-    }
+    },
+    requestHandler: new NodeHttpHandler({
+        httpsAgent: new https.Agent({ family: 4 }),
+        connectionTimeout: 5000,
+        socketTimeout: 30000
+    })
 })
 
 export const GET = async () => {
@@ -18,18 +25,18 @@ export const GET = async () => {
         })
 
         const response = await client.send(command)
-        const bytes = await response.Body?.transformToByteArray()
 
-        if (!bytes) {
+        if (!response.Body) {
             throw new Error("File not found")
         }
 
-        const buffer = Buffer.from(bytes)
+        const stream = response.Body.transformToWebStream()
 
-        return new NextResponse(buffer, {
+        return new NextResponse(stream, {
             headers: {
                 "Content-Type": "application/vnd.android.package-archive",
-                "Content-Disposition": "attachment; filename=\"smart-parking.apk\""
+                "Content-Disposition": "attachment; filename=\"smart-parking.apk\"",
+                "Content-Length": String(response.ContentLength)
             }
         })
     } catch (error) {
