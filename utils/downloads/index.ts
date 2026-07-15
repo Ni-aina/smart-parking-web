@@ -12,18 +12,10 @@ export const downloadFile = async (
         speed: string,
         timeLeft: string
     ) => void
-) => {
-    const headResponse = await fetch(url, { method: "HEAD" });
-    const total = Number(headResponse.headers.get("content-length"));
-
+): Promise<string> => {
     const saved = await getSavedChunk(filename);
-    const chunks: BlobPart[] = saved ? [saved] : [];
+    let chunks: BlobPart[] = saved ? [saved] : [];
     let received = saved ? saved.size : 0;
-
-    if (received >= total) {
-        chunks.length = 0;
-        received = 0
-    }
 
     const headers: Record<string, string> = {};
 
@@ -33,54 +25,70 @@ export const downloadFile = async (
 
     const response = await fetch(url, { headers });
 
-    if (!response.ok && response.status !== 206) {
+    if (response.status === 416) {
+        await clearSavedChunk(filename);
+        return downloadFile(url, filename, language, onProgress)
+    }
+
+    if (!response.ok) {
         throw new Error()
     }
 
     if (received > 0 && response.status !== 206) {
-        chunks.length = 0;
+        chunks = [];
         received = 0
     }
+
+    const total = response.status === 206
+        ? Number(response.headers.get("content-range")?.split("/")[1])
+        : Number(response.headers.get("content-length"));
 
     const reader = response.body!.getReader();
     let lastReceived = received;
     let lastTime = Date.now();
     let lastSaveTime = Date.now();
 
-    while (true) {
-        const { done, value } = await reader.read();
+    try {
+        while (true) {
+            const { done, value } = await reader.read();
 
-        if (done) {
-            break
+            if (done) {
+                break
+            }
+
+            chunks.push(value as BlobPart);
+            received += value.length;
+
+            const now = Date.now();
+
+            if (now - lastSaveTime >= 3000) {
+                const merged = new Blob(chunks);
+                await saveChunk(filename, merged);
+                chunks = [merged];
+                lastSaveTime = now
+            }
+
+            const elapsed = (now - lastTime) / 1000;
+
+            if (elapsed >= 0.5) {
+                const bytePerSec = (received - lastReceived) / elapsed;
+                const remaining = bytePerSec > 0 ? Math.round((total - received) / bytePerSec) : 0;
+
+                lastReceived = received;
+                lastTime = now;
+
+                onProgress(
+                    formatMB(received),
+                    formatMB(total),
+                    Math.round((received / total) * 100),
+                    formatSpeed(bytePerSec),
+                    formatTimeLeft(remaining, language)
+                )
+            }
         }
-
-        chunks.push(value as BlobPart);
-        received += value.length;
-
-        const now = Date.now();
-
-        if (now - lastSaveTime >= 3000) {
-            await saveChunk(filename, new Blob(chunks));
-            lastSaveTime = now
-        }
-
-        const elapsed = (now - lastTime) / 1000;
-
-        if (elapsed >= 0.5) {
-            const bytePerSec = (received - lastReceived) / elapsed;
-            const remaining = bytePerSec > 0 ? Math.round((total - received) / bytePerSec) : 0;
-
-            lastReceived = received;
-            lastTime = now;
-
-            onProgress(
-                formatMB(received),
-                formatMB(total),
-                Math.round((received / total) * 100),
-                formatSpeed(bytePerSec),
-                formatTimeLeft(remaining, language)
-            )
-        }
+    } catch (error) {
+        await saveChunk(filename, new Blob(chunks));
+        throw error
     }
 
     const blob = new Blob(chunks, { type: "application/vnd.android.package-archive" });
