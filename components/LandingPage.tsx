@@ -31,6 +31,9 @@ const LandingPage = () => {
     }, [])
 
     const handleDownload = async () => {
+
+        if (isDownloading.current) return;
+
         toast.loading(t("landing.downloadStarting"), {
             id: "apk-download"
         })

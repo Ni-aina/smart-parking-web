@@ -13,9 +13,17 @@ export const downloadFile = async (
         timeLeft: string
     ) => void
 ) => {
+    const headResponse = await fetch(url, { method: "HEAD" });
+    const total = Number(headResponse.headers.get("content-length"));
+
     const saved = await getSavedChunk(filename);
-    const chunks: Blob[] = saved ? [saved] : [];
+    const chunks: BlobPart[] = saved ? [saved] : [];
     let received = saved ? saved.size : 0;
+
+    if (received >= total) {
+        chunks.length = 0;
+        received = 0
+    }
 
     const headers: Record<string, string> = {};
 
@@ -29,15 +37,15 @@ export const downloadFile = async (
         throw new Error()
     }
 
-    const contentRange = response.headers.get("content-range");
-    const contentLength = response.headers.get("content-length");
-    const total = contentRange
-        ? Number(contentRange.split("/")[1])
-        : received + Number(contentLength);
+    if (received > 0 && response.status !== 206) {
+        chunks.length = 0;
+        received = 0
+    }
 
     const reader = response.body!.getReader();
     let lastReceived = received;
     let lastTime = Date.now();
+    let lastSaveTime = Date.now();
 
     while (true) {
         const { done, value } = await reader.read();
@@ -46,12 +54,16 @@ export const downloadFile = async (
             break
         }
 
-        chunks.push(new Blob([value as BlobPart]));
+        chunks.push(value as BlobPart);
         received += value.length;
 
-        await saveChunk(filename, new Blob(chunks as BlobPart[]));
-
         const now = Date.now();
+
+        if (now - lastSaveTime >= 3000) {
+            await saveChunk(filename, new Blob(chunks));
+            lastSaveTime = now
+        }
+
         const elapsed = (now - lastTime) / 1000;
 
         if (elapsed >= 0.5) {
@@ -71,7 +83,7 @@ export const downloadFile = async (
         }
     }
 
-    const blob = new Blob(chunks as BlobPart[], { type: "application/vnd.android.package-archive" });
+    const blob = new Blob(chunks, { type: "application/vnd.android.package-archive" });
     const objectUrl = URL.createObjectURL(blob);
     const link = document.createElement("a");
 
