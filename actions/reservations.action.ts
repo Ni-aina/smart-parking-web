@@ -7,7 +7,7 @@ import { rejectTimeout } from "@/utils/rejectTimeout";
 import { isUUID } from "@/utils/isUUID";
 import { revalidatePath } from "next/cache";
 import { keyFilter } from "@/types/global";
-import { getFilterDates } from "@/utils/DateTimeFilter";
+import { getFilterDates } from "@/utils/dates/DateTimeFilter";
 import { checkLotByTime } from "./parkingLots.action";
 import { checkVehicleSpace } from "./type.action";
 

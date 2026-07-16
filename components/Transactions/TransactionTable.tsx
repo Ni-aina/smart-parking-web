@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { PaymentInterface } from "@/types/payment";
-import { getDateFormat, getTimeFormat } from "@/utils/DateTimeAction";
+import { getDateFormat, getTimeFormat } from "@/utils/dates/DateTimeAction";
 import Order from "../ui/order";
 import InputSelect from "../ui/inputSelect";
 import Pagination from "../ui/pagination";

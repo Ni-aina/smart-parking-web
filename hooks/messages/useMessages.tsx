@@ -14,7 +14,6 @@ import { useEffect } from "react";
 
 const useMessages = (conversation: ConversationInterface, messages: MessageInterface[]) => {
     const { currentProfile } = useProfileContext()
-    const userId = currentProfile?.id || ""
 
     const {
         mutateAsync: handleSendAsync,
@@ -29,12 +28,11 @@ const useMessages = (conversation: ConversationInterface, messages: MessageInter
     })
 
     useEffect(() => {
-        if (!conversation.id || !userId) return
-        markConversationMessagesAsRead(String(conversation.id), userId).catch(() => null)
+        if (!conversation.id) return
+        markConversationMessagesAsRead(String(conversation.id)).catch(() => null)
     }, [
         conversation.id,
-        messages.length,
-        userId
+        messages.length
     ])
 
     useEffect(() => {

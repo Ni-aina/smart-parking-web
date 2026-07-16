@@ -7,7 +7,7 @@ import {
     useEffect,
     ReactNode
 } from "react";
-import { translations } from "@/utils/translations";
+import { translations } from "@/utils/translations/translations";
 
 type Language = "en" | "fr";
 

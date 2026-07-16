@@ -15,7 +15,7 @@ const useConversationProfiles = (searchTerm: string, roleFilter = "all") => {
         refetch
     } = useQuery({
         queryKey: ["conversation-profiles", userId, searchTerm, roleFilter],
-        queryFn: () => getProfilesForConversation(userId, searchTerm, roleFilter),
+        queryFn: () => getProfilesForConversation(searchTerm, roleFilter),
         enabled: !!userId
     })
 

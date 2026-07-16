@@ -8,7 +8,7 @@ import type {
 import { tools } from "@/utils/tools";
 import { getParkingLots } from "@/actions/lots.action";
 import { supabaseAdmin } from "@/lib/supabase/admin";
-import parseUserTime from "@/utils/DateConverstion";
+import parseUserTime from "@/utils/dates/DateConverstion";
 import { denormalizeData, normalizeData } from "@/utils/normalizeData";
 import { LotInterface } from "@/types/lot";
 

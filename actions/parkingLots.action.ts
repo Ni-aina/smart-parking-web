@@ -9,7 +9,7 @@ import { removeFile } from "./removeFile.action";
 import { revalidatePath } from "next/cache";
 import { rejectTimeout } from "@/utils/rejectTimeout";
 import { keyFilter } from "@/types/global";
-import { getFilterDates } from "@/utils/DateTimeFilter";
+import { getFilterDates } from "@/utils/dates/DateTimeFilter";
 
 export async function createParkingLot(parking: ParkingFormInterface)
     : Promise<ParkingInterface | null> {

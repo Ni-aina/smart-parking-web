@@ -13,7 +13,7 @@ import {
 import { ReservationInterface } from '@/types/reservation';
 import { useState } from 'react';
 import { Skeleton } from '../ui/skeleton';
-import { getDateFormat, getTimeFormat } from '@/utils/DateTimeAction';
+import { getDateFormat, getTimeFormat } from '@/utils/dates/DateTimeAction';
 import { useTranslation } from '@/context/LanguageContext';
 
 interface ReservationCardProps {

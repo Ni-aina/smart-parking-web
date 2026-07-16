@@ -17,7 +17,7 @@ import {
     QueryRecord,
     selectConversationFields,
     withTimeout
-} from "../utils/messageHelpers";
+} from "../utils/messages/messageHelpers";
 import { revalidatePath } from "next/cache";
 
 export const revalidateConversationsByUser = async () => {
@@ -76,6 +76,7 @@ export const getConversationsByUser = async (): Promise<ConversationInterface[]>
 
     return withTimeout(request)
 }
+
 export const getConversationById = async (conversationId: string): Promise<ConversationInterface> => {
     if (!conversationId) throw new Error("Conversation id is required")
 
@@ -162,11 +163,11 @@ export const sendMessage = async (message: MessageCreateInterface): Promise<Mess
     return withTimeout(request)
 }
 
-export const markConversationMessagesAsRead = async (conversationId: string, userId: string): Promise<boolean> => {
-    if (!conversationId || !isUUID(userId)) return false
+export const markConversationMessagesAsRead = async (conversationId: string): Promise<boolean> => {
+    if (!conversationId) return false
 
     const request = (async () => {
-        const { supabase } = await getServerAuth()
+        const { supabase, userId } = await getServerAuth()
         const { error } = await supabase
             .from("messages")
             .update({ is_read: true })
@@ -180,11 +181,10 @@ export const markConversationMessagesAsRead = async (conversationId: string, use
     return withTimeout(request)
 }
 
-export const getProfilesForConversation = async (currentUserId: string, searchTerm = "", roleFilter = "all"): Promise<ProfileInterface[]> => {
-    if (!isUUID(currentUserId)) throw new Error("You have to be authenticated")
+export const getProfilesForConversation = async (searchTerm = "", roleFilter = "all"): Promise<ProfileInterface[]> => {
 
     const request = (async () => {
-        const { supabase } = await getServerAuth()
+        const { supabase, userId: currentUserId } = await getServerAuth()
         const term = cleanSearchTerm(searchTerm)
         let query = supabase
             .from("profiles")

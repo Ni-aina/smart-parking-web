@@ -7,7 +7,7 @@ import CustomButton from "../ui/customButton";
 import { ProfileStateInterface } from "@/hooks/useAccountSettings";
 import SubmitForm from "../ui/submitForm";
 import { useTranslation } from "@/context/LanguageContext";
-import { translateAccountMessage } from "@/utils/accountSettingsMessages";
+import { translateAccountMessage } from "@/utils/messages/accountSettingsMessages";
 
 interface AccountSecurityInterface {
     formData: SecurityFormInterface;

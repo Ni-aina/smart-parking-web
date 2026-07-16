@@ -7,7 +7,7 @@ import { BankAccountInterface } from "@/types/payment";
 import { useActionState, useEffect, useState } from "react";
 import SubmitForm from "../ui/submitForm";
 import { useTranslation } from "@/context/LanguageContext";
-import { translateAccountMessage } from "@/utils/accountSettingsMessages";
+import { translateAccountMessage } from "@/utils/messages/accountSettingsMessages";
 
 export interface PaymentStateInterface {
     error: string | null,

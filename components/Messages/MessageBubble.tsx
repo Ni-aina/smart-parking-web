@@ -5,7 +5,7 @@ import { MessageInterface } from "@/types/message";
 import {
     formatMessageTime,
     shouldShowMessageTime
-} from "@/utils/messageTime";
+} from "@/utils/messages/messageTime";
 import Avatar from "./Avatar";
 
 const MessageBubble = ({

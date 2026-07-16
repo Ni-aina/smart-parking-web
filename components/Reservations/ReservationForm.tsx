@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import CustomButton from "../ui/customButton";
 import InputSelect from "../ui/inputSelect";
-import useReservationForm from "@/hooks/useReservationForm";
+import useReservationForm from "@/hooks/forms/useReservationForm";
 import useOccupancy from "@/hooks/useOccupancy";
 import { useTranslation } from "@/context/LanguageContext";
 

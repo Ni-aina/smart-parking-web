@@ -14,7 +14,7 @@ import {
     SubscriptionStateInterface
 } from "@/types/subscription";
 import { useTranslation } from "@/context/LanguageContext";
-import { translateAccountMessage } from "@/utils/accountSettingsMessages";
+import { translateAccountMessage } from "@/utils/messages/accountSettingsMessages";
 
 const initialState: SubscriptionStateInterface = {
     error: null,

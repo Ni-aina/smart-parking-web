@@ -6,7 +6,7 @@ import { SelectInterface } from "@/types/input";
 import { ParkingInterface } from "@/types/parking";
 import { ProfileInterface } from "@/types/profile";
 import { VehicleInterface } from "@/types/vehicle";
-import { calculateDurationHours } from "@/utils/DateTimeAction";
+import { calculateDurationHours } from "@/utils/dates/DateTimeAction";
 import { useTranslation } from "@/context/LanguageContext";
 import { useRouter } from "next/navigation";
 import {

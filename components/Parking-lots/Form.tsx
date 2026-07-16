@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import CustomButton from "../ui/customButton";
-import useParkingForm from "@/hooks/useParkingForm";
+import useParkingForm from "@/hooks/forms/useParkingForm";
 import Loading from "../ui/loading";
 import InputNumber from "../ui/inputNumber";
 import InputSelect from "../ui/inputSelect";

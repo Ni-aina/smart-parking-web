@@ -3,7 +3,7 @@
 import { useTranslation } from "@/context/LanguageContext";
 import { cn } from "@/lib/utils";
 import { ConversationInterface } from "@/types/message";
-import { formatRelativeMessageTime } from "@/utils/messageTime";
+import { formatRelativeMessageTime } from "@/utils/messages/messageTime";
 import Avatar from "./Avatar";
 
 const ConversationItem = ({
