@@ -8,23 +8,25 @@ import { toast } from "sonner";
 import Avatar from "./Avatar";
 import MessageBubble from "./MessageBubble";
 import Link from "next/link";
+import { ConversationInterface, MessageInterface } from "@/types/message";
+
+interface ThreadPaneInterface {
+    conversation: ConversationInterface;
+    messages: MessageInterface[];
+}
 
 const ThreadPane = ({
-    conversationId
-}: {
-    conversationId: string
-}) => {
+    conversation,
+    messages
+}: ThreadPaneInterface) => {
     const { t, language } = useTranslation()
     const [message, setMessage] = useState("")
     const scrollRef = useRef<HTMLDivElement>(null)
     const {
-        conversation,
-        messages,
-        isLoading,
         handleSendAsync,
         isSending,
         currentProfile
-    } = useMessages(conversationId)
+    } = useMessages(conversation, messages)
 
     const otherUser = useMemo(() => {
         if (!conversation || !currentProfile?.id) return undefined
@@ -39,11 +41,11 @@ const ThreadPane = ({
     const submitMessage = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         const content = message.trim()
-        if (!content || !currentProfile?.id || !conversationId) return
+        if (!content || !currentProfile?.id || !conversation.id) return
 
         try {
             await handleSendAsync({
-                conversationId: Number(conversationId),
+                conversationId: Number(conversation.id),
                 senderId: currentProfile.id,
                 content
             })
@@ -82,28 +84,24 @@ const ThreadPane = ({
             </header>
 
             {
-                isLoading ?
-                    <div className="flex flex-1 items-center justify-center text-white/55">
-                        <Loader2 size={24} className="animate-spin" />
-                    </div> :
-                    <div ref={scrollRef} className="min-h-0 flex-1 space-y-2 overflow-y-auto p-4">
-                        {
-                            messages.length ? messages.map((item, index) => <MessageBubble
-                                key={item.id}
-                                message={item}
-                                previousMessage={messages[index - 1]}
-                                isMine={item.senderId === currentProfile?.id}
-                                locale={language === "fr" ? "fr-FR" : "en-US"}
-                            />)
-                                :
-                                <div className="flex h-full min-h-72 flex-col items-center justify-center gap-3 text-center">
-                                    <MessageCircle size={52} className="text-white/20" />
-                                    <p className="text-sm font-medium text-white/55">
-                                        {t("messages.startChat")}
-                                    </p>
-                                </div>
-                        }
-                    </div>
+                <div ref={scrollRef} className="min-h-0 flex-1 space-y-2 overflow-y-auto p-4">
+                    {
+                        messages.length ? messages.map((item, index) => <MessageBubble
+                            key={item.id}
+                            message={item}
+                            previousMessage={messages[index - 1]}
+                            isMine={item.senderId === currentProfile?.id}
+                            locale={language === "fr" ? "fr-FR" : "en-US"}
+                        />)
+                            :
+                            <div className="flex h-full min-h-72 flex-col items-center justify-center gap-3 text-center">
+                                <MessageCircle size={52} className="text-white/20" />
+                                <p className="text-sm font-medium text-white/55">
+                                    {t("messages.startChat")}
+                                </p>
+                            </div>
+                    }
+                </div>
             }
 
             <form onSubmit={submitMessage} className="bg-black/20 p-3">

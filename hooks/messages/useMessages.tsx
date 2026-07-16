@@ -1,73 +1,46 @@
 "use client"
 
 import {
-    getConversationById,
-    getMessagesByConversationId,
     markConversationMessagesAsRead,
+    revalidateConversationsByUser,
+    revalidateMessagesByConversation,
     sendMessage
 } from "@/actions/message.action";
 import { useProfileContext } from "@/context/ProfileContext";
 import { supabase } from "@/lib/supabase/client";
-import { MessageCreateInterface } from "@/types/message";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { ConversationInterface, MessageCreateInterface, MessageInterface } from "@/types/message";
+import { useMutation } from "@tanstack/react-query";
 import { useEffect } from "react";
 
-const useMessages = (conversationId: string) => {
+const useMessages = (conversation: ConversationInterface, messages: MessageInterface[]) => {
     const { currentProfile } = useProfileContext()
     const userId = currentProfile?.id || ""
-    const queryClient = useQueryClient()
-    const messagesKey = ["messages", conversationId]
-    const conversationKey = ["conversation", conversationId]
-
-    const {
-        data: conversation,
-        isLoading: isConversationLoading,
-        error: conversationError,
-        refetch: refetchConversation
-    } = useQuery({
-        queryKey: conversationKey,
-        queryFn: () => getConversationById(conversationId),
-        enabled: !!conversationId
-    })
-
-    const {
-        data: messages = [],
-        isLoading,
-        error,
-        refetch,
-        isRefetching
-    } = useQuery({
-        queryKey: messagesKey,
-        queryFn: () => getMessagesByConversationId(conversationId),
-        enabled: !!conversationId
-    })
 
     const {
         mutateAsync: handleSendAsync,
         isPending: isSending,
         error: sendError
     } = useMutation({
-        mutationKey: ["send-message", conversationId],
+        mutationKey: ["send-message", conversation.id],
         mutationFn: (message: MessageCreateInterface) => sendMessage(message),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: messagesKey })
-            queryClient.invalidateQueries({ queryKey: ["conversations"] })
+        onSuccess: async () => {
+            await revalidateMessagesByConversation(String(conversation.id))
         }
     })
 
     useEffect(() => {
-        if (!conversationId || !userId) return
-        markConversationMessagesAsRead(conversationId, userId).catch(() => null)
+        if (!conversation.id || !userId) return
+        markConversationMessagesAsRead(String(conversation.id), userId).catch(() => null)
     }, [
-        conversationId,
+        conversation.id,
         messages.length,
         userId
     ])
 
     useEffect(() => {
-        if (!conversationId) return
+        if (!conversation.id) return
 
-        const channelName = `messages:${conversationId}`
+        const channelName = `messages:${conversation.id}`
         const existingChannel = supabase.getChannels().find(c => c.topic === `realtime:${channelName}`)
         if (existingChannel) {
             supabase.removeChannel(existingChannel)
@@ -80,9 +53,9 @@ const useMessages = (conversationId: string) => {
                     event: "*",
                     schema: "public",
                     table: "messages",
-                    filter: `conversation_id=eq.${conversationId}`
+                    filter: `conversation_id=eq.${conversation.id}`
                 },
-                () => refetch()
+                async () => await revalidateMessagesByConversation(String(conversation.id))
             )
             .on(
                 "postgres_changes",
@@ -90,9 +63,9 @@ const useMessages = (conversationId: string) => {
                     event: "*",
                     schema: "public",
                     table: "conversations",
-                    filter: `id=eq.${conversationId}`
+                    filter: `id=eq.${conversation.id}`
                 },
-                () => refetchConversation()
+                async () => await revalidateConversationsByUser()
             )
             .subscribe()
 
@@ -100,18 +73,12 @@ const useMessages = (conversationId: string) => {
             supabase.removeChannel(messagesChannel)
         }
     }, [
-        conversationId,
-        refetch,
-        refetchConversation
+        conversation.id
     ])
 
     return {
         conversation,
         messages,
-        isLoading: isLoading || isConversationLoading,
-        error: error || conversationError,
-        refetch,
-        isRefetching,
         handleSendAsync,
         isSending,
         sendError,
@@ -119,4 +86,4 @@ const useMessages = (conversationId: string) => {
     }
 }
 
-export default useMessages
+export default useMessages;

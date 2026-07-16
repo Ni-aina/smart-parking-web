@@ -23,6 +23,9 @@ import { revalidatePath } from "next/cache";
 export const revalidateConversationsByUser = async () => {
     revalidatePath("/owner/messages");
 }
+export const revalidateMessagesByConversation = async (conversationId: string) => {
+    revalidatePath(`/owner/messages/${conversationId}`);
+}
 
 export const getConversationsByUser = async (): Promise<ConversationInterface[]> => {
     const request = (async () => {

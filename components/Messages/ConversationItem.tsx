@@ -30,7 +30,7 @@ const ConversationItem = ({
             onClick={onClick}
             className={cn(
                 "flex w-full cursor-pointer items-center gap-3 rounded-md p-3 text-left transition hover:bg-white/5",
-                isActive ? "bg-white/5 shadow-sm shadow-white/5" : "bg-white/10"
+                isActive ? "bg-white/5" : "bg-white/10"
             )}
         >
             <Avatar profile={otherUser} size="lg" />

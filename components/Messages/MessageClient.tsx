@@ -101,7 +101,7 @@ const MessagesClient = ({
                 >
                     {
                         showProfiles &&
-                        <div ref={profileListRef}>
+                        <div ref={profileListRef} className="mb-5">
                             <ProfileSearch
                                 onStart={startConversation}
                                 isCreating={isCreating}
@@ -109,7 +109,7 @@ const MessagesClient = ({
                         </div>
                     }
 
-                    <div className="mt-5 min-h-0 flex-1 space-y-2 overflow-y-auto">
+                    <div className="min-h-0 flex-1 space-y-2 overflow-y-auto">
                         {
                             conversations.length ?
                                 conversations.map(conversation =>

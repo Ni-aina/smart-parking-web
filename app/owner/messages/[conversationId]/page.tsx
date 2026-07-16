@@ -1,3 +1,4 @@
+import { getConversationById, getMessagesByConversationId } from "@/actions/message.action";
 import ThreadPane from "@/components/Messages/ThreadPane";
 
 interface ConversationPageInterface {
@@ -9,9 +10,19 @@ const ConversationPage = async ({
 }: ConversationPageInterface) => {
 
     const { conversationId } = await params;
+    const [
+        conversation,
+        messages
+    ] = await Promise.all([
+        getConversationById(conversationId),
+        getMessagesByConversationId(conversationId)
+    ])
 
     return (
-        <ThreadPane conversationId={conversationId} />
+        <ThreadPane
+            conversation={conversation}
+            messages={messages}
+        />
     )
 }
 
