@@ -1,5 +1,5 @@
-import MessagesClient from "@/components/Messages/MessagesClient";
+import EmptyThread from "@/components/Messages/EmptyThread";
 
-const MessagesPage = () => <MessagesClient />
+const MessagesPage = () => <EmptyThread />
 
 export default MessagesPage;

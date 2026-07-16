@@ -2,22 +2,26 @@
 
 import { useTranslation } from "@/context/LanguageContext";
 import useConversations from "@/hooks/messages/useConversations";
-import { cn } from "@/lib/utils";
 import { ProfileInterface } from "@/types/profile";
 import { Loader2, Plus, UserRound } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import ConversationItem from "./ConversationItem";
-import EmptyThread from "./EmptyThread";
 import ProfileSearch from "./ProfileSearch";
-import ThreadPane from "./ThreadPane";
+import { usePathname, useRouter } from "next/navigation";
 
-const MessagesClient = () => {
+const MessagesClient = ({
+    children
+}: {
+    children: ReactNode
+}) => {
     const { t } = useTranslation()
     const profileListRef = useRef<HTMLDivElement>(null)
     const newConversationButtonRef = useRef<HTMLButtonElement>(null)
-    const [selectedConversationId, setSelectedConversationId] = useState<number | null>(null)
     const [showProfiles, setShowProfiles] = useState(false)
+    const pathname = usePathname();
+    const router = useRouter();
+
     const {
         conversations,
         isLoading,
@@ -34,7 +38,7 @@ const MessagesClient = () => {
                 senderId: currentProfile.id,
                 receiverId: profile.id
             })
-            setSelectedConversationId(conversation.id)
+            router.push(`/owner/messages/${conversation.id}`)
             setShowProfiles(false)
         } catch {
             toast.error(t("messages.errorConversation"))
@@ -59,7 +63,7 @@ const MessagesClient = () => {
     }, [showProfiles])
 
     return (
-        <div className="flex h-full min-h-[calc(100dvh-8rem)] flex-col gap-4">
+        <div className="flex h-full min-h-[calc(100dvh-4rem)] flex-col gap-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                     <h1 className="text-2xl font-semibold text-white">
@@ -73,7 +77,13 @@ const MessagesClient = () => {
                     ref={newConversationButtonRef}
                     type="button"
                     onClick={() => setShowProfiles(prev => !prev)}
-                    className="flex cursor-pointer items-center gap-2 rounded-md bg-white px-4 py-2 text-sm font-medium text-neutral-950 transition hover:opacity-80"
+                    className={
+                        `
+                        ${pathname.split("/").at(-1) === "messages" ? "flex" : "hidden lg:flex"} cursor-pointer items-center gap-2 rounded-md 
+                        bg-white px-4 py-2 text-sm font-medium text-neutral-950 
+                        transition hover:opacity-80
+                        `
+                    }
                 >
                     <Plus size={16} />
                     {t("messages.newConversation")}
@@ -82,10 +92,9 @@ const MessagesClient = () => {
 
             <div className="flex min-h-0 flex-1 gap-4">
                 <aside
-                    className={cn(
-                        "min-h-0 w-full flex-col gap-3 lg:flex lg:max-w-105",
-                        selectedConversationId ? "hidden lg:flex" : "flex"
-                    )}
+                    className={
+                        `min-h-0 w-full ${pathname.split("/").at(-1) === "messages" ? "flex" : "hidden lg:flex"} flex-col lg:max-w-105`
+                    }
                 >
                     {
                         showProfiles &&
@@ -97,7 +106,7 @@ const MessagesClient = () => {
                         </div>
                     }
 
-                    <div className="min-h-0 flex-1 space-y-2 overflow-y-auto">
+                    <div className="mt-5 min-h-0 flex-1 space-y-2 overflow-y-auto">
                         {
                             isLoading ?
                                 <div className="flex h-72 items-center justify-center text-white/55">
@@ -110,8 +119,8 @@ const MessagesClient = () => {
                                             key={conversation.id}
                                             conversation={conversation}
                                             currentUserId={currentProfile?.id || ""}
-                                            isActive={conversation.id === selectedConversationId}
-                                            onClick={() => setSelectedConversationId(conversation.id)}
+                                            isActive={pathname === `/owner/messages/${conversation.id}`}
+                                            onClick={() => router.push(`/owner/messages/${conversation.id}`)}
                                         />
                                     )
                                     :
@@ -130,15 +139,7 @@ const MessagesClient = () => {
                         }
                     </div>
                 </aside>
-
-                {
-                    selectedConversationId ?
-                        <ThreadPane
-                            conversationId={String(selectedConversationId)}
-                            onBack={() => setSelectedConversationId(null)}
-                        /> :
-                        <EmptyThread />
-                }
+                {children}
             </div>
         </div>
     )

@@ -7,13 +7,12 @@ import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import Avatar from "./Avatar";
 import MessageBubble from "./MessageBubble";
+import Link from "next/link";
 
 const ThreadPane = ({
-    conversationId,
-    onBack
+    conversationId
 }: {
     conversationId: string
-    onBack: () => void
 }) => {
     const { t, language } = useTranslation()
     const [message, setMessage] = useState("")
@@ -64,14 +63,13 @@ const ThreadPane = ({
     return (
         <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-md bg-white/10 shadow-sm shadow-black/20">
             <header className="flex min-h-16 items-center gap-3 bg-black/20 px-4">
-                <button
-                    type="button"
-                    onClick={onBack}
+                <Link
+                    href="/owner/messages"
                     className="cursor-pointer rounded-md p-2 text-white/60 transition hover:bg-white/10 hover:text-white lg:hidden"
                     aria-label={t("messages.backToInbox")}
                 >
                     <ArrowLeft size={18} />
-                </button>
+                </Link>
                 <Avatar profile={otherUser} />
                 <div className="min-w-0 flex-1">
                     <h2 className="truncate text-base font-semibold text-white">
