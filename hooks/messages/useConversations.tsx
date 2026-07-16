@@ -1,32 +1,15 @@
 "use client"
 
-import {
-    createConversation,
-    getConversationsByUserId
-} from "@/actions/message.action";
+import { createConversation, revalidateConversationsByUser } from "@/actions/message.action";
 import { useProfileContext } from "@/context/ProfileContext";
 import { supabase } from "@/lib/supabase/client";
 import { ConversationCreateInterface } from "@/types/message";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useEffect } from "react";
 
 const useConversations = () => {
     const { currentProfile } = useProfileContext()
     const userId = currentProfile?.id || ""
-    const queryClient = useQueryClient()
-    const conversationsKey = ["conversations", userId]
-
-    const {
-        data: conversations = [],
-        isLoading,
-        error,
-        refetch,
-        isRefetching
-    } = useQuery({
-        queryKey: conversationsKey,
-        queryFn: () => getConversationsByUserId(userId),
-        enabled: !!userId
-    })
 
     const {
         mutateAsync: createConversationAsync,
@@ -35,13 +18,13 @@ const useConversations = () => {
     } = useMutation({
         mutationKey: ["create-conversation", userId],
         mutationFn: (conversation: ConversationCreateInterface) => createConversation(conversation),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: conversationsKey })
+        onSuccess: async () => {
+            await revalidateConversationsByUser()
         }
     })
 
     useEffect(() => {
-        if (!userId) return
+        if (!userId) return;
 
         const channel = supabase.channel(`conversations:${userId}`)
             .on(
@@ -51,7 +34,7 @@ const useConversations = () => {
                     schema: "public",
                     table: "conversations"
                 },
-                () => refetch()
+                async () => await revalidateConversationsByUser()
             )
             .on(
                 "postgres_changes",
@@ -60,24 +43,16 @@ const useConversations = () => {
                     schema: "public",
                     table: "messages"
                 },
-                () => refetch()
+                async () => await revalidateConversationsByUser()
             )
             .subscribe()
 
         return () => {
             supabase.removeChannel(channel)
         }
-    }, [
-        refetch,
-        userId
-    ])
+    }, [userId])
 
     return {
-        conversations,
-        isLoading,
-        error,
-        refetch,
-        isRefetching,
         createConversationAsync,
         isCreating,
         createError,

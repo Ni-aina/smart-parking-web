@@ -1,10 +1,10 @@
 "use server"
 
-import { 
-    ConversationCreateInterface, 
-    ConversationInterface, 
-    MessageCreateInterface, 
-    MessageInterface 
+import {
+    ConversationCreateInterface,
+    ConversationInterface,
+    MessageCreateInterface,
+    MessageInterface
 } from "@/types/message";
 import { ProfileInterface } from "@/types/profile";
 import { isUUID } from "@/utils/isUUID";
@@ -18,11 +18,15 @@ import {
     selectConversationFields,
     withTimeout
 } from "../utils/messageHelpers";
-export const getConversationsByUserId = async (userId: string): Promise<ConversationInterface[]> => {
-    if (!isUUID(userId)) throw new Error("You have to be authenticated")
+import { revalidatePath } from "next/cache";
 
+export const revalidateConversationsByUser = async () => {
+    revalidatePath("/owner/messages");
+}
+
+export const getConversationsByUser = async (): Promise<ConversationInterface[]> => {
     const request = (async () => {
-        const { supabase } = await getServerAuth()
+        const { supabase, userId } = await getServerAuth()
         const { data: conversations, error } = await supabase
             .from("conversations")
             .select(selectConversationFields)

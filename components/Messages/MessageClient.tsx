@@ -3,18 +3,23 @@
 import { useTranslation } from "@/context/LanguageContext";
 import useConversations from "@/hooks/messages/useConversations";
 import { ProfileInterface } from "@/types/profile";
-import { Loader2, Plus, UserRound } from "lucide-react";
+import { Plus, UserRound } from "lucide-react";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import ConversationItem from "./ConversationItem";
 import ProfileSearch from "./ProfileSearch";
 import { usePathname, useRouter } from "next/navigation";
+import { ConversationInterface } from "@/types/message";
+
+interface MessageClientInterface {
+    conversations: ConversationInterface[];
+    children: ReactNode;
+}
 
 const MessagesClient = ({
+    conversations,
     children
-}: {
-    children: ReactNode
-}) => {
+}: MessageClientInterface) => {
     const { t } = useTranslation()
     const profileListRef = useRef<HTMLDivElement>(null)
     const newConversationButtonRef = useRef<HTMLButtonElement>(null)
@@ -23,8 +28,6 @@ const MessagesClient = ({
     const router = useRouter();
 
     const {
-        conversations,
-        isLoading,
         createConversationAsync,
         isCreating,
         currentProfile
@@ -108,34 +111,29 @@ const MessagesClient = ({
 
                     <div className="mt-5 min-h-0 flex-1 space-y-2 overflow-y-auto">
                         {
-                            isLoading ?
-                                <div className="flex h-72 items-center justify-center text-white/55">
-                                    <Loader2 size={24} className="animate-spin" />
-                                </div>
+                            conversations.length ?
+                                conversations.map(conversation =>
+                                    <ConversationItem
+                                        key={conversation.id}
+                                        conversation={conversation}
+                                        currentUserId={currentProfile?.id || ""}
+                                        isActive={pathname === `/owner/messages/${conversation.id}`}
+                                        onClick={() => router.push(`/owner/messages/${conversation.id}`)}
+                                    />
+                                )
                                 :
-                                conversations.length ?
-                                    conversations.map(conversation =>
-                                        <ConversationItem
-                                            key={conversation.id}
-                                            conversation={conversation}
-                                            currentUserId={currentProfile?.id || ""}
-                                            isActive={pathname === `/owner/messages/${conversation.id}`}
-                                            onClick={() => router.push(`/owner/messages/${conversation.id}`)}
-                                        />
-                                    )
-                                    :
-                                    <div
-                                        className="flex h-full min-h-72 flex-col items-center justify-center rounded-md 
+                                <div
+                                    className="flex h-full min-h-72 flex-col items-center justify-center rounded-md 
                                         bg-white/10 p-8 text-center shadow-sm shadow-black/20"
-                                    >
-                                        <UserRound size={52} className="text-white/20" />
-                                        <h2 className="mt-4 text-base font-semibold text-white">
-                                            {t("messages.noData")}
-                                        </h2>
-                                        <p className="mt-2 text-sm text-white/40">
-                                            {t("messages.noDataDescription")}
-                                        </p>
-                                    </div>
+                                >
+                                    <UserRound size={52} className="text-white/20" />
+                                    <h2 className="mt-4 text-base font-semibold text-white">
+                                        {t("messages.noData")}
+                                    </h2>
+                                    <p className="mt-2 text-sm text-white/40">
+                                        {t("messages.noDataDescription")}
+                                    </p>
+                                </div>
                         }
                     </div>
                 </aside>
