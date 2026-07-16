@@ -12,6 +12,7 @@ import {
     messageRoles,
     RoleFilter
 } from "./messageRoles";
+import useDebounce from "@/hooks/useDebounce";
 
 const ProfileSearch = ({
     onStart,
@@ -23,7 +24,12 @@ const ProfileSearch = ({
     const { t } = useTranslation()
     const [searchTerm, setSearchTerm] = useState("")
     const [roleFilter, setRoleFilter] = useState<RoleFilter>("all")
-    const { profiles, isLoading } = useConversationProfiles(searchTerm, roleFilter)
+
+    const {
+        debouncedValue: debounceSearchTerm
+    } = useDebounce(searchTerm, 1000)
+
+    const { profiles, isLoading } = useConversationProfiles(debounceSearchTerm, roleFilter)
 
     return (
         <div className="space-y-3 rounded-md bg-white/10 p-3 shadow-sm shadow-black/20">
@@ -37,23 +43,26 @@ const ProfileSearch = ({
                 />
             </div>
             <div className="flex flex-wrap gap-2">
-                {(["all", ...messageRoles] as RoleFilter[]).map(role => <button
-                    key={role}
-                    type="button"
-                    onClick={() => setRoleFilter(role)}
-                    className={cn(
-                        "cursor-pointer rounded-md px-3 py-1.5 text-xs font-semibold transition hover:bg-white/10",
-                        roleFilter === role ? "bg-white text-neutral-950" : "bg-black/30 text-white/60"
-                    )}
-                >
-                    {role === "all" ? t("messages.roles.all") : t(`messages.roles.${role}`)}
-                </button>)}
+                {
+                    (["all", ...messageRoles] as RoleFilter[]).map(role => <button
+                        key={role}
+                        type="button"
+                        onClick={() => setRoleFilter(role)}
+                        className={cn(
+                            "cursor-pointer rounded-md px-3 py-1.5 text-xs font-semibold transition",
+                            roleFilter === role ? "bg-white text-neutral-950" : "bg-black/30 text-white/60 hover:bg-white/10"
+                        )}
+                    >
+                        {role === "all" ? t("messages.roles.all") : t(`messages.roles.${role}`)}
+                    </button>
+                    )
+                }
             </div>
             <div className="max-h-60 space-y-2 overflow-y-auto">
                 {
                     isLoading ?
-                        <div className="flex items-center justify-center py-16 text-white/45">
-                            <Loader2 size={18} className="animate-spin" />
+                        <div className="flex items-center justify-center py-24 text-white/60">
+                            <Loader2 size={20} className="animate-spin" />
                         </div> : profiles.length ? profiles.map(profile => <button
                             key={profile.id}
                             type="button"
