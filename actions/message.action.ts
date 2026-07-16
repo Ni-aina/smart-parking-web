@@ -171,6 +171,7 @@ export const markConversationMessagesAsRead = async (conversationId: string): Pr
         const { error } = await supabase
             .from("messages")
             .update({ is_read: true })
+            .eq("is_read", false)
             .eq("conversation_id", conversationId)
             .neq("sender_id", userId)
 

@@ -3,7 +3,7 @@
 import { useTranslation } from "@/context/LanguageContext";
 import useMessages from "@/hooks/messages/useMessages";
 import { ArrowLeft, Loader2, MessageCircle, Send } from "lucide-react";
-import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import Avatar from "./Avatar";
 import MessageBubble from "./MessageBubble";
@@ -28,15 +28,9 @@ const ThreadPane = ({
         currentProfile
     } = useMessages(conversation, messages)
 
-    const otherUser = useMemo(() => {
-        if (!conversation || !currentProfile?.id) return undefined
-        return conversation.senderId === currentProfile.id
-            ? conversation.receiver
-            : conversation.sender
-    }, [
-        conversation,
-        currentProfile?.id
-    ])
+    const otherUser = currentProfile && conversation.senderId === currentProfile?.id
+        ? conversation.receiver
+        : conversation.sender
 
     const submitMessage = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -86,13 +80,15 @@ const ThreadPane = ({
             {
                 <div ref={scrollRef} className="min-h-0 flex-1 space-y-2 overflow-y-auto p-4">
                     {
-                        messages.length ? messages.map((item, index) => <MessageBubble
-                            key={item.id}
-                            message={item}
-                            previousMessage={messages[index - 1]}
-                            isMine={item.senderId === currentProfile?.id}
-                            locale={language === "fr" ? "fr-FR" : "en-US"}
-                        />)
+                        messages.length ? messages.map((item, index) =>
+                            <MessageBubble
+                                key={item.id}
+                                message={item}
+                                previousMessage={messages[index - 1]}
+                                isMine={item.senderId === currentProfile?.id}
+                                locale={language === "fr" ? "fr-FR" : "en-US"}
+                            />
+                        )
                             :
                             <div className="flex h-full min-h-72 flex-col items-center justify-center gap-3 text-center">
                                 <MessageCircle size={52} className="text-white/20" />
