@@ -4,21 +4,15 @@ import { cn } from "@/lib/utils";
 import { ProfileInterface } from "@/types/profile";
 import Image from "next/image";
 
-const getInitials = (name?: string) =>
-    name
-        ?.split(" ")
-        .slice(0, 2)
-        .map(part => part.at(0)?.toUpperCase())
-        .join("") || "?"
-
 const Avatar = ({
     profile,
     size = "md"
 }: {
     profile?: ProfileInterface
-    size?: "sm" | "md" | "lg"
+    size?: "xs" | "sm" | "md" | "lg"
 }) => {
     const sizeClass = {
+        xs: "h-4 w-4 text-xs",
         sm: "h-8 w-8 text-xs",
         md: "h-11 w-11 text-sm",
         lg: "h-12 w-12 text-base"
@@ -45,7 +39,7 @@ const Avatar = ({
                 sizeClass
             )}
         >
-            {getInitials(profile?.fullName)}
+            {profile?.fullName.at(0)?.toUpperCase()}
         </div>
     )
 }

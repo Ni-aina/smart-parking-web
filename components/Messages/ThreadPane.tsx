@@ -32,6 +32,8 @@ const ThreadPane = ({
         ? conversation.receiver
         : conversation.sender
 
+    const lastSeenMessageId = messages.filter(item => item.senderId === currentProfile?.id && item.isRead).at(-1)?.id
+
     const submitMessage = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         const content = message.trim()
@@ -86,6 +88,8 @@ const ThreadPane = ({
                                 message={item}
                                 previousMessage={messages[index - 1]}
                                 isMine={item.senderId === currentProfile?.id}
+                                isLastSeenMessage={item.id === lastSeenMessageId}
+                                otherUser={otherUser}
                                 locale={language === "fr" ? "fr-FR" : "en-US"}
                             />
                         )

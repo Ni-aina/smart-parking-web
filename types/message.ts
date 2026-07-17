@@ -21,6 +21,7 @@ export interface ConversationInterface {
     sender?: ProfileInterface
     receiver?: ProfileInterface
     lastMessage?: MessageInterface
+    isNotReadCount?: number
 }
 
 export interface ConversationCreateInterface {

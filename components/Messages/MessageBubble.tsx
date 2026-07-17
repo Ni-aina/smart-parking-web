@@ -7,16 +7,21 @@ import {
     shouldShowMessageTime
 } from "@/utils/messages/messageTime";
 import Avatar from "./Avatar";
+import { ProfileInterface } from "@/types/profile";
 
 const MessageBubble = ({
     message,
     previousMessage,
     isMine,
+    isLastSeenMessage,
+    otherUser,
     locale
 }: {
     message: MessageInterface
     previousMessage?: MessageInterface
     isMine: boolean
+    isLastSeenMessage: boolean
+    otherUser: ProfileInterface | undefined
     locale: string
 }) => {
     const showTime = shouldShowMessageTime(
@@ -25,7 +30,7 @@ const MessageBubble = ({
     )
 
     return (
-        <div>
+        <div className="space-y-2">
             {
                 showTime &&
                 <div className="my-4 text-center text-xs font-medium text-white/35">
@@ -45,6 +50,12 @@ const MessageBubble = ({
                     {message.content}
                 </div>
             </div>
+            {
+                isLastSeenMessage &&
+                <div className="flex justify-end">
+                    <Avatar profile={otherUser} size="xs" />
+                </div>
+            }
         </div>
     )
 }

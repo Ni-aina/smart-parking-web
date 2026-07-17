@@ -45,13 +45,21 @@ const ConversationItem = ({
                             : formatRelativeMessageTime(conversation.createdAt, t)}
                     </span>
                 </div>
-                <p className="truncate text-sm text-white/45">
+                <div className="flex items-center justify-between gap-5">
+                    <p className="truncate text-sm text-white/45">
+                        {
+                            lastMessage?.content
+                                ? `${isMine ? `${t("messages.you")}: ` : ""}${lastMessage.content}`
+                                : t("messages.noMessagesYet")
+                        }
+                    </p>
                     {
-                        lastMessage?.content
-                            ? `${isMine ? `${t("messages.you")}: ` : ""}${lastMessage.content}`
-                            : t("messages.noMessagesYet")
+                        conversation.isNotReadCount !== 0 &&
+                        <div className="bg-red-500 text-white rounded-xl px-2 py-0.5 text-xs font-semibold">
+                            {conversation.isNotReadCount}
+                        </div>
                     }
-                </p>
+                </div>
             </div>
         </button>
     )
