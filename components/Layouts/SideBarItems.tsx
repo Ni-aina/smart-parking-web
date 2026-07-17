@@ -20,11 +20,20 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTranslation } from "@/context/LanguageContext";
+import useNotReadCount from "@/hooks/messages/useNotReadCount";
 
 export const SideBarItems = () => {
     const [isOpenSettings, setIsOpenSettings] = useState(false)
     const pathname = usePathname()
     const { t } = useTranslation()
+
+    const {
+        isNotReadCount,
+        isLoading
+    } = useNotReadCount();
+
+    console.log("isNotReadCount", isNotReadCount);
+    console.log("isLoading", isLoading);
 
     const handleOpenSettings = () => {
         setIsOpenSettings(prev => !prev)
@@ -104,12 +113,20 @@ export const SideBarItems = () => {
                 <Link
                     href="/owner/messages"
                     className={`
-                        flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
+                        flex items-center justify-between space-x-3 px-3 py-2 rounded-sm hover:opacity-70
                         ${pathname === "/owner/messages" && "bg-white/10"}
                     `}
                 >
-                    <MessageCircle />
-                    <h1>{t("sidebar.messages")}</h1>
+                    <div className="flex items-center space-x-3">
+                        <MessageCircle />
+                        <h1>{t("sidebar.messages")}</h1>
+                    </div>
+                    {
+                        (!isLoading && isNotReadCount !== 0) &&
+                        <div className="bg-red-500 text-white rounded-xl px-2 py-0.5 text-xs font-semibold">
+                            {isNotReadCount}
+                        </div>
+                    }
                 </Link>
             </SidebarGroup>
             <SidebarGroup className="flex flex-col gap-3">

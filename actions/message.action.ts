@@ -27,6 +27,26 @@ export const revalidateMessagesByConversation = async (conversationId: string) =
     revalidatePath(`/owner/messages/${conversationId}`);
 }
 
+export async function getNoReadCountByUser(): Promise<number> {
+    try {
+        const request = (async () => {
+            const { supabase, userId } = await getServerAuth()
+            const { count, error } = await supabase.from("messages")
+                .select("*", { count: "exact", head: true })
+                .neq("sender_id", userId)
+                .eq("is_read", false)
+
+            if (error) throw new Error(`Count fetching error, ${error?.message}`);
+            return count;
+        })()
+
+        return withTimeout(request)
+
+    } catch (error) {
+        throw error;
+    }
+}
+
 export const getConversationsByUser = async (): Promise<ConversationInterface[]> => {
     const request = (async () => {
         const { supabase, userId } = await getServerAuth()
