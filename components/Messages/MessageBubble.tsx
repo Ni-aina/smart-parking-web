@@ -12,6 +12,7 @@ import { ProfileInterface } from "@/types/profile";
 const MessageBubble = ({
     message,
     previousMessage,
+    nextMessage,
     isMine,
     isLastSeenMessage,
     otherUser,
@@ -19,6 +20,7 @@ const MessageBubble = ({
 }: {
     message: MessageInterface
     previousMessage?: MessageInterface
+    nextMessage?: MessageInterface,
     isMine: boolean
     isLastSeenMessage: boolean
     otherUser: ProfileInterface | undefined
@@ -51,7 +53,7 @@ const MessageBubble = ({
                 </div>
             </div>
             {
-                isLastSeenMessage &&
+                (nextMessage?.senderId !== otherUser?.id && isLastSeenMessage) &&
                 <div className="flex justify-end">
                     <Avatar profile={otherUser} size="xs" />
                 </div>

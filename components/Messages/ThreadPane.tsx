@@ -87,6 +87,7 @@ const ThreadPane = ({
                                 key={item.id}
                                 message={item}
                                 previousMessage={messages[index - 1]}
+                                nextMessage={messages[index + 1]}
                                 isMine={item.senderId === currentProfile?.id}
                                 isLastSeenMessage={item.id === lastSeenMessageId}
                                 otherUser={otherUser}
