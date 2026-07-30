@@ -30,7 +30,7 @@ const LandingPage = () => {
         }
     }, [])
 
-    const handleDownload = async () => {
+    const handleDownloadAndroid = async () => {
 
         if (isDownloading.current) return;
 
@@ -70,19 +70,22 @@ const LandingPage = () => {
         }
     }
 
+    const handleDownloadiOS = () => {
+        toast.info(t("landing.comingSoon"))
+    }
+
     return (
         <div className="min-h-screen bg-black/95">
             <Header />
             <main className="max-w-7xl mx-auto px-6 py-16">
                 <Hero
-                    handleDownload={handleDownload}
+                    handleDownloadAndroid={handleDownloadAndroid}
+                    handleDownloadiOS={handleDownloadiOS}
                 />
                 <Features />
                 <HowItWorks />
                 <Architecture />
-                <CTA
-                    handleDownload={handleDownload}
-                />
+                <CTA />
             </main>
             <Footer />
         </div>

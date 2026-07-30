@@ -1,12 +1,15 @@
-import { Smartphone } from "lucide-react";
-import Link from "next/link";
+import { FaAndroid, FaApple } from "react-icons/fa";
 import { useTranslation } from "@/context/LanguageContext";
 
+interface HeroInterface {
+    handleDownloadAndroid: ()=> void;
+    handleDownloadiOS: ()=> void;
+}
+
 export const Hero = ({
-    handleDownload
-}: {
-    handleDownload: () => void
-}) => {
+    handleDownloadAndroid,
+    handleDownloadiOS
+}: HeroInterface) => {
     const { t } = useTranslation()
 
     return (
@@ -28,10 +31,10 @@ export const Hero = ({
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <button
-                    onClick={handleDownload}
+                    onClick={handleDownloadAndroid}
                     className="flex justify-center items-center gap-3 bg-white text-black px-8 py-4 rounded-xl cursor-pointer hover:opacity-80 transition-opacity shadow-lg"
                 >
-                    <Smartphone size={24} />
+                    <FaAndroid size={24} />
                     <div className="flex items-center gap-2">
                         <span className="text-sm font-medium">
                             {
@@ -41,14 +44,20 @@ export const Hero = ({
                         <h1 className="text-lg font-bold">Android</h1>
                     </div>
                 </button>
-                <Link
-                    href="/owner/dashboard"
-                    className="bg-white text-black px-8 py-4 rounded-xl hover:opacity-80 transition-opacity shadow-lg"
+                  <button
+                    onClick={handleDownloadiOS}
+                    className="flex justify-center items-center gap-3 bg-white text-black px-8 py-4 rounded-xl cursor-pointer hover:opacity-80 transition-opacity shadow-lg"
                 >
-                    {
-                        t("landing.ownerDashboard")
-                    }
-                </Link>
+                    <FaApple size={24} />
+                    <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium">
+                            {
+                                t("landing.downloadFor")
+                            }
+                        </span>
+                        <h1 className="text-lg font-bold">iOS</h1>
+                    </div>
+                </button>
             </div>
         </section>
     )

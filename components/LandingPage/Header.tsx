@@ -38,16 +38,16 @@ export const Header = () => {
             <div className="hidden sm:flex flex-1 justify-end items-center gap-6">
                 <LanguageSwitcher />
                 <Link
-                    href="/auth/sign-in"
+                    href="/owner/dashboard"
                     className="text-white hover:opacity-90 transition-opacity"
                 >
-                    {t("landing.signIn")}
+                    {t("landing.getStarted")}
                 </Link>
                 <Link
                     href="/auth/sign-up"
                     className="bg-white text-neutral-900 px-4 py-2 rounded-lg hover:opacity-90 transition-opacity"
                 >
-                    {t("landing.getStarted")}
+                    {t("landing.signUp")}
                 </Link>
             </div>
 
@@ -65,23 +65,23 @@ export const Header = () => {
 
             {
                 open && (
-                    <div className="sm:hidden absolute top-full left-0 right-0 z-50 bg-gray-950 border-b border-white/10 flex flex-col gap-4 px-6 py-4">
+                    <div className="sm:hidden absolute top-full left-0 right-0 z-50 bg-neutral-900 border-b border-white/10 flex flex-col gap-4 px-6 py-4">
                         <div className="flex justify-end">
                             <LanguageSwitcher />
                         </div>
                         <Link
-                            href="/auth/sign-in"
+                            href="/owner/dashboard"
                             className="text-white text-center"
                             onClick={() => setOpen(false)}
                         >
-                            {t("landing.signIn")}
+                            {t("landing.getStarted")}
                         </Link>
                         <Link
                             href="/auth/sign-up"
                             className="bg-white text-neutral-900 px-4 py-2 rounded-lg text-center"
                             onClick={() => setOpen(false)}
                         >
-                            {t("landing.getStarted")}
+                            {t("landing.signUp")}
                         </Link>
                     </div>
                 )

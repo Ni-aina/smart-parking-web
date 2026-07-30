@@ -1,12 +1,7 @@
-import { Smartphone } from "lucide-react";
 import Link from "next/link";
 import { useTranslation } from "@/context/LanguageContext";
 
-export const CTA = ({
-    handleDownload
-}: {
-    handleDownload: () => void
-}) => {
+export const CTA = () => {
     const { t } = useTranslation()
 
     return (
@@ -21,24 +16,13 @@ export const CTA = ({
                     t("landing.readyToStartDesc")
                 }
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button
-                    onClick={handleDownload}
-                    className="flex items-center justify-center gap-3 bg-white text-black px-8 py-4 rounded-xl cursor-pointer hover:opacity-80 transition-opacity shadow-lg"
-                >
-                    <Smartphone size={24} />
-                    <span>
-                        {
-                            t("landing.downloadAndroidApp")
-                        }
-                    </span>
-                </button>
+            <div className="flex justify-center">
                 <Link
                     href="/owner/dashboard"
-                    className="bg-white text-black px-8 py-4 rounded-xl hover:opacity-80 transition-opacity shadow-lg"
+                    className="w-full sm:w-xs bg-white text-black py-4 rounded-xl hover:opacity-80 transition-opacity shadow-lg"
                 >
                     {
-                        t("landing.ownerAccess")
+                        t("landing.getStarted")
                     }
                 </Link>
             </div>
