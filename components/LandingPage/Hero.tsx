@@ -29,7 +29,7 @@ export const Hero = ({
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <button
                     onClick={handleDownload}
-                    className="flex items-center gap-3 bg-white text-black px-8 py-4 rounded-xl cursor-pointer hover:opacity-80 transition-opacity shadow-lg"
+                    className="flex justify-center items-center gap-3 bg-white text-black px-8 py-4 rounded-xl cursor-pointer hover:opacity-80 transition-opacity shadow-lg"
                 >
                     <Smartphone size={24} />
                     <div className="flex items-center gap-2">
