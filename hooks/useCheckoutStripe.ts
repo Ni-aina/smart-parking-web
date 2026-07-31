@@ -1,3 +1,4 @@
+import { useTranslation } from "@/context/LanguageContext";
 import { SignUpForm } from "@/types/auth";
 import { useElements, useStripe } from "@stripe/react-stripe-js";
 import { FormEvent, useEffect, useState } from "react";
@@ -16,6 +17,7 @@ const useCheckoutStripe = ({
 }) => {
     const stripe = useStripe();
     const elements = useElements();
+    const { t } = useTranslation();
 
     const [errorMessage, setErrorMessage] = useState<string>("");
     const [clientSecret, setClientSecret] = useState<string>("");
@@ -33,7 +35,7 @@ const useCheckoutStripe = ({
         const { error: submitError } = await elements.submit();
 
         if (submitError) {
-            setErrorMessage(submitError.message || "Error submit element");
+            setErrorMessage(submitError.message || t("auth.errors.submit"));
             setLoading(false);
             return;
         }
@@ -48,14 +50,16 @@ const useCheckoutStripe = ({
         })
 
         if (error) {
-            setErrorMessage(error.message || "Error payment processing");
+            setErrorMessage(error.message || t("auth.errors.payment"));
             setLoading(false);
             return;
         }
 
         if (paymentIntent.status === "succeeded") {
             handleShowStripeElement();
-            toast.success("Check your inbox to activate your account.");
+            toast.success(t("auth.checkInbox"), {
+                duration: 15000
+            })
             setLoading(false);
             return;
         }

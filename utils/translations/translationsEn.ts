@@ -126,6 +126,7 @@ export const translationsEn = {
         dontHaveAccount: "Don't have an account ?",
         createAccount: "Create an account",
         failedAuth: "Failed authentication",
+        checkInbox: "Check your inbox to activate your account.",
         signUpSteps: {
             account: "Account",
             plan: "Plan",
@@ -142,7 +143,9 @@ export const translationsEn = {
             invalidEmail: "Invalid email address",
             passwordLength: "Password must be at least 6 characters",
             passwordMismatch: "Passwords do not match",
-            invalidPhone: "Invalid phone number"
+            invalidPhone: "Invalid phone number",
+            submit: "Error submit element",
+            payment: "Error payment processing"
         },
         back: "Back",
         next: "Next",

@@ -126,6 +126,7 @@ export const translationsFr = {
         dontHaveAccount: "Vous n'avez pas de compte ?",
         createAccount: "Créer un compte",
         failedAuth: "Échec de l'authentification",
+        checkInbox: "Consultez votre boîte de réception pour activer votre compte.",
         signUpSteps: {
             account: "Compte",
             plan: "Formule",
@@ -142,7 +143,9 @@ export const translationsFr = {
             invalidEmail: "Adresse e-mail invalide",
             passwordLength: "Le mot de passe doit comporter au moins 6 caractères",
             passwordMismatch: "Les mots de passe ne correspondent pas",
-            invalidPhone: "Numéro de téléphone invalide"
+            invalidPhone: "Numéro de téléphone invalide",
+            submit: "Erreur lors de la soumission de l'élément",
+            payment: "Erreur lors du traitement du paiement"
         },
         back: "Retour",
         next: "Suivant",
