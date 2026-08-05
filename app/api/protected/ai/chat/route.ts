@@ -274,8 +274,8 @@ export async function POST(req: NextRequest) {
         const {
             messages,
             driverId,
-            latitude = -18.916479,
-            longitude = 47.5657178,
+            latitude,
+            longitude,
             timezoneOffset,
             i18nLanguage
         } = await req.json();
