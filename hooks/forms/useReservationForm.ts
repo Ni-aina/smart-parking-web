@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import {
     ChangeEvent,
     FormEvent,
+    useEffect,
     useLayoutEffect,
     useState
 } from "react";
@@ -61,15 +62,13 @@ const useReservationForm = ({
 
     const [formData, setFormData] = useState({
         lotId: selectLots.at(0)?.id || "",
-        driverId: selectDrivers.at(0)?.id || "",
+        driverId: "",
         vehicleId: "",
         startTime: toDateTimeLocal(now),
         endTime: toDateTimeLocal(defaultEnd)
     })
 
-    const {
-        driverId
-    } = formData;
+    const { driverId } = formData;
 
     const selectedLot = parkingLots.find(l => l.id === formData.lotId);
     const pricePerHour = selectedLot?.pricePerHour || 0;
@@ -89,7 +88,7 @@ const useReservationForm = ({
         setFormData(prev => ({
             ...prev,
             [name]: value
-        }));
+        }))
         setError("");
     }
 
@@ -117,7 +116,7 @@ const useReservationForm = ({
                 startTime: startDate.toISOString(),
                 endTime: endDate.toISOString(),
                 amount
-            });
+            })
 
             if (!newReservation) return;
             router.push("/owner/reservations");
@@ -147,14 +146,28 @@ const useReservationForm = ({
                 setFormData(prev => ({
                     ...prev,
                     vehicleId: driverVehicles.at(0)?.id || ""
-                }));
+                }))
             } catch {
                 setVehicles([]);
             } finally {
                 setIsLoadingVehicles(false);
             }
         })()
-    }, [driverId]);
+    }, [driverId])
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            const now = new Date();
+            const defaultEnd = new Date(now);
+            defaultEnd.setHours(now.getHours() + 1);
+            setFormData(prev => ({
+                ...prev,
+                startTime: toDateTimeLocal(now),
+                endTime: toDateTimeLocal(defaultEnd)
+            }))
+        }, 300000)
+        return () => clearTimeout(timer)
+    }, [formData])
 
     return {
         formData,

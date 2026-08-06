@@ -14,6 +14,7 @@ import InputSelect from "../ui/inputSelect";
 import useReservationForm from "@/hooks/forms/useReservationForm";
 import useOccupancy from "@/hooks/useOccupancy";
 import { useTranslation } from "@/context/LanguageContext";
+import { isUUID } from "@/utils/isUUID";
 
 interface ReservationFormInterface {
     parkingLots: ParkingInterface[];
@@ -66,13 +67,13 @@ const ReservationForm = ({
     return (
         <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             {
-                error  &&
+                error &&
                 <div className="lg:col-span-2 text-red-500 text-sm bg-red-500/10 px-4 py-2 rounded-sm">
                     {error}
                 </div>
             }
             {
-                occupancyError  &&
+                occupancyError &&
                 <div className="lg:col-span-2 text-red-500 text-sm bg-red-500/10 px-4 py-2 rounded-sm">
                     {occupancyError?.message || t("reservations.form.availabilityError")}
                 </div>
@@ -214,6 +215,7 @@ const ReservationForm = ({
                         isPending={isPending}
                         Icon={Upload}
                         disabled={
+                            (!isUUID(driverId) || !vehicleId) ||
                             isLoadingVehicles ||
                             isLoadingOccupancy ||
                             availableSpots <= 0
@@ -228,6 +230,7 @@ const ReservationForm = ({
                     isPending={isPending}
                     Icon={Upload}
                     disabled={
+                        (!isUUID(driverId) || !vehicleId) ||
                         isLoadingVehicles ||
                         isLoadingOccupancy ||
                         availableSpots <= 0
