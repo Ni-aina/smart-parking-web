@@ -156,7 +156,7 @@ const useReservationForm = ({
     }, [driverId])
 
     useEffect(() => {
-        const timer = setTimeout(() => {
+        const timer = setInterval(() => {
             const now = new Date();
             const defaultEnd = new Date(now);
             defaultEnd.setHours(now.getHours() + 1);
@@ -166,7 +166,7 @@ const useReservationForm = ({
                 endTime: toDateTimeLocal(defaultEnd)
             }))
         }, 300000)
-        return () => clearTimeout(timer)
+        return () => clearInterval(timer)
     }, [formData])
 
     return {
