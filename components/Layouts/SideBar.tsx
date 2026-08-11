@@ -16,6 +16,7 @@ import { useState } from "react";
 import OwnerProtected from "../OwnerProtected";
 import { SideBarItems } from "./SideBarItems";
 import { useTranslation } from "@/context/LanguageContext";
+import Link from "next/link";
 
 const SideBarLayout = () => {
     const [isPending, setIsPending] = useState(false)
@@ -36,7 +37,10 @@ const SideBarLayout = () => {
         <Sidebar className="bg-black/95 border-none shadow-white/10 shadow-sm">
             <div className="flex flex-col bg-black/95 text-white w-full h-full gap-5 lg:gap-8 p-5">
                 <SidebarHeader>
-                    <div className="flex justify-center mt-3">
+                    <Link 
+                        className="flex justify-center mt-3 hover:scale-105 transition-transform"
+                        href="/"
+                    >
                         <div className="relative w-36 h-12">
                             <Image
                                 src="/images/smart-parking.png"
@@ -46,7 +50,7 @@ const SideBarLayout = () => {
                                 priority
                             />
                         </div>
-                    </div>
+                    </Link>
                 </SidebarHeader>
                 <OwnerProtected>
                     <SideBarItems />
