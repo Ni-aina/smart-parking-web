@@ -10,8 +10,8 @@ interface CustomButtonInterface {
     onClick?: ([...args]: any) => void;
     type?: "submit" | "button";
     className?: string;
-    Icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> 
-    & RefAttributes<SVGSVGElement>>;
+    Icon: ForwardRefExoticComponent<Omit<LucideProps, "ref">
+        & RefAttributes<SVGSVGElement>>;
     disabled?: boolean;
 }
 
@@ -35,16 +35,18 @@ const CustomButton = ({
         >
             {
                 isPending ?
-                <Loader2
-                    size={16}
-                    className="animate-spin"
-                />
-                :
-                <Icon
-                    size={16}
-                />
+                    <Loader2
+                        size={16}
+                        className="animate-spin"
+                    />
+                    :
+                    <Icon
+                        size={16}
+                    />
             }
-            {title}
+            <span className="line-clamp-1 overflow-hidden">
+                {title}
+            </span>
         </button>
     )
 }
