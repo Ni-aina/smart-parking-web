@@ -42,21 +42,7 @@ export async function resetPassword(email: string): Promise<void> {
 
 export async function logOut() {
     try {
-        const request = (async () => {
-            await supabase.auth.signOut();
-
-            sessionStorage.clear();
-
-            document.cookie.split(";").forEach((c) => {
-                document.cookie = c
-                    .replace(/^ +/, "")
-                    .replace(/=.*/, "=;expires=" + new Date(0).toUTCString() + ";path=/");
-            })
-        })()
-        return Promise.race([
-            request,
-            rejectTimeout()
-        ])
+        await supabase.auth.signOut();
     } catch (error) {
         throw error;
     }
