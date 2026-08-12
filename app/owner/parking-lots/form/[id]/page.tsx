@@ -1,7 +1,7 @@
 import { getParkingById } from "@/actions/parkingLots.action";
 import { getAgents } from "@/actions/profile.action";
 import { getTypes } from "@/actions/type.action";
-import FormParkingLots from "@/components/Parking-lots/Form";
+import FormParkingLots from "@/components/Parking-lots/LotForm";
 import HeaderBack from "@/components/ui/headerBack";
 
 interface FormPageInterface {

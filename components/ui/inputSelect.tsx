@@ -49,7 +49,7 @@ const InputSelect = ({
     ])
     
     return (
-        <div className="relative w-full pl-4 pr-2 py-2 border border-white/10 rounded-sm">
+        <div className="relative min-w-0 w-full pl-4 pr-2 py-2 border border-white/10 rounded-sm">
             <button
                 className="flex w-full justify-between items-center gap-2 cursor-pointer"
                 onClick={handleOpenMenu}
