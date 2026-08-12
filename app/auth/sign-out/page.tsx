@@ -2,7 +2,6 @@
 
 import { logOut } from "@/actions/auth.action";
 import Loading from "@/components/ui/loading";
-import { redirect } from "next/navigation";
 import { useEffect } from "react";
 
 const signOut = () => {
@@ -10,7 +9,7 @@ const signOut = () => {
     useEffect(() => {
         (async () => {
             await logOut()
-            redirect("/auth/sign-in")
+            window.location.href = "/auth/sign-in"
         })()
     }, [])
 
