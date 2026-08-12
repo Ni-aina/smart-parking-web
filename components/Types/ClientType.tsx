@@ -2,13 +2,11 @@
 
 import Navbar from "../Layouts/Navbar";
 import Table from "../Table";
-import { Modal } from "../ui/modal";
 import { TypeInterface } from "@/types/type";
-import { Loader2 } from "lucide-react";
 import useType from "@/hooks/useType";
-import InputNumber from "../ui/inputNumber";
 import NoData from "../ui/noData";
 import { useTranslation } from "@/context/LanguageContext";
+import FormType from "./FormType";
 
 const ClientType = ({ 
     types,
@@ -80,82 +78,19 @@ const ClientType = ({
                         labels={tableLabels}
                     />
             }
-            <Modal
-                isOpen={isModalOpen}
-                onClose={handleOnClose}
-                title={id ? t("types.form.updateTitle") : t("types.form.addTitle")}
-            >
-                <form
-                    className="flex flex-col gap-3"
-                    onSubmit={handleSubmit}
-                >
-                    <div className="flex flex-col gap-3">
-                        <label htmlFor="type">{t("types.form.vehicleType")}</label>
-                        <input
-                            type="text"
-                            name="vehicleType"
-                            value={vehicleType}
-                            onChange={handleChange}
-                            required
-                            className="outline-none px-4 py-2 border border-white/10 rounded-sm" />
-                        <label htmlFor="type">{t("types.form.maxWidth")}</label>
-                        <InputNumber
-                            name="maxWidth"
-                            value={`${maxWidth}`}
-                            handleChange={handleChange}
-                            min={0}
-                        />
-                        <label htmlFor="type">{t("types.form.maxLength")}</label>
-                        <InputNumber
-                            name="maxLength"
-                            value={`${maxLength}`}
-                            handleChange={handleChange}
-                            min={0}
-                        />
-                        <label htmlFor="type">{t("types.form.maxHeight")}</label>
-                        <InputNumber
-                            name="maxHeight"
-                            value={`${maxHeight}`}
-                            handleChange={handleChange}
-                            min={0}
-                        />
-                        <label htmlFor="description">{t("types.form.description")}</label>
-                        <textarea
-                            name="description"
-                            value={description}
-                            onChange={handleChange}
-                            className="outline-none px-4 py-2 border border-white/10 rounded-sm"
-                        />
-                    </div>
-                    <div className="mt-3 w-full flex justify-end gap-3">
-                        <button
-                            type="button"
-                            onClick={handleOnClose}
-                            className="w-30 h-10 flex justify-center items-center 
-                            bg-white/10 rounded-sm cursor-pointer hover:opacity-80"
-                        >
-                            {t("types.form.cancel")}
-                        </button>
-                        <button
-                            className="w-30 h-10 flex justify-center items-center gap-2
-                            bg-white text-black rounded-sm cursor-pointer hover:opacity-80
-                            disabled:cursor-not-allowed disabled:opacity-80"
-                            disabled={isPending}
-                        >
-                            {
-                                isPending &&
-                                <Loader2
-                                    size={14}
-                                    className="animate-spin"
-                                />
-                            }
-                            <span>
-                                {id ? t("types.form.update") : t("types.form.add")}
-                            </span>
-                        </button>
-                    </div>
-                </form>
-            </Modal>
+            <FormType
+                isModalOpen={isModalOpen}
+                handleOnClose={handleOnClose}
+                handleChange={handleChange}
+                handleSubmit={handleSubmit}
+                id={id}
+                vehicleType={vehicleType}
+                maxWidth={maxWidth}
+                maxLength={maxLength}
+                maxHeight={maxHeight}
+                description={description}
+                isPending={isPending}
+            />
         </div>
     )
 }
