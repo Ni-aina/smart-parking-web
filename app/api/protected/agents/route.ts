@@ -39,7 +39,7 @@ export const POST = async (req: Request) => {
                     full_name: fullName,
                     phone_number: phoneNumber
                 },
-                redirectTo: "SmartParking://auth/updatePassword"
+                redirectTo: "SmartParking://auth/setPassword"
             }
         )
 
