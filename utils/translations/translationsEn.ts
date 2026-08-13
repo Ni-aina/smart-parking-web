@@ -165,6 +165,19 @@ export const translationsEn = {
         backToSignIn: "Back to sign in",
         errorSend: "Failed to send reset link. Please try again."
     },
+    resetPassword: {
+        title: "Reset password",
+        desc: "Enter your new password below.",
+        newPassword: "New Password",
+        confirmPassword: "Confirm Password",
+        placeholderNew: "Enter new password",
+        placeholderConfirm: "Confirm new password",
+        updateButton: "Update password",
+        passwordsDoNotMatch: "Passwords do not match",
+        successMessage: "Password updated successfully!",
+        errorUpdate: "Failed to update password. Link may be expired or invalid.",
+        backToSignIn: "Back to sign in"
+    },
     payment: {
         planSuffix: " Plan",
         billedMonthly: "Billed monthly",

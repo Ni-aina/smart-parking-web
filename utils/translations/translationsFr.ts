@@ -165,6 +165,19 @@ export const translationsFr = {
         backToSignIn: "Retour à la connexion",
         errorSend: "Échec de l'envoi du lien. Veuillez réessayer."
     },
+    resetPassword: {
+        title: "Réinitialiser le mot de passe",
+        desc: "Entrez votre nouveau mot de passe ci-dessous.",
+        newPassword: "Nouveau mot de passe",
+        confirmPassword: "Confirmer le mot de passe",
+        placeholderNew: "Entrez le nouveau mot de passe",
+        placeholderConfirm: "Confirmez le nouveau mot de passe",
+        updateButton: "Mettre à jour le mot de passe",
+        passwordsDoNotMatch: "Les mots de passe ne correspondent pas",
+        successMessage: "Mot de passe mis à jour avec succès!",
+        errorUpdate: "Échec de la mise à jour. Le lien a peut-être expiré.",
+        backToSignIn: "Retour à la connexion"
+    },
     payment: {
         planSuffix: " Formule",
         billedMonthly: "Facturé mensuellement",
