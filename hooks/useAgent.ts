@@ -23,7 +23,7 @@ const useAgent = (
 
     const [search, setSearch] = useState(searchTerm)
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
+    const [isPending, setIsPending] = useState(false)
     const [formData, setFormData] = useState<AgentFormInterface>(initForm)
 
     const title = t("agents.title")
@@ -92,7 +92,7 @@ const useAgent = (
             return
         }
 
-        setIsLoading(true)
+        setIsPending(true)
 
         try {
             const { data: { session } } = await supabase.auth.getSession()
@@ -115,7 +115,7 @@ const useAgent = (
 
                 if (!res.ok) {
                     toast.error(t("agentCreatedError"))
-                    setIsLoading(false)
+                    setIsPending(false)
                     return
                 }
 
@@ -150,7 +150,7 @@ const useAgent = (
         } catch (err: unknown) {
             toast.error(t("agentUpdatedError"))
         } finally {
-            setIsLoading(false)
+            setIsPending(false)
         }
     }
 
@@ -212,7 +212,7 @@ const useAgent = (
         setSearch,
         isModalOpen,
         setIsModalOpen,
-        isLoading,
+        isPending,
         title,
         headers,
         tableLabels,

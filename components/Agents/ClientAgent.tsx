@@ -6,7 +6,7 @@ import Navbar from "../Layouts/Navbar";
 import Table from "../Table";
 import { Modal } from "../ui/modal";
 import { ProfileInterface } from "@/types/profile";
-import { Flag } from "lucide-react";
+import { Flag, Loader2 } from "lucide-react";
 import useAgent from "@/hooks/useAgent";
 import { ChangeEvent } from "react";
 import NoData from "../ui/noData";
@@ -21,7 +21,7 @@ const ClientAgent = ({
     count: number,
     searchTerm: string
  }) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation()
 
     const {
         formData,
@@ -29,6 +29,7 @@ const ClientAgent = ({
         setSearch,
         isModalOpen,
         setIsModalOpen,
+        isPending,
         title,
         headers,
         tableLabels,
@@ -48,7 +49,7 @@ const ClientAgent = ({
         fullName,
         emailAddress,
         phoneNumber
-    } = formData;
+    } = formData
 
     return (
         <div className="flex flex-col gap-5">
@@ -150,10 +151,13 @@ const ClientAgent = ({
                             {t("agents.form.cancel")}
                         </button>
                         <button
+                            type="submit"
                             className="w-30 h-10 flex justify-center items-center gap-2
                             bg-white text-black rounded-sm cursor-pointer hover:opacity-80
                             disabled:cursor-not-allowed disabled:opacity-80"
+                            disabled={isPending}
                         >
+                            {isPending && <Loader2 className="w-4 h-4 animate-spin" />}
                             <span>{id ? t("agents.form.update") : t("agents.form.add")}</span>
                         </button>
                     </div>
@@ -164,3 +168,4 @@ const ClientAgent = ({
 }
 
 export default ClientAgent;
+
