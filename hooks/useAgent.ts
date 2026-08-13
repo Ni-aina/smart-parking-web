@@ -5,6 +5,7 @@ import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { isValidPhoneNumber } from "react-phone-number-input";
 import { toast } from "sonner";
 import { useTranslation } from "@/context/LanguageContext";
+import { supabase } from "@/lib/supabase/client";
 
 const initForm = {
     fullName: "",
@@ -13,25 +14,27 @@ const initForm = {
 }
 
 const useAgent = (
-    { agents, searchTerm }: 
-    { agents: ProfileInterface[], searchTerm: string }
+    { agents, searchTerm }:
+        { agents: ProfileInterface[], searchTerm: string }
 ) => {
-    const { language, t } = useTranslation();
+    const { language, t } = useTranslation()
 
-    const [localAgents, setLocalAgents] = useState(agents);
+    const [localAgents, setLocalAgents] = useState<ProfileInterface[]>(agents)
 
-    const [search, setSearch] = useState(searchTerm);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [formData, setFormData] = useState<AgentFormInterface>(initForm);
+    const [search, setSearch] = useState(searchTerm)
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
+    const [formData, setFormData] = useState<AgentFormInterface>(initForm)
 
-    const title = t("agents.title");
+    const title = t("agents.title")
     const headers = [
         t("agents.headers.fullName"),
         t("agents.headers.email"),
         t("agents.headers.phone"),
         t("agents.headers.roles"),
         t("agents.headers.createdAt")
-    ];
+    ]
+
     const tableLabels = {
         all: t("agents.table.all"),
         delete: t("agents.table.delete"),
@@ -41,10 +44,7 @@ const useAgent = (
         confirmMessage: t("agents.confirm.message"),
         confirmCancel: t("agents.confirm.cancel"),
         confirmConfirm: t("agents.confirm.confirm")
-    };
-
-        const isAgentOnly = (roles: string[]) =>
-            roles.length === 1 && roles.includes("agent");
+    }
 
     const body = {
         rows: localAgents.map(item => ({
@@ -70,7 +70,7 @@ const useAgent = (
     }
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
+        const { name, value } = e.target
         setFormData(prev => ({
             ...prev,
             [name]: value
@@ -78,44 +78,80 @@ const useAgent = (
     }
 
     const handleOnClose = () => {
-        setFormData(initForm);
-        setIsModalOpen(false);
+        setFormData(initForm)
+        setIsModalOpen(false)
     }
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
 
-        const { id, phoneNumber } = formData;
+        const { id, fullName, emailAddress, phoneNumber } = formData
 
         if (!isValidPhoneNumber(phoneNumber)) {
-            toast.error(t("agents.messages.invalidPhone"));
-            return;
+            toast.error(t("agents.messages.invalidPhone"))
+            return
         }
 
-        if (!id) {
-            const newAgent: ProfileInterface = {
-                id: crypto.randomUUID(),
-                roles: ["agent"],
-                fullName: formData.fullName,
-                emailAddress: formData.emailAddress,
-                phoneNumber: formData.phoneNumber,
-                createdAt: new Date().toISOString()
-            }
-            setLocalAgents(prev => [newAgent, ...prev]);
-            setFormData(initForm);
-            setIsModalOpen(false);
-            return;
-        }
+        setIsLoading(true)
 
-        setLocalAgents(prev => prev.map(agent =>
-            agent.id !== id ? agent : {
-                ...agent,
-                fullName: formData.fullName,
-                emailAddress: formData.emailAddress,
-                phoneNumber: formData.phoneNumber
+        try {
+            const { data: { session } } = await supabase.auth.getSession()
+
+            if (!id) {
+                const res = await fetch("/api/protected/agents", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${session?.access_token || ""}`
+                    },
+                    body: JSON.stringify({
+                        fullName,
+                        emailAddress,
+                        phoneNumber
+                    })
+                })
+
+                const result = await res.json()
+
+                if (!res.ok) {
+                    toast.error(t("agentCreatedError"))
+                    setIsLoading(false)
+                    return
+                }
+
+                setLocalAgents(prev => [result.data, ...prev])
+                handleOnClose()
+                return
             }
-        ))
-        handleOnClose();
+
+            const res = await fetch("/api/protected/agents", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${session?.access_token || ""}`
+                },
+                body: JSON.stringify({
+                    id,
+                    fullName,
+                    phoneNumber
+                })
+            })
+
+            if (!res.ok) throw new Error()
+
+            setLocalAgents(prev => prev.map(agent =>
+                agent.id !== id ? agent : {
+                    ...agent,
+                    fullName,
+                    phoneNumber
+                }
+            ))
+            handleOnClose()            
+        } catch (err: unknown) {
+            toast.error(t("agentUpdatedError"))
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     const handleEdit = (id: string) => {
@@ -124,37 +160,50 @@ const useAgent = (
                 id,
                 fullName,
                 emailAddress,
-                phoneNumber,
+                phoneNumber
             }) => ({
                 id,
                 fullName,
                 emailAddress,
                 phoneNumber
-            }))?.at(0);
+            }))?.at(0)
 
-        if (!agent) return;
-        
+        if (!agent) return
+
         setFormData({
             id: agent.id,
             fullName: agent.fullName,
             emailAddress: agent.emailAddress,
             phoneNumber: agent.phoneNumber
         })
-        setIsModalOpen(true);
+        setIsModalOpen(true)
     }
 
-    const handleDelete = (id: string) => {
-        const agent = localAgents.find(item => item.id === id);
-        if (!agent || !isAgentOnly(agent.roles)){
-            toast.error(t("agents.messages.onlyAgentsDeleted"));
-            return;
+    const handleDelete = async (id: string) => {
+        try {
+            const { data: { session } } = await supabase.auth.getSession()
+
+            setLocalAgents(prev => prev.filter(item => item.id !== id))
+
+            const res = await fetch("/api/protected/agents", {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${session?.access_token || ""}`
+                },
+                body: JSON.stringify({ id })
+            })
+
+            if (!res.ok) throw new Error()
+
+        } catch (err: unknown) {
+            toast.error(t("agents.messages.accessDenied"))
+            setLocalAgents(localAgents)
         }
-
-        setLocalAgents(prev => prev.filter(item => item.id !== id));
     }
 
-    useEffect(()=> {
-        setLocalAgents(agents);
+    useEffect(() => {
+        setLocalAgents(agents)
     }, [agents])
 
     return {
@@ -163,6 +212,7 @@ const useAgent = (
         setSearch,
         isModalOpen,
         setIsModalOpen,
+        isLoading,
         title,
         headers,
         tableLabels,
@@ -176,3 +226,4 @@ const useAgent = (
 }
 
 export default useAgent;
+

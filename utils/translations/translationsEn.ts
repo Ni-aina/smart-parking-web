@@ -405,7 +405,9 @@ export const translationsEn = {
         },
         messages: {
             invalidPhone: "Invalid phone number",
-            onlyAgentsDeleted: "Only agents can be deleted"
+            agentCreatedError: "Failed to create agent",
+            agentUpdatedError: "Failed to update agent",
+            accessDenied: "You may not have permission to perform this action"
         }
     },
     reservations: {
