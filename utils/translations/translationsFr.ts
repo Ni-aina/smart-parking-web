@@ -356,7 +356,6 @@ export const translationsFr = {
         },
         table: {
             all: "Tous les types de places",
-            delete: "Supprimer",
             rowsPerPage: "Lignes par page",
             actions: "Actions"
         },
@@ -395,7 +394,7 @@ export const translationsFr = {
         },
         table: {
             all: "Tous les agents",
-            delete: "Supprimer",
+            resend: "Renvoyer l'invitation email",
             rowsPerPage: "Lignes par page",
             actions: "Actions"
         },
@@ -420,6 +419,8 @@ export const translationsFr = {
             invalidPhone: "Numéro de téléphone invalide",
             agentCreatedError: "Échec de la création de l'agent",
             agentUpdatedError: "Échec de la modification de l'agent",
+            alreadyRegistered: "Un utilisateur avec cette adresse e-mail a déjà été enregistré",
+            invitationSent: "Invitation envoyée avec succès",
             accessDenied: "Vous n'avez peut-être pas la permission d'effectuer cette action"
         }
     },
@@ -554,5 +555,7 @@ export const translationsFr = {
             dayAgo: "Il y a 1 jour",
             daysAgo: "Il y a {count} jours"
         }
-    }
+    },
+    edit: "Modifier",
+    delete: "Supprimer"
 }

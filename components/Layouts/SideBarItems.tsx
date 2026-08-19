@@ -32,9 +32,6 @@ export const SideBarItems = () => {
         isLoading
     } = useNotReadCount();
 
-    console.log("isNotReadCount", isNotReadCount);
-    console.log("isLoading", isLoading);
-
     const handleOpenSettings = () => {
         setIsOpenSettings(prev => !prev)
     }

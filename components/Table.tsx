@@ -2,7 +2,11 @@
 
 import { Edit, Trash2 } from "lucide-react";
 import Order from "./ui/order";
-import { useEffect, useState } from "react";
+import {
+    JSX,
+    useEffect,
+    useState
+} from "react";
 import { customCheckStyle } from "@/lib/customChexBoxStyle";
 import Image from "next/image";
 import InputSelect from "./ui/inputSelect";
@@ -10,6 +14,7 @@ import { SelectInterface } from "@/types/input";
 import Pagination from "./ui/pagination";
 import { PAGINATION } from "@/lib/pagination";
 import DeleteConfirm from "./ui/deleteConfirm";
+import { useTranslation } from "@/context/LanguageContext";
 
 interface TabelInterface {
     title: string;
@@ -17,7 +22,7 @@ interface TabelInterface {
     body: {
         rows: Array<Record<string, string>>;
         cols: Array<string>;
-    };
+    }
     count: number;
     handleEdit: (id: string) => void;
     handleDelete: (id: string) => void;
@@ -30,7 +35,11 @@ interface TabelInterface {
         confirmMessage?: string;
         confirmCancel?: string;
         confirmConfirm?: string;
-    };
+    }
+    Unknown?: {
+        action: (key: string) => JSX.Element,
+        key: string
+    }
 }
 
 const Table = ({
@@ -40,8 +49,10 @@ const Table = ({
     handleEdit,
     handleDelete,
     count,
-    labels
+    labels,
+    Unknown
 }: TabelInterface) => {
+    const { t } = useTranslation();
 
     const [showPage, setShowPage] = useState("10");
 
@@ -229,16 +240,21 @@ const Table = ({
                                             }
                                             <td className="pr-8 py-3 lg:pr-10">
                                                 <div className="flex h-full items-center justify-end gap-3">
-                                                    <Edit
+                                                    {Unknown?.action(item[Unknown.key])}
+                                                    <button
                                                         className="text-green-600 cursor-pointer hover:scale-105"
                                                         onClick={() => handleEdit(item.id)}
-                                                        size={18}
-                                                    />
-                                                    <Trash2
-                                                        size={18}
-                                                        onClick={() => setIsConfirmId(item.id)}
+                                                        title={t("edit")}
+                                                    >
+                                                        <Edit size={18} />
+                                                    </button>
+                                                    <button
                                                         className="text-red-600 cursor-pointer hover:scale-105"
-                                                    />
+                                                        onClick={() => setIsConfirmId(item.id)}
+                                                        title={t("delete")}
+                                                    >
+                                                        <Trash2 size={18} />
+                                                    </button>
                                                 </div>
                                             </td>
                                         </tr>

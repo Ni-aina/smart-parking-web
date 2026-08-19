@@ -24,6 +24,7 @@ const useAgent = (
     const [search, setSearch] = useState(searchTerm)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [isPending, setIsPending] = useState(false)
+    const [resendingEmail, setResendingEmail] = useState("");
     const [formData, setFormData] = useState<AgentFormInterface>(initForm)
 
     const title = t("agents.title")
@@ -82,6 +83,31 @@ const useAgent = (
         setIsModalOpen(false)
     }
 
+    const handleResendInvitationEmail = async (emailAddress: string) => {
+        try {
+            setResendingEmail(emailAddress)
+
+            const { data: { session } } = await supabase.auth.getSession()
+
+            const res = await fetch("/api/protected/agents/invitation", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${session?.access_token || ""}`
+                },
+                body: JSON.stringify({ emailAddress })
+            })
+
+            if (!res.ok) throw new Error()
+                
+            toast.success(t("agents.messages.invitationSent"))
+        } catch {
+            toast.error(t("agents.messages.alreadyRegistered"))
+        } finally {
+            setResendingEmail("")
+        }
+    }
+
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
@@ -114,7 +140,7 @@ const useAgent = (
                 const result = await res.json()
 
                 if (!res.ok) {
-                    toast.error(t("agentCreatedError"))
+                    toast.error(t("agents.messages.agentCreatedError"))
                     setIsPending(false)
                     return
                 }
@@ -146,9 +172,9 @@ const useAgent = (
                     phoneNumber
                 }
             ))
-            handleOnClose()            
-        } catch (err: unknown) {
-            toast.error(t("agentUpdatedError"))
+            handleOnClose()
+        } catch {
+            toast.error(t("agents.messages.agentUpdatedError"))
         } finally {
             setIsPending(false)
         }
@@ -218,6 +244,8 @@ const useAgent = (
         tableLabels,
         body,
         handleChange,
+        handleResendInvitationEmail,
+        resendingEmail,
         handleSubmit,
         handleOnClose,
         handleEdit,

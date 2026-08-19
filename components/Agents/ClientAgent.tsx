@@ -6,21 +6,21 @@ import Navbar from "../Layouts/Navbar";
 import Table from "../Table";
 import { Modal } from "../ui/modal";
 import { ProfileInterface } from "@/types/profile";
-import { Flag, Loader2 } from "lucide-react";
+import { Flag, Loader2, Send } from "lucide-react";
 import useAgent from "@/hooks/useAgent";
 import { ChangeEvent } from "react";
 import NoData from "../ui/noData";
 import { useTranslation } from "@/context/LanguageContext";
 
-const ClientAgent = ({ 
+const ClientAgent = ({
     agents,
     count,
     searchTerm
- }: {
+}: {
     agents: ProfileInterface[],
     count: number,
     searchTerm: string
- }) => {
+}) => {
     const { t } = useTranslation()
 
     const {
@@ -35,14 +35,16 @@ const ClientAgent = ({
         tableLabels,
         body,
         handleChange,
+        handleResendInvitationEmail,
+        resendingEmail,
         handleSubmit,
         handleOnClose,
         handleEdit,
         handleDelete
-    } = useAgent({ 
+    } = useAgent({
         agents,
         searchTerm
-     })
+    })
 
     const {
         id,
@@ -63,13 +65,14 @@ const ClientAgent = ({
                 addLabel={t("agents.addNew")}
                 loadingLabel={t("agents.loadingData")}
             />
+
             {
                 !count ?
                     <NoData
                         message={t("agents.noData")}
                         description=""
                     />
-                :
+                    :
                     <Table
                         title={title}
                         headers={headers}
@@ -78,8 +81,29 @@ const ClientAgent = ({
                         handleDelete={handleDelete}
                         count={count}
                         labels={tableLabels}
+                        Unknown={{
+                            action: (email) =>
+                                <button
+                                    className="text-yellow-600 cursor-pointer hover:scale-105 disabled:cursor-not-allowed"
+                                    onClick={() => handleResendInvitationEmail(email)}
+                                    title={t("agents.table.resend")}
+                                    disabled={resendingEmail === email}
+                                >
+                                    {
+                                        resendingEmail === email ?
+                                            <Loader2
+                                                className="animate-spin"
+                                                size={18}
+                                            />
+                                            :
+                                            <Send size={18} />
+                                    }
+                                </button>,
+                            key: "emailAddress"
+                        }}
                     />
             }
+
             <Modal
                 isOpen={isModalOpen}
                 onClose={handleOnClose}
@@ -97,7 +121,7 @@ const ClientAgent = ({
                             value={fullName}
                             onChange={handleChange}
                             required
-                            className="outline-none px-4 py-2 border border-white/10 rounded-sm" 
+                            className="outline-none px-4 py-2 border border-white/10 rounded-sm"
                         />
                         <label htmlFor="emailAddress">
                             {t("agents.form.emailAddress")}
@@ -114,7 +138,7 @@ const ClientAgent = ({
                             value={emailAddress}
                             onChange={handleChange}
                             className="outline-none px-4 py-2 border border-white/10 rounded-sm
-                            disabled:bg-white/10 disabled:cursor-not-allowed" 
+                            disabled:bg-white/10 disabled:cursor-not-allowed"
                             required
                             disabled={!!id}
                         />

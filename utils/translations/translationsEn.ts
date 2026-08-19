@@ -5,7 +5,7 @@ export const translationsEn = {
         description: "Complete parking management system with vehicle tracking, subscription plans, and multi-agent support.",
         downloadFor: "Download for",
         ownerDashboard: "Dashboard Owner",
-        comingSoon:  "iOS version coming soon",
+        comingSoon: "iOS version coming soon",
         keyFeatures: "Key Features",
         vehicleManagement: "Vehicle Management",
         vehicleManagementDesc: "Register and manage multiple vehicles with dimensions, plate numbers, and maintenance schedules.",
@@ -356,7 +356,6 @@ export const translationsEn = {
         },
         table: {
             all: "All lot types",
-            delete: "Delete",
             rowsPerPage: "Rows per page",
             actions: "Actions"
         },
@@ -395,7 +394,7 @@ export const translationsEn = {
         },
         table: {
             all: "All agents",
-            delete: "Delete",
+            resend: "Re-send invitation email",
             rowsPerPage: "Rows per page",
             actions: "Actions"
         },
@@ -420,6 +419,8 @@ export const translationsEn = {
             invalidPhone: "Invalid phone number",
             agentCreatedError: "Failed to create agent",
             agentUpdatedError: "Failed to update agent",
+            alreadyRegistered: "A user with this email address has already been registered",
+            invitationSent: "Invitation sent successfully",
             accessDenied: "You may not have permission to perform this action"
         }
     },
@@ -554,5 +555,7 @@ export const translationsEn = {
             dayAgo: "1 day ago",
             daysAgo: "{count} days ago"
         }
-    }
+    },
+    edit: "Edit",
+    delete: "Delete"
 }
