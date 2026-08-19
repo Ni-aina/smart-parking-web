@@ -8,10 +8,11 @@ import {
   Eye,
   Ban,
   Clock,
-  CarFront
+  CarFront,
+  ParkingCircle
 } from 'lucide-react';
 import { ReservationInterface } from '@/types/reservation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Skeleton } from '../ui/skeleton';
 import { getDateFormat, getTimeFormat } from '@/utils/dates/DateTimeAction';
 import { useTranslation } from '@/context/LanguageContext';
@@ -63,8 +64,13 @@ const ReservationCard = ({
   const startDate = getDateFormat(dateTimeStart);
   const startTime = getTimeFormat(dateTimeStart);
 
-  const imageSrc = urlImages?.[0] || '/images/default-parking.jpg';
+  const imageSrc = urlImages?.[0];
   const statusLabel = t(`reservations.status.${status}`);
+
+  useEffect(() => {
+    if (imageSrc) return;
+    setLoadingImage(false);
+  }, [imageSrc])
 
   return (
     <div className="flex flex-col bg-white/2.5 rounded-md p-4 text-white gap-3">
@@ -110,34 +116,36 @@ const ReservationCard = ({
         <div
           className={
             `
-                relative shrink-0 rounded-md overflow-hidden
-                ${loadingImage ? "hidden" : "w-28 h-20"}
+                relative shrink-0 rounded-md w-28 h-20 overflow-hidden
+                ${loadingImage ? "hidden" : ""}
               `
           }
         >
-          <Image
-            src={imageSrc}
-            alt={name || t("reservations.detail.parkingLotAlt")}
-            fill
-            className="object-cover"
-            onLoadStart={
-              () => setLoadingImage(true)
-            }
-            onLoad={
-              () => setLoadingImage(false)
-            }
-            sizes="(max-width: 768px) 100vw, 33vw"
-            loading="eager"
-          />
+          {
+            imageSrc ?
+              <Image
+                src={imageSrc}
+                alt={name || t("reservations.detail.parkingLotAlt")}
+                fill
+                className="object-cover"
+                onLoad={
+                  () => setLoadingImage(false)
+                }
+                sizes="(max-width: 768px) 100vw, 33vw"
+                loading="eager"
+              />
+              :
+              <ParkingCircle size="100%" />
+          }
         </div>
         <div className="flex flex-col gap-2 w-full overflow-hidden">
           <div className="flex items-center justify-between gap-3">
-            <div className="w-20 font-semibold truncate">
+            <div className="flex-1 font-semibold truncate">
               {name || '—'}
             </div>
-            <div className="flex-1">
+            <h1 className="text-sm font-semibold">
               ${pricePerHour || t("reservations.form.unavailable")} {t("reservations.form.perHour")}
-            </div>
+            </h1>
           </div>
           <p className="text-sm text-white/60 truncate mt-1">
             {location || '—'}

@@ -1,14 +1,19 @@
 "use client";
 
 import Image from "next/image";
-import { DollarSign, Edit, Trash2 } from "lucide-react";
-import { useState } from "react";
+import {
+    DollarSign,
+    Edit,
+    ParkingCircle,
+    Trash2
+} from "lucide-react";
+import { useEffect, useState } from "react";
 import { Skeleton } from "../ui/skeleton";
 import { useTranslation } from "@/context/LanguageContext";
 
 interface ParkingCardProps {
     id: string;
-    urlImage: string;
+    urlImage?: string;
     name: string;
     location: string;
     type: string;
@@ -36,6 +41,11 @@ const ParkingCard = ({
     const { t } = useTranslation();
     const [loadingImage, setLoadingImage] = useState(true);
 
+    useEffect(() => {
+        if (urlImage) return;
+        setLoadingImage(false);
+    }, [urlImage])
+
     return (
         <div className="flex flex-col bg-white/2.5 rounded-md p-4 text-white gap-4">
             <div className="flex gap-4">
@@ -48,29 +58,31 @@ const ParkingCard = ({
                 <div
                     className={
                         `
-                            relative shrink-0 rounded-md overflow-hidden
-                            ${loadingImage ? "hidden" : "w-30 h-25"}
+                            relative shrink-0 rounded-md w-30 h-25 overflow-hidden
+                            ${loadingImage ? "hidden" : ""}
                         `
                     }
                 >
-                    <Image
-                        src={urlImage || "/images/default-parking.jpg"}
-                        alt={name}
-                        fill
-                        className="object-cover"
-                        onLoadStart={
-                            () => setLoadingImage(true)
-                        }
-                        onLoad={
-                            () => setLoadingImage(false)
-                        }
-                        sizes="(max-width: 768px) 100vw, 33vw"
-                    />
+                    {
+                        urlImage ?
+                            <Image
+                                src={urlImage}
+                                alt={name}
+                                fill
+                                className="object-cover"
+                                onLoad={
+                                    () => setLoadingImage(false)
+                                }
+                                sizes="(max-width: 768px) 100vw, 33vw"
+                            />
+                            :
+                            <ParkingCircle size="100%" />
+                    }
                 </div>
                 <div className="flex-1 flex flex-col gap-1 overflow-hidden">
-                    <div className="flex justify-between items-center gap-4">
+                    <div className="grid grid-cols-[1fr_25%] items-center gap-4">
                         <h2 className="font-semibold truncate">{name}</h2>
-                        <p className="text-sm text-white">{type}</p>
+                        <p className="text-end text-sm text-white truncate">{type}</p>
                     </div>
                     <p className="text-sm text-white/60 truncate">{location}</p>
                     <div className="text-md">{t("parkingLots.card.agents")}</div>

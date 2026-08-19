@@ -16,10 +16,16 @@ import {
     MapPin,
     DollarSign,
     CreditCard,
-    Ban
+    Ban,
+    ParkingCircle
 } from "lucide-react";
 import Image from "next/image";
-import { startTransition, useOptimistic, useState } from "react";
+import { 
+    startTransition, 
+    useEffect, 
+    useOptimistic, 
+    useState 
+} from "react";
 import { Skeleton } from "../ui/skeleton";
 import CancelConfirm from "../ui/cancelConfirm";
 import { useTranslation } from "@/context/LanguageContext";
@@ -75,7 +81,7 @@ const ReservationDetail = ({
     const statusLabel = t(`reservations.status.${status}`);
     const paymentStatusLabel = payment ? t(`reservations.status.${payment.status}`) : "";
 
-    const imageSrc = lot.urlImages?.[0] || "/images/default-parking.jpg";
+    const imageSrc = lot.urlImages?.[0];
 
     const handleCancel = async () => {
         if (!cancellingId) return;
@@ -87,6 +93,11 @@ const ReservationDetail = ({
 
         setCancellingId("");
     }
+
+    useEffect(() => {
+        if (imageSrc) return;
+        setLoadingImage(false);
+    }, [imageSrc])
 
     return (
         <>
@@ -135,14 +146,19 @@ const ReservationDetail = ({
                                 loadingImage &&
                                 <Skeleton className="w-full h-full bg-white/10" />
                             }
-                            <Image
-                                src={imageSrc}
-                                alt={lot.name || t("reservations.detail.parkingLotAlt")}
-                                fill
-                                className="object-cover"
-                                onLoadStart={() => setLoadingImage(true)}
-                                onLoadingComplete={() => setLoadingImage(false)}
-                            />
+                            {
+                                imageSrc ?
+                                    <Image
+                                        src={imageSrc}
+                                        alt={lot.name || t("reservations.detail.parkingLotAlt")}
+                                        fill
+                                        className="object-cover"
+                                        onLoad={() => setLoadingImage(false)}
+                                        sizes="(max-width: 768px) 100vw, 33vw"
+                                    />
+                                    :
+                                    <ParkingCircle size="100%" />
+                            }
                         </div>
                         <div className="flex flex-col gap-3">
                             <h3 className="text-lg font-semibold">{lot.name}</h3>

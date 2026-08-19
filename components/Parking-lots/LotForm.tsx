@@ -320,7 +320,7 @@ const FormParkingLots = ({
                     <CustomButton
                         title={parking ? t("parkingLots.form.update") : t("parkingLots.form.add")}
                         className="text-black min-w-48"
-                        isPending={isPending}
+                        isPending={isPending || isImagesPending}
                         Icon={Upload}
                     />
                 </div>
@@ -328,7 +328,7 @@ const FormParkingLots = ({
                     <CustomButton
                         title={parking ? t("parkingLots.form.update") : t("parkingLots.form.add")}
                         className="text-black min-w-48"
-                        isPending={isPending}
+                        isPending={isPending || isImagesPending}
                         Icon={Upload}
                     />
                     <CustomButton
