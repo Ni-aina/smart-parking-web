@@ -35,23 +35,22 @@ export const POST = async (req: Request) => {
             )
         }
 
-        const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
-            type: "invite",
-            email: emailAddress,
-            options: {
+        const { error: inviteError } = await supabaseAdmin.auth.admin.inviteUserByEmail(
+            emailAddress,
+            {
                 redirectTo: "SmartParking://auth/setPassword"
             }
-        })
+        )
 
-        if (linkError || !linkData) {
+        if (inviteError) {
             return NextResponse.json(
-                { error: linkError?.message || "Failed to generate invitation link" },
+                { error: inviteError?.message || "Failed to send invitation" },
                 { status: 400 }
             )
         }
 
         return NextResponse.json(
-            { data: linkData, message: "Invitation resent successfully" },
+            { message: "Invitation sent successfully" },
             { status: 200 }
         )
     } catch (error) {
