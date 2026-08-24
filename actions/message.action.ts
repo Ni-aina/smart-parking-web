@@ -19,6 +19,7 @@ import {
     withTimeout
 } from "../utils/messages/messageHelpers";
 import { revalidatePath } from "next/cache";
+import { sendMessagePushNotification } from "./notification.action";
 
 export const revalidateConversationsByUser = async () => {
     revalidatePath("/owner/messages");
@@ -182,7 +183,28 @@ export const sendMessage = async (message: MessageCreateInterface): Promise<Mess
             .single()
 
         if (!newMessage || error) throw new Error(`Message sending error, ${error?.message}`)
-        return normalizeMessage(newMessage)
+        const normalized = normalizeMessage(newMessage);
+
+        const { data: conversationData } = await supabase
+            .from("conversations")
+            .select("sender_id, receiver_id")
+            .eq("id", message.conversationId)
+            .single();
+
+        if (conversationData) {
+            const recipientId = conversationData.sender_id === message.senderId
+                ? conversationData.receiver_id
+                : conversationData.sender_id;
+
+            sendMessagePushNotification({
+                recipientId,
+                senderName: normalized.sender?.fullName || "New Message",
+                messageContent: normalized.content,
+                conversationId: normalized.conversationId
+            }).catch(() => null)
+        }
+
+        return normalized;
     })()
 
     return withTimeout(request)
