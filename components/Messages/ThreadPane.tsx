@@ -2,31 +2,38 @@
 
 import { useTranslation } from "@/context/LanguageContext";
 import useMessages from "@/hooks/messages/useMessages";
-import { ArrowLeft, Loader2, MessageCircle, Send } from "lucide-react";
+import { ArrowLeft, ChevronUp, Loader2, MessageCircle, Send } from "lucide-react";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import Avatar from "./Avatar";
 import MessageBubble from "./MessageBubble";
 import Link from "next/link";
-import { ConversationInterface, MessageInterface } from "@/types/message";
+import { ConversationInterface, PaginatedMessagesInterface } from "@/types/message";
 
 interface ThreadPaneInterface {
-    conversation: ConversationInterface;
-    messages: MessageInterface[];
+    conversation: ConversationInterface
+    initialData: PaginatedMessagesInterface
 }
 
 const ThreadPane = ({
     conversation,
-    messages
+    initialData
 }: ThreadPaneInterface) => {
     const { t, language } = useTranslation()
     const [message, setMessage] = useState("")
     const scrollRef = useRef<HTMLDivElement>(null)
+    const prevScrollHeightRef = useRef<number | null>(null)
+    const isInitialLoadRef = useRef<boolean>(true)
+
     const {
+        messages,
+        hasMore,
+        isLoadingOlder,
+        loadOlderMessages,
         handleSendAsync,
         isSending,
         currentProfile
-    } = useMessages(conversation, messages)
+    } = useMessages(conversation, initialData)
 
     const otherUser = currentProfile && conversation.senderId === currentProfile?.id
         ? conversation.receiver
@@ -51,8 +58,33 @@ const ThreadPane = ({
         }
     }
 
+    const handleLoadOlder = async () => {
+        if (!scrollRef.current) return
+        prevScrollHeightRef.current = scrollRef.current.scrollHeight
+        await loadOlderMessages()
+    }
+
     useEffect(() => {
-        scrollRef.current?.scrollTo({
+        isInitialLoadRef.current = true
+    }, [conversation.id])
+
+    useEffect(() => {
+        if (!scrollRef.current) return
+
+        if (prevScrollHeightRef.current !== null) {
+            const newScrollHeight = scrollRef.current.scrollHeight
+            scrollRef.current.scrollTop = newScrollHeight - prevScrollHeightRef.current
+            prevScrollHeightRef.current = null
+            return
+        }
+
+        if (isInitialLoadRef.current) {
+            scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+            isInitialLoadRef.current = false
+            return
+        }
+
+        scrollRef.current.scrollTo({
             top: scrollRef.current.scrollHeight,
             behavior: "smooth"
         })
@@ -79,10 +111,33 @@ const ThreadPane = ({
                 </div>
             </header>
 
-            {
-                <div ref={scrollRef} className="min-h-0 flex-1 space-y-2 overflow-y-auto p-4">
-                    {
-                        messages.length ? messages.map((item, index) =>
+            <div ref={scrollRef} className="min-h-0 flex-1 space-y-2 overflow-y-auto p-4">
+                {
+                    hasMore &&
+                    <div className="flex justify-center py-2">
+                        {
+                            isLoadingOlder ?
+                                <div className="flex items-center justify-center gap-2 py-1 text-xs text-white/50">
+                                    <Loader2 size={14} className="animate-spin" />
+                                    <span>{t("messages.loadingOlder")}</span>
+                                </div>
+                                :
+                                <button
+                                    type="button"
+                                    onClick={handleLoadOlder}
+                                    disabled={isLoadingOlder}
+                                    className="flex cursor-pointer items-center gap-1.5 rounded-md bg-white/10 px-3 py-1.5 text-xs font-medium text-white/80 transition hover:bg-white/15 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                                >
+                                    <ChevronUp size={14} />
+                                    {t("messages.loadOlder")}
+                                </button>
+                        }
+                    </div>
+                }
+
+                {
+                    messages.length ?
+                        messages.map((item, index) =>
                             <MessageBubble
                                 key={item.id}
                                 message={item}
@@ -94,16 +149,15 @@ const ThreadPane = ({
                                 locale={language === "fr" ? "fr-FR" : "en-US"}
                             />
                         )
-                            :
-                            <div className="flex h-full min-h-72 flex-col items-center justify-center gap-3 text-center">
-                                <MessageCircle size={52} className="text-white/20" />
-                                <p className="text-sm font-medium text-white/55">
-                                    {t("messages.startChat")}
-                                </p>
-                            </div>
-                    }
-                </div>
-            }
+                        :
+                        <div className="flex h-full min-h-72 flex-col items-center justify-center gap-3 text-center">
+                            <MessageCircle size={52} className="text-white/20" />
+                            <p className="text-sm font-medium text-white/55">
+                                {t("messages.startChat")}
+                            </p>
+                        </div>
+                }
+            </div>
 
             <form onSubmit={submitMessage} className="bg-black/20 p-3">
                 <div className="flex items-end gap-2 rounded-md bg-black/30 p-2">
@@ -134,4 +188,4 @@ const ThreadPane = ({
     )
 }
 
-export default ThreadPane;
+export default ThreadPane

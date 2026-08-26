@@ -13,6 +13,12 @@ export interface MessageInterface {
     sender?: ProfileInterface
 }
 
+export interface PaginatedMessagesInterface {
+    messages: MessageInterface[]
+    hasMore: boolean
+    totalCount: number
+}
+
 export interface ConversationInterface {
     id: number
     senderId: string

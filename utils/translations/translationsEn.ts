@@ -540,6 +540,8 @@ export const translationsEn = {
         conversation: "Conversation",
         errorSending: "Message could not be sent",
         errorConversation: "Conversation could not be opened",
+        loadOlder: "Show older messages",
+        loadingOlder: "Loading older messages...",
         roles: {
             all: "All",
             owner: "Owner",

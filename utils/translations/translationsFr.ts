@@ -540,6 +540,8 @@ export const translationsFr = {
         conversation: "Conversation",
         errorSending: "Le message n'a pas pu être envoyé",
         errorConversation: "La conversation n'a pas pu être ouverte",
+        loadOlder: "Afficher les messages précédents",
+        loadingOlder: "Chargement des messages précédents...",
         roles: {
             all: "Tous",
             owner: "Propriétaire",

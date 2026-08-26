@@ -8,22 +8,21 @@ interface ConversationPageInterface {
 const ConversationPage = async ({
     params
 }: ConversationPageInterface) => {
-
-    const { conversationId } = await params;
+    const { conversationId } = await params
     const [
         conversation,
-        messages
+        initialData
     ] = await Promise.all([
         getConversationById(conversationId),
-        getMessagesByConversationId(conversationId)
+        getMessagesByConversationId(conversationId, 1, 20)
     ])
 
     return (
         <ThreadPane
             conversation={conversation}
-            messages={messages}
+            initialData={initialData}
         />
     )
 }
 
-export default ConversationPage;
+export default ConversationPage

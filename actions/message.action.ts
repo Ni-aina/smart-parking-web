@@ -1,123 +1,76 @@
 "use server"
 
-import {
-    ConversationCreateInterface,
-    ConversationInterface,
-    MessageCreateInterface,
-    MessageInterface
-} from "@/types/message";
+import { ConversationCreateInterface, ConversationInterface, MessageCreateInterface, MessageInterface, PaginatedMessagesInterface } from "@/types/message";
 import { ProfileInterface } from "@/types/profile";
 import { isUUID } from "@/utils/isUUID";
 import { denormalizeData, normalizeData } from "@/utils/normalizeData";
 import { getServerAuth } from "./authServer.action";
-import {
-    cleanSearchTerm,
-    normalizeConversation,
-    normalizeMessage,
-    QueryRecord,
-    selectConversationFields,
-    withTimeout
-} from "../utils/messages/messageHelpers";
+import { cleanSearchTerm, normalizeConversation, normalizeMessage, QueryRecord, selectConversationFields, withTimeout } from "../utils/messages/messageHelpers";
 import { revalidatePath } from "next/cache";
 import { sendMessagePushNotification } from "./notification.action";
 
 export const revalidateConversationsByUser = async () => {
-    revalidatePath("/owner/messages");
-}
-export const revalidateMessagesByConversation = async (conversationId: string) => {
-    revalidatePath(`/owner/messages/${conversationId}`);
+    revalidatePath("/owner/messages")
 }
 
-export async function getNoReadCountByUser(): Promise<number> {
+export const revalidateMessagesByConversation = async (conversationId: string) => {
+    revalidatePath(`/owner/messages/${conversationId}`)
+}
+
+export const getNoReadCountByUser = async (): Promise<number> => {
     try {
         const request = (async () => {
             const { supabase, userId } = await getServerAuth()
-            const { count, error } = await supabase.from("messages")
-                .select("*", { count: "exact", head: true })
-                .neq("sender_id", userId)
-                .eq("is_read", false)
-
-            if (error) throw new Error(`Count fetching error, ${error?.message}`);
-            return count;
+            const { count, error } = await supabase.from("messages").select("*", { count: "exact", head: true }).neq("sender_id", userId).eq("is_read", false)
+            if (error) throw new Error(`Count fetching error, ${error?.message}`)
+            return count ?? 0
         })()
-
         return withTimeout(request)
-
     } catch (error) {
-        throw error;
+        throw error
     }
 }
 
 export const getConversationsByUser = async (): Promise<ConversationInterface[]> => {
     const request = (async () => {
         const { supabase, userId } = await getServerAuth()
-        const { data: conversations, error } = await supabase
-            .from("conversations")
-            .select(selectConversationFields)
-            .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`)
-            .order("created_at", { ascending: false })
-
+        const { data: conversations, error } = await supabase.from("conversations").select(selectConversationFields).or(`sender_id.eq.${userId},receiver_id.eq.${userId}`).order("created_at", { ascending: false })
         if (!conversations || error) throw new Error(`Conversations fetching error, ${error?.message}`)
-
         const rawConversations = conversations as QueryRecord[]
         const conversationIds = rawConversations.map(item => item.id)
         const { data: messages, error: messageError } = conversationIds.length
-            ? await supabase
-                .from("messages")
-                .select("id,conversation_id,sender_id,content,content_type,attachement_url,is_read,created_at,updated_at")
-                .in("conversation_id", conversationIds)
-                .order("created_at", { ascending: false })
+            ? await supabase.from("messages").select("id,conversation_id,sender_id,content,content_type,attachement_url,is_read,created_at,updated_at").in("conversation_id", conversationIds).order("created_at", { ascending: false })
             : { data: [], error: null }
-
         if (messageError) throw new Error(`Messages fetching error, ${messageError.message}`)
-
-        const lastMessages = ((messages ?? []) as QueryRecord[]).reduce((
-            acc: Record<number, MessageInterface>,
-            item
-        ) => {
+        const lastMessages = ((messages ?? []) as QueryRecord[]).reduce((acc: Record<number, MessageInterface>, item) => {
             const normalized = normalizeMessage(item)
             if (!acc[normalized.conversationId]) acc[normalized.conversationId] = normalized
             return acc
         }, {})
-
-        return rawConversations
-            .map(item => {
-                const normalized = normalizeConversation(item)
-                return {
-                    ...normalized,
-                    lastMessage: lastMessages[normalized.id],
-                    isNotReadCount: messages?.filter((m: any) =>
-                        m.conversation_id === normalized.id &&
-                        m.is_read === false &&
-                        m.sender_id !== userId
-                    ).length
-                }
-            })
-            .sort((a, b) => {
-                const aTime = a.lastMessage?.createdAt ?? a.createdAt
-                const bTime = b.lastMessage?.createdAt ?? b.createdAt
-                return new Date(bTime).getTime() - new Date(aTime).getTime()
-            })
+        return rawConversations.map(item => {
+            const normalized = normalizeConversation(item)
+            return {
+                ...normalized,
+                lastMessage: lastMessages[normalized.id],
+                isNotReadCount: messages?.filter((m: any) => m.conversation_id === normalized.id && m.is_read === false && m.sender_id !== userId).length
+            }
+        }).sort((a, b) => {
+            const aTime = a.lastMessage?.createdAt ?? a.createdAt
+            const bTime = b.lastMessage?.createdAt ?? b.createdAt
+            return new Date(bTime).getTime() - new Date(aTime).getTime()
+        })
     })()
-
     return withTimeout(request)
 }
 
 export const getConversationById = async (conversationId: string): Promise<ConversationInterface> => {
     if (!conversationId) throw new Error("Conversation id is required")
-
     const request = (async () => {
         const { supabase } = await getServerAuth()
-        const { data: conversation, error } = await supabase
-            .from("conversations")
-            .select(selectConversationFields)
-            .eq("id", conversationId)
-            .single()
-
+        const { data: conversation, error } = await supabase.from("conversations").select(selectConversationFields).eq("id", conversationId).single()
         if (!conversation || error) throw new Error(`Conversation fetching error, ${error?.message}`)
         return normalizeConversation(conversation)
     })()
-
     return withTimeout(request)
 }
 
@@ -125,46 +78,39 @@ export const createConversation = async (conversation: ConversationCreateInterfa
     const { senderId, receiverId } = conversation
     if (!isUUID(senderId) || !isUUID(receiverId)) throw new Error("Invalid user")
     if (senderId === receiverId) throw new Error("You cannot create a conversation with yourself")
-
     const request = (async () => {
         const { supabase } = await getServerAuth()
-        const { data: existingConversation, error: existingError } = await supabase
-            .from("conversations")
-            .select(selectConversationFields)
-            .or(`and(sender_id.eq.${senderId},receiver_id.eq.${receiverId}),and(sender_id.eq.${receiverId},receiver_id.eq.${senderId})`)
-            .maybeSingle()
-
+        const { data: existingConversation, error: existingError } = await supabase.from("conversations").select(selectConversationFields).or(`and(sender_id.eq.${senderId},receiver_id.eq.${receiverId}),and(sender_id.eq.${receiverId},receiver_id.eq.${senderId})`).maybeSingle()
         if (existingError) throw new Error(`Conversation lookup error, ${existingError.message}`)
         if (existingConversation) return normalizeConversation(existingConversation)
-
-        const { data: newConversation, error } = await supabase
-            .from("conversations")
-            .insert([denormalizeData(conversation)])
-            .select(selectConversationFields)
-            .single()
-
+        const { data: newConversation, error } = await supabase.from("conversations").insert([denormalizeData(conversation)]).select(selectConversationFields).single()
         if (!newConversation || error) throw new Error(`Conversation creation error, ${error?.message}`)
         return normalizeConversation(newConversation)
     })()
-
     return withTimeout(request)
 }
 
-export const getMessagesByConversationId = async (conversationId: string): Promise<MessageInterface[]> => {
+export const getMessagesByConversationId = async (
+    conversationId: string,
+    page = 1,
+    limit = 20
+): Promise<PaginatedMessagesInterface> => {
     if (!conversationId) throw new Error("Conversation id is required")
-
     const request = (async () => {
         const { supabase } = await getServerAuth()
-        const { data: messages, error } = await supabase
-            .from("messages")
-            .select("*, sender: sender_id(*)")
-            .eq("conversation_id", conversationId)
-            .order("created_at", { ascending: true })
-
+        const from = (page - 1) * limit
+        const to = from + limit - 1
+        const { data: messages, count, error } = await supabase.from("messages").select("*, sender: sender_id(*)", { count: "exact" }).eq("conversation_id", conversationId).order("created_at", { ascending: false }).range(from, to)
         if (!messages || error) throw new Error(`Messages fetching error, ${error?.message}`)
-        return (messages as QueryRecord[]).map(item => normalizeMessage(item))
+        const normalized = (messages as QueryRecord[]).map(item => normalizeMessage(item)).reverse()
+        const totalCount = count ?? 0
+        const hasMore = totalCount > page * limit
+        return {
+            messages: normalized,
+            hasMore,
+            totalCount
+        }
     })()
-
     return withTimeout(request)
 }
 
@@ -173,29 +119,14 @@ export const sendMessage = async (message: MessageCreateInterface): Promise<Mess
         ...message,
         contentType: message.contentType ?? "text"
     })
-
     const request = (async () => {
         const { supabase } = await getServerAuth()
-        const { data: newMessage, error } = await supabase
-            .from("messages")
-            .insert([payload])
-            .select("*, sender: sender_id(*)")
-            .single()
-
+        const { data: newMessage, error } = await supabase.from("messages").insert([payload]).select("*, sender: sender_id(*)").single()
         if (!newMessage || error) throw new Error(`Message sending error, ${error?.message}`)
-        const normalized = normalizeMessage(newMessage);
-
-        const { data: conversationData } = await supabase
-            .from("conversations")
-            .select("sender_id, receiver_id")
-            .eq("id", message.conversationId)
-            .single();
-
+        const normalized = normalizeMessage(newMessage)
+        const { data: conversationData } = await supabase.from("conversations").select("sender_id, receiver_id").eq("id", message.conversationId).single()
         if (conversationData) {
-            const recipientId = conversationData.sender_id === message.senderId
-                ? conversationData.receiver_id
-                : conversationData.sender_id;
-
+            const recipientId = conversationData.sender_id === message.senderId ? conversationData.receiver_id : conversationData.sender_id
             sendMessagePushNotification({
                 recipientId,
                 senderName: normalized.sender?.fullName || "New Message",
@@ -203,52 +134,32 @@ export const sendMessage = async (message: MessageCreateInterface): Promise<Mess
                 conversationId: normalized.conversationId
             }).catch(() => null)
         }
-
-        return normalized;
+        return normalized
     })()
-
     return withTimeout(request)
 }
 
 export const markConversationMessagesAsRead = async (conversationId: string): Promise<boolean> => {
     if (!conversationId) return false
-
     const request = (async () => {
         const { supabase, userId } = await getServerAuth()
-        const { error } = await supabase
-            .from("messages")
-            .update({ is_read: true })
-            .eq("is_read", false)
-            .eq("conversation_id", conversationId)
-            .neq("sender_id", userId)
-
+        const { error } = await supabase.from("messages").update({ is_read: true }).eq("is_read", false).eq("conversation_id", conversationId).neq("sender_id", userId)
         if (error) throw new Error(`Mark messages as read error, ${error.message}`)
         return true
     })()
-
     return withTimeout(request)
 }
 
 export const getProfilesForConversation = async (searchTerm = "", roleFilter = "all"): Promise<ProfileInterface[]> => {
-
     const request = (async () => {
         const { supabase, userId: currentUserId } = await getServerAuth()
         const term = cleanSearchTerm(searchTerm)
-        let query = supabase
-            .from("profiles")
-            .select("*")
-            .neq("id", currentUserId)
-            .order("full_name", { ascending: true })
-            .limit(30)
-
+        let query = supabase.from("profiles").select("*").neq("id", currentUserId).order("full_name", { ascending: true }).limit(30)
         if (term) query = query.or(`full_name.ilike.%${term}%,email_address.ilike.%${term}%`)
         if (["owner", "driver", "agent"].includes(roleFilter)) query = query.contains("roles", [roleFilter])
-
         const { data: profiles, error } = await query
-
         if (!profiles || error) throw new Error(`Profiles fetching error, ${error?.message}`)
         return (profiles as QueryRecord[]).map(item => normalizeData(item) as ProfileInterface)
     })()
-
     return withTimeout(request)
 }
