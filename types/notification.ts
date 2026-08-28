@@ -12,7 +12,7 @@ export interface PushNotificationPayload {
     title: string;
     body: string;
     data?: Record<string, unknown>;
-    sound?: "default" | null;
+    sound?: "default" | string | null;
     badge?: number;
     channelId?: string;
     priority?: "default" | "normal" | "high";
