@@ -1,11 +1,24 @@
 "use server"
 
-import { ConversationCreateInterface, ConversationInterface, MessageCreateInterface, MessageInterface, PaginatedMessagesInterface } from "@/types/message";
+import {
+    ConversationCreateInterface,
+    ConversationInterface,
+    MessageCreateInterface,
+    MessageInterface,
+    PaginatedMessagesInterface
+} from "@/types/message";
 import { ProfileInterface } from "@/types/profile";
 import { isUUID } from "@/utils/isUUID";
 import { denormalizeData, normalizeData } from "@/utils/normalizeData";
 import { getServerAuth } from "./authServer.action";
-import { cleanSearchTerm, normalizeConversation, normalizeMessage, QueryRecord, selectConversationFields, withTimeout } from "../utils/messages/messageHelpers";
+import {
+    cleanSearchTerm,
+    normalizeConversation,
+    normalizeMessage,
+    QueryRecord,
+    selectConversationFields,
+    withTimeout
+} from "../utils/messages/messageHelpers";
 import { revalidatePath } from "next/cache";
 import { sendMessagePushNotification } from "./notification.action";
 
@@ -21,7 +34,12 @@ export const getNoReadCountByUser = async (): Promise<number> => {
     try {
         const request = (async () => {
             const { supabase, userId } = await getServerAuth()
-            const { count, error } = await supabase.from("messages").select("*", { count: "exact", head: true }).neq("sender_id", userId).eq("is_read", false)
+            const { count, error } = await supabase
+                .from("messages")
+                .select("*", { count: "exact", head: true })
+                .neq("sender_id", userId)
+                .eq("is_read", false)
+
             if (error) throw new Error(`Count fetching error, ${error?.message}`)
             return count ?? 0
         })()
@@ -34,12 +52,22 @@ export const getNoReadCountByUser = async (): Promise<number> => {
 export const getConversationsByUser = async (): Promise<ConversationInterface[]> => {
     const request = (async () => {
         const { supabase, userId } = await getServerAuth()
-        const { data: conversations, error } = await supabase.from("conversations").select(selectConversationFields).or(`sender_id.eq.${userId},receiver_id.eq.${userId}`).order("created_at", { ascending: false })
+        const { data: conversations, error } = await supabase
+            .from("conversations")
+            .select(selectConversationFields)
+            .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`)
+            .order("created_at", { ascending: false })
+
         if (!conversations || error) throw new Error(`Conversations fetching error, ${error?.message}`)
         const rawConversations = conversations as QueryRecord[]
         const conversationIds = rawConversations.map(item => item.id)
         const { data: messages, error: messageError } = conversationIds.length
-            ? await supabase.from("messages").select("id,conversation_id,sender_id,content,content_type,attachement_url,is_read,created_at,updated_at").in("conversation_id", conversationIds).order("created_at", { ascending: false })
+            ? await supabase
+                .from("messages")
+                .select("id,conversation_id,sender_id,content,content_type,attachement_url,is_read,created_at,updated_at")
+                .in("conversation_id", conversationIds)
+                .order("created_at", { ascending: false })
+
             : { data: [], error: null }
         if (messageError) throw new Error(`Messages fetching error, ${messageError.message}`)
         const lastMessages = ((messages ?? []) as QueryRecord[]).reduce((acc: Record<number, MessageInterface>, item) => {
@@ -52,7 +80,9 @@ export const getConversationsByUser = async (): Promise<ConversationInterface[]>
             return {
                 ...normalized,
                 lastMessage: lastMessages[normalized.id],
-                isNotReadCount: messages?.filter((m: any) => m.conversation_id === normalized.id && m.is_read === false && m.sender_id !== userId).length
+                isNotReadCount: messages?.filter((m: any) =>
+                    m.conversation_id === normalized.id && m.is_read === false && m.sender_id !== userId
+                ).length
             }
         }).sort((a, b) => {
             const aTime = a.lastMessage?.createdAt ?? a.createdAt
@@ -67,7 +97,12 @@ export const getConversationById = async (conversationId: string): Promise<Conve
     if (!conversationId) throw new Error("Conversation id is required")
     const request = (async () => {
         const { supabase } = await getServerAuth()
-        const { data: conversation, error } = await supabase.from("conversations").select(selectConversationFields).eq("id", conversationId).single()
+        const { data: conversation, error } = await supabase
+            .from("conversations")
+            .select(selectConversationFields)
+            .eq("id", conversationId)
+            .single()
+
         if (!conversation || error) throw new Error(`Conversation fetching error, ${error?.message}`)
         return normalizeConversation(conversation)
     })()
@@ -80,10 +115,20 @@ export const createConversation = async (conversation: ConversationCreateInterfa
     if (senderId === receiverId) throw new Error("You cannot create a conversation with yourself")
     const request = (async () => {
         const { supabase } = await getServerAuth()
-        const { data: existingConversation, error: existingError } = await supabase.from("conversations").select(selectConversationFields).or(`and(sender_id.eq.${senderId},receiver_id.eq.${receiverId}),and(sender_id.eq.${receiverId},receiver_id.eq.${senderId})`).maybeSingle()
+        const { data: existingConversation, error: existingError } = await supabase
+            .from("conversations")
+            .select(selectConversationFields)
+            .or(`and(sender_id.eq.${senderId},receiver_id.eq.${receiverId}),and(sender_id.eq.${receiverId},receiver_id.eq.${senderId})`)
+            .maybeSingle()
+
         if (existingError) throw new Error(`Conversation lookup error, ${existingError.message}`)
         if (existingConversation) return normalizeConversation(existingConversation)
-        const { data: newConversation, error } = await supabase.from("conversations").insert([denormalizeData(conversation)]).select(selectConversationFields).single()
+        const { data: newConversation, error } = await supabase
+            .from("conversations")
+            .insert([denormalizeData(conversation)])
+            .select(selectConversationFields)
+            .single()
+
         if (!newConversation || error) throw new Error(`Conversation creation error, ${error?.message}`)
         return normalizeConversation(newConversation)
     })()
@@ -100,7 +145,13 @@ export const getMessagesByConversationId = async (
         const { supabase } = await getServerAuth()
         const from = (page - 1) * limit
         const to = from + limit - 1
-        const { data: messages, count, error } = await supabase.from("messages").select("*, sender: sender_id(*)", { count: "exact" }).eq("conversation_id", conversationId).order("created_at", { ascending: false }).range(from, to)
+        const { data: messages, count, error } = await supabase
+            .from("messages")
+            .select("*, sender: sender_id(*)", { count: "exact" })
+            .eq("conversation_id", conversationId)
+            .order("created_at", { ascending: false })
+            .range(from, to)
+
         if (!messages || error) throw new Error(`Messages fetching error, ${error?.message}`)
         const normalized = (messages as QueryRecord[]).map(item => normalizeMessage(item)).reverse()
         const totalCount = count ?? 0
@@ -121,10 +172,20 @@ export const sendMessage = async (message: MessageCreateInterface): Promise<Mess
     })
     const request = (async () => {
         const { supabase } = await getServerAuth()
-        const { data: newMessage, error } = await supabase.from("messages").insert([payload]).select("*, sender: sender_id(*)").single()
+        const { data: newMessage, error } = await supabase
+            .from("messages")
+            .insert([payload])
+            .select("*, sender: sender_id(*)")
+            .single()
+
         if (!newMessage || error) throw new Error(`Message sending error, ${error?.message}`)
         const normalized = normalizeMessage(newMessage)
-        const { data: conversationData } = await supabase.from("conversations").select("sender_id, receiver_id").eq("id", message.conversationId).single()
+        const { data: conversationData } = await supabase
+            .from("conversations")
+            .select("sender_id, receiver_id")
+            .eq("id", message.conversationId)
+            .single()
+
         if (conversationData) {
             const recipientId = conversationData.sender_id === message.senderId ? conversationData.receiver_id : conversationData.sender_id
             sendMessagePushNotification({
@@ -143,7 +204,13 @@ export const markConversationMessagesAsRead = async (conversationId: string): Pr
     if (!conversationId) return false
     const request = (async () => {
         const { supabase, userId } = await getServerAuth()
-        const { error } = await supabase.from("messages").update({ is_read: true }).eq("is_read", false).eq("conversation_id", conversationId).neq("sender_id", userId)
+        const { error } = await supabase
+            .from("messages")
+            .update({ is_read: true })
+            .eq("is_read", false)
+            .eq("conversation_id", conversationId)
+            .neq("sender_id", userId)
+
         if (error) throw new Error(`Mark messages as read error, ${error.message}`)
         return true
     })()
@@ -154,7 +221,13 @@ export const getProfilesForConversation = async (searchTerm = "", roleFilter = "
     const request = (async () => {
         const { supabase, userId: currentUserId } = await getServerAuth()
         const term = cleanSearchTerm(searchTerm)
-        let query = supabase.from("profiles").select("*").neq("id", currentUserId).order("full_name", { ascending: true }).limit(30)
+        let query = supabase
+            .from("profiles")
+            .select("*")
+            .neq("id", currentUserId)
+            .order("full_name", { ascending: true })
+            .limit(30)
+
         if (term) query = query.or(`full_name.ilike.%${term}%,email_address.ilike.%${term}%`)
         if (["owner", "driver", "agent"].includes(roleFilter)) query = query.contains("roles", [roleFilter])
         const { data: profiles, error } = await query
