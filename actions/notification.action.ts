@@ -76,10 +76,10 @@ export const sendMessagePushNotification = async ({
 
         const notificationPayload: PushNotificationPayload = {
             to: validTokens,
-            sound: "notification.wav",
+            sound: "default",
             title: senderName || "New Message",
             body: messageContent,
-            channelId: "messages",
+            channelId: "messages-v2",
             priority: "high",
             data: {
                 conversationId,
