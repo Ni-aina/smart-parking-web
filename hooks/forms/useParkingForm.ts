@@ -2,10 +2,10 @@
 
 import { createParkingLot, editParkingLot } from "@/actions/parkingLots.action";
 import { SelectInterface } from "@/types/input";
+import { LotInterface } from "@/types/lot";
 import { ParkingInterface } from "@/types/parking";
 import { ProfileInterface } from "@/types/profile";
 import { TypeInterface } from "@/types/type";
-import { getLatLng } from "@/utils/openstreetmap";
 import { urlToFile } from "@/utils/urlToFile";
 import { useTranslation } from "@/context/LanguageContext";
 import { useRouter } from "next/navigation";
@@ -20,7 +20,7 @@ import {
 interface FormParkingLotsInterface {
     types: TypeInterface[];
     agents: ProfileInterface[];
-    parking: ParkingInterface | null
+    parking: (LotInterface | ParkingInterface) | null;
 }
 
 const allowedTypes = ["image/png", "image/jpeg", "image/jpg"]
@@ -47,11 +47,22 @@ const useParkingForm = ({
     const [agentSearch, setAgentSearch] = useState("");
     const [isPending, setIsPending] = useState(false);
 
-    const [formData, setFormData] = useState({
-        id: parking?.id || "",
+    const [formData, setFormData] = useState<{
+        id: string;
+        name: string;
+        location: string;
+        locationLat: number | null;
+        locationLng: number | null;
+        typeId: string;
+        totalSpots: number | string;
+        pricePerHour: number | string;
+    }>({
+        id: parking?.id ? String(parking.id) : "",
         name: parking?.name || "",
         location: parking?.location || "",
-        typeId: parking?.lotType.id || selectTypes.at(0)?.id || "",
+        locationLat: parking && "locationLat" in parking && typeof parking.locationLat === "number" ? parking.locationLat : null,
+        locationLng: parking && "locationLng" in parking && typeof parking.locationLng === "number" ? parking.locationLng : null,
+        typeId: (parking && "lotType" in parking && parking.lotType?.id) || (parking && "typeId" in parking && String(parking.typeId)) || selectTypes.at(0)?.id || "",
         totalSpots: parking?.totalSpots || "",
         pricePerHour: parking?.pricePerHour || ""
     })
@@ -60,7 +71,7 @@ const useParkingForm = ({
         id: item.id || "",
         name: item.fullName || "",
         urlImage: item.urlImage || "/images/default-user.png",
-        checked: parking?.agents.includes(item.id) || false
+        checked: parking && "agents" in parking && Array.isArray(parking.agents) ? parking.agents.includes(item.id) : false
     })))
 
     const agentsFiltered = agentsFormated.filter(item =>
@@ -76,6 +87,23 @@ const useParkingForm = ({
         setFormData(prev => ({
             ...prev,
             [name]: value
+        }))
+    }
+
+    const handleLocationSelect = ({
+        address,
+        lat,
+        lng
+    }: {
+        address: string;
+        lat: number;
+        lng: number;
+    }) => {
+        setFormData(prev => ({
+            ...prev,
+            location: address,
+            locationLat: lat,
+            locationLng: lng
         }))
     }
 
@@ -133,14 +161,13 @@ const useParkingForm = ({
         e.preventDefault();
         try {
             setIsPending(true);
-            const latLng = await getLatLng(formData.location);
             if (parking?.id) {
                 const updatedParking = await editParkingLot({
                     ...formData,
                     agents: agentsFormated,
                     images,
-                    location_lat: latLng.latitude,
-                    location_lng: latLng.longitude
+                    location_lat: formData.locationLat,
+                    location_lng: formData.locationLng
                 }, parking.urlImages)
 
                 if (!updatedParking) return;
@@ -151,8 +178,8 @@ const useParkingForm = ({
                 ...formData,
                 agents: agentsFormated,
                 images,
-                location_lat: latLng.latitude,
-                location_lng: latLng.longitude
+                location_lat: formData.locationLat,
+                location_lng: formData.locationLng
             })
             if (!newParking) return;
             router.push("/owner/parking-lots");
@@ -168,7 +195,7 @@ const useParkingForm = ({
     }
 
     useEffect(() => {
-        (async function () {
+        (async () => {
             if (parking?.urlImages?.length) {
                 const files = await Promise.all(parking.urlImages.map(url => urlToFile(url)));
                 setImages(files);
@@ -177,11 +204,11 @@ const useParkingForm = ({
         })()
     }, [parking]);
 
-
     return {
         formData,
         selectTypes,
         handleChange,
+        handleLocationSelect,
         agentsFiltered,
         agentSearch,
         setAgentSearch,
@@ -200,4 +227,4 @@ const useParkingForm = ({
     }
 }
 
-export default useParkingForm;
+export default useParkingForm

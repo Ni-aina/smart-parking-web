@@ -1,12 +1,15 @@
 "use client";
 
+import { useState } from "react";
 import { customCheckStyle } from "@/lib/customChexBoxStyle";
+import { LotInterface } from "@/types/lot";
 import { ParkingInterface } from "@/types/parking";
 import { ProfileInterface } from "@/types/profile";
 import { TypeInterface } from "@/types/type";
 import {
     DollarSign,
     Loader2,
+    MapPin,
     Plus,
     PlusCircle,
     Search,
@@ -23,11 +26,12 @@ import InputSelect from "../ui/inputSelect";
 import { useTranslation } from "@/context/LanguageContext";
 import useType from "@/hooks/useType";
 import FormType from "../Types/FormType";
+import LocationPickerModal from "../Maps/LocationPickerModal";
 
 interface FormParkingLotsInterface {
     types: TypeInterface[];
     agents: ProfileInterface[];
-    parking: ParkingInterface | null
+    parking: (LotInterface | ParkingInterface) | null;
 }
 
 const FormParkingLots = ({
@@ -36,11 +40,13 @@ const FormParkingLots = ({
     parking
 }: FormParkingLotsInterface) => {
     const { t } = useTranslation();
+    const [isMapModalOpen, setIsMapModalOpen] = useState(false)
 
     const {
         selectTypes,
         formData,
         handleChange,
+        handleLocationSelect,
         agentsFiltered,
         agentSearch,
         setAgentSearch,
@@ -107,15 +113,44 @@ const FormParkingLots = ({
                     />
                 </div>
                 <div className="flex flex-col gap-2">
-                    <label htmlFor="location">{t("parkingLots.form.location")}</label>
-                    <input
-                        className="w-full outline-none px-4 py-2 border border-white/10 rounded-sm"
-                        name="location"
-                        type="text"
-                        value={location}
-                        onChange={handleChange}
-                        required
-                    />
+                    <label htmlFor="location">
+                        {
+                            t("parkingLots.form.location")
+                        }
+                    </label>
+                    <button
+                        type="button"
+                        onClick={
+                            () => {
+                                setIsMapModalOpen(true)
+                            }
+                        }
+                        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-white/10 rounded-sm bg-white/5 hover:bg-white/10 text-white transition-colors cursor-pointer text-sm"
+                    >
+                        <MapPin
+                            size={
+                                16
+                            }
+                            className="text-red-500"
+                        />
+                        <span>
+                            Select location on map
+                        </span>
+                    </button>
+                    {
+                        location ?
+                            <div className="flex flex-col gap-1 p-3 bg-white/5 border border-white/10 rounded-sm">
+                                <span className="text-xs text-white/50 uppercase tracking-wider">
+                                    Selected Address
+                                </span>
+                                <p className="text-sm text-white/90 wrap-break-word">
+                                    {
+                                        location
+                                    }
+                                </p>
+                            </div>
+                            : null
+                    }
                 </div>
                 <div className="flex flex-col gap-2">
                     <label htmlFor="typeId">{t("parkingLots.form.vehicleType")}</label>
@@ -129,7 +164,7 @@ const FormParkingLots = ({
                         <div
                             className="flex justify-center items-center p-2.5 text-white bg-transparent
                             border border-white/5 rounded-sm cursor-pointer hover:bg-white/5"
-                            onClick={()=> setIsModalOpen(true)}
+                            onClick={() => setIsModalOpen(true)}
                             role="button"
                         >
                             <Plus size={20} />
@@ -353,8 +388,20 @@ const FormParkingLots = ({
                 description={description}
                 isPending={isPendingType}
             />
+            <LocationPickerModal
+                isOpen={isMapModalOpen}
+                onClose={
+                    () => {
+                        setIsMapModalOpen(false)
+                    }
+                }
+                onConfirm={handleLocationSelect}
+                initialAddress={location}
+                initialLat={formData.locationLat}
+                initialLng={formData.locationLng}
+            />
         </>
     )
 }
 
-export default FormParkingLots;
+export default FormParkingLots
