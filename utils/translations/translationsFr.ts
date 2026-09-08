@@ -318,6 +318,9 @@ export const translationsFr = {
         form: {
             name: "Nom du parking *",
             location: "Emplacement du parking *",
+            selectLocationOnMap: "Sélectionner la position sur la carte",
+            selectedAddress: "Adresse sélectionnée",
+            resolvingCurrentLocation: "Résolution de la position actuelle...",
             vehicleType: "Type de véhicule *",
             totalSpots: "Places totales *",
             pricePerHour: "Prix/heure *",
@@ -559,5 +562,15 @@ export const translationsFr = {
         }
     },
     edit: "Modifier",
-    delete: "Supprimer"
+    delete: "Supprimer",
+    locationPicker: {
+        title: "Sélectionner la position sur la carte",
+        resolvingAddress: "Recherche adresse en cours...",
+        address: "Adresse",
+        latitude: "Latitude",
+        longitude: "Longitude",
+        hint: "Cliquez sur la carte pour placer un repère et sélectionner une position.",
+        cancel: "Annuler",
+        confirm: "Confirmer"
+    }
 }

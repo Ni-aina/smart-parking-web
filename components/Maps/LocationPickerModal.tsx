@@ -13,6 +13,7 @@ import {
 import {
     reverseGeocode
 } from "@/utils/openstreetmap";
+import { useTranslation } from "@/context/LanguageContext";
 
 interface LocationResult {
     address: string
@@ -48,6 +49,7 @@ const LocationPickerModal = ({
     initialLat,
     initialLng
 }: LocationPickerModalProps) => {
+    const { t } = useTranslation()
     const [selectedLocation, setSelectedLocation] = useState<LocationResult | null>(null)
     const [isLoadingAddress, setIsLoadingAddress] = useState(false)
 
@@ -59,6 +61,26 @@ const LocationPickerModal = ({
                     lat: initialLat,
                     lng: initialLng
                 })
+            }
+            else if (typeof window !== "undefined" && "geolocation" in navigator) {
+                setIsLoadingAddress(true)
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                        const lat = position.coords.latitude
+                        const lng = position.coords.longitude
+                        const address = await reverseGeocode(lat, lng)
+                        setSelectedLocation({
+                            address,
+                            lat,
+                            lng
+                        })
+                        setIsLoadingAddress(false)
+                    },
+                    () => {
+                        setIsLoadingAddress(false)
+                        setSelectedLocation(null)
+                    }
+                )
             }
             else {
                 setSelectedLocation(null)
@@ -101,7 +123,7 @@ const LocationPickerModal = ({
                     <div className="flex items-center gap-2">
                         <MapPin size={20} className="text-red-500" />
                         <h2 className="text-md font-semibold uppercase tracking-wider text-white">
-                            Select location on map
+                            {t("locationPicker.title")}
                         </h2>
                     </div>
                     <button
@@ -128,22 +150,22 @@ const LocationPickerModal = ({
                         isLoadingAddress ?
                             <div className="flex items-center gap-2 text-white/70 py-1">
                                 <Loader2 size={16} className="animate-spin text-red-500" />
-                                <span>Resolving address...</span>
+                                <span>{t("locationPicker.resolvingAddress")}</span>
                             </div>
                             :
                             selectedLocation ?
                                 <div className="flex flex-col gap-1.5">
                                     <div className="flex flex-col">
-                                        <span className="text-xs text-white/50 uppercase tracking-wider">Address</span>
+                                        <span className="text-xs text-white/50 uppercase tracking-wider">{t("locationPicker.address")}</span>
                                         <span className="text-white font-medium wrap-break-word mt-0.5">{selectedLocation.address}</span>
                                     </div>
                                     <div className="flex items-center gap-4 text-xs text-white/60 pt-1 border-t border-white/5">
-                                        <span>Latitude: {selectedLocation.lat.toFixed(6)}</span>
-                                        <span>Longitude: {selectedLocation.lng.toFixed(6)}</span>
+                                        <span>{t("locationPicker.latitude")}: {selectedLocation.lat.toFixed(6)}</span>
+                                        <span>{t("locationPicker.longitude")}: {selectedLocation.lng.toFixed(6)}</span>
                                     </div>
                                 </div>
                                 :
-                                <span className="text-white/50 italic py-1">Click anywhere on the map to place a marker and select a location.</span>
+                                <span className="text-white/50 italic py-1">{t("locationPicker.hint")}</span>
                     }
                 </div>
 
@@ -153,7 +175,7 @@ const LocationPickerModal = ({
                         onClick={onClose}
                         className="px-5 py-2 rounded-sm bg-white/10 hover:bg-white/15 text-white transition-colors cursor-pointer text-sm"
                     >
-                        Cancel
+                        {t("locationPicker.cancel")}
                     </button>
                     <button
                         type="button"
@@ -161,7 +183,7 @@ const LocationPickerModal = ({
                         disabled={!selectedLocation || isLoadingAddress}
                         className="px-5 py-2 rounded-sm bg-white text-black hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity cursor-pointer text-sm font-medium"
                     >
-                        Confirm
+                        {t("locationPicker.confirm")}
                     </button>
                 </div>
             </div>

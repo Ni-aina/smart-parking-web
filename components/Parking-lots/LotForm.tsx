@@ -61,7 +61,8 @@ const FormParkingLots = ({
         handleDragLeave,
         handleSubmit,
         isPending,
-        handleCancel
+        handleCancel,
+        isLocationLoading
     } = useParkingForm({
         agents,
         parking,
@@ -134,22 +135,27 @@ const FormParkingLots = ({
                             className="text-red-500"
                         />
                         <span>
-                            Select location on map
+                            {t("parkingLots.form.selectLocationOnMap")}
                         </span>
                     </button>
                     {
-                        location ?
-                            <div className="flex flex-col gap-1 p-3 bg-white/5 border border-white/10 rounded-sm">
-                                <span className="text-xs text-white/50 uppercase tracking-wider">
-                                    Selected Address
-                                </span>
-                                <p className="text-sm text-white/90 wrap-break-word">
-                                    {
-                                        location
-                                    }
-                                </p>
+                        isLocationLoading ?
+                            <div className="flex items-center gap-2 p-3 bg-white/5 border border-white/10 rounded-sm text-sm text-white/70">
+                                <Loader2 size={16} className="animate-spin text-red-500" />
+                                <span>{t("parkingLots.form.resolvingCurrentLocation")}</span>
                             </div>
-                            : null
+                            : location ?
+                                <div className="flex flex-col gap-1 p-3 bg-white/5 border border-white/10 rounded-sm">
+                                    <span className="text-xs text-white/50 uppercase tracking-wider">
+                                        {t("parkingLots.form.selectedAddress")}
+                                    </span>
+                                    <p className="text-sm text-white/90 wrap-break-word">
+                                        {
+                                            location
+                                        }
+                                    </p>
+                                </div>
+                                : null
                     }
                 </div>
                 <div className="flex flex-col gap-2">
@@ -355,7 +361,7 @@ const FormParkingLots = ({
                     <CustomButton
                         title={parking ? t("parkingLots.form.update") : t("parkingLots.form.add")}
                         className="text-black min-w-48"
-                        isPending={isPending || isImagesPending}
+                        isPending={isPending || isImagesPending || isLocationLoading}
                         Icon={Upload}
                     />
                 </div>
@@ -363,7 +369,7 @@ const FormParkingLots = ({
                     <CustomButton
                         title={parking ? t("parkingLots.form.update") : t("parkingLots.form.add")}
                         className="text-black min-w-48"
-                        isPending={isPending || isImagesPending}
+                        isPending={isPending || isImagesPending || isLocationLoading}
                         Icon={Upload}
                     />
                     <CustomButton

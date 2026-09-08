@@ -318,6 +318,9 @@ export const translationsEn = {
         form: {
             name: "Parking name *",
             location: "Parking location *",
+            selectLocationOnMap: "Select location on map",
+            selectedAddress: "Selected Address",
+            resolvingCurrentLocation: "Resolving current location...",
             vehicleType: "Vehicle type *",
             totalSpots: "Total spots *",
             pricePerHour: "Price/hour *",
@@ -559,5 +562,15 @@ export const translationsEn = {
         }
     },
     edit: "Edit",
-    delete: "Delete"
+    delete: "Delete",
+    locationPicker: {
+        title: "Select location on map",
+        resolvingAddress: "Resolving address...",
+        address: "Address",
+        latitude: "Latitude",
+        longitude: "Longitude",
+        hint: "Click anywhere on the map to place a marker and select a location.",
+        cancel: "Cancel",
+        confirm: "Confirm"
+    }
 }

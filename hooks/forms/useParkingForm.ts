@@ -9,6 +9,7 @@ import { TypeInterface } from "@/types/type";
 import { urlToFile } from "@/utils/urlToFile";
 import { useTranslation } from "@/context/LanguageContext";
 import { useRouter } from "next/navigation";
+import { reverseGeocode } from "@/utils/openstreetmap";
 import {
     ChangeEvent,
     DragEvent,
@@ -46,6 +47,7 @@ const useParkingForm = ({
 
     const [agentSearch, setAgentSearch] = useState("");
     const [isPending, setIsPending] = useState(false);
+    const [isLocationLoading, setIsLocationLoading] = useState(false)
 
     const [formData, setFormData] = useState<{
         id: string;
@@ -204,6 +206,34 @@ const useParkingForm = ({
         })()
     }, [parking]);
 
+    useEffect(() => {
+        if (!parking?.id && typeof window !== "undefined" && "geolocation" in navigator) {
+            setIsLocationLoading(true)
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    const lat = position.coords.latitude
+                    const lng = position.coords.longitude
+                    const address = await reverseGeocode(lat, lng)
+                    setFormData(prev => {
+                        if (prev.locationLat !== null || prev.locationLng !== null || prev.location !== "") {
+                            return prev
+                        }
+                        return {
+                            ...prev,
+                            location: address,
+                            locationLat: lat,
+                            locationLng: lng
+                        }
+                    })
+                    setIsLocationLoading(false)
+                },
+                () => {
+                    setIsLocationLoading(false)
+                }
+            )
+        }
+    }, [parking])
+
     return {
         formData,
         selectTypes,
@@ -223,7 +253,8 @@ const useParkingForm = ({
         handleDragLeave,
         handleSubmit,
         isPending,
-        handleCancel
+        handleCancel,
+        isLocationLoading
     }
 }
 
