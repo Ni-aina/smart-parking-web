@@ -72,7 +72,7 @@ const useParkingForm = ({
     const [agentsFormated, setAgentsFormated] = useState(agents.map(item => ({
         id: item.id || "",
         name: item.fullName || "",
-        urlImage: item.urlImage || "/images/default-user.png",
+        urlImage: item.urlImage || "",
         checked: parking && "agents" in parking && Array.isArray(parking.agents) ? parking.agents.includes(item.id) : false
     })))
 

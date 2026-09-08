@@ -20,13 +20,13 @@ import {
 import Image from "next/image";
 import CustomButton from "../ui/customButton";
 import useParkingForm from "@/hooks/forms/useParkingForm";
-import Loading from "../ui/loading";
 import InputNumber from "../ui/inputNumber";
 import InputSelect from "../ui/inputSelect";
 import { useTranslation } from "@/context/LanguageContext";
 import useType from "@/hooks/useType";
 import FormType from "../Types/FormType";
 import LocationPickerModal from "../Maps/LocationPickerModal";
+import Avatar from "../Messages/Avatar";
 
 interface FormParkingLotsInterface {
     types: TypeInterface[];
@@ -129,9 +129,7 @@ const FormParkingLots = ({
                         className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-white/10 rounded-sm bg-white/5 hover:bg-white/10 text-white transition-colors cursor-pointer text-sm"
                     >
                         <MapPin
-                            size={
-                                16
-                            }
+                            size={16}
                             className="text-red-500"
                         />
                         <span>
@@ -338,12 +336,12 @@ const FormParkingLots = ({
                                                 {item.name}
                                             </h1>
                                         </div>
-                                        <Image
-                                            src={item.urlImage}
-                                            alt={item.name}
-                                            width={25}
-                                            height={25}
-                                            className="rounded-full"
+                                        <Avatar
+                                            profile={{
+                                                fullName: item.name,
+                                                urlImage: item.urlImage
+                                            }}
+                                            size="sm"
                                         />
                                     </div>
                                 )

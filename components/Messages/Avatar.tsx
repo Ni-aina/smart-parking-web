@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { cn } from "@/lib/utils";
 import { ProfileInterface } from "@/types/profile";
@@ -8,7 +8,7 @@ const Avatar = ({
     profile,
     size = "md"
 }: {
-    profile?: ProfileInterface
+    profile?: Partial<ProfileInterface>
     size?: "xs" | "sm" | "md" | "lg"
 }) => {
     const sizeClass = {
@@ -39,7 +39,7 @@ const Avatar = ({
                 sizeClass
             )}
         >
-            {profile?.fullName.at(0)?.toUpperCase()}
+            {profile?.fullName?.at(0)?.toUpperCase()}
         </div>
     )
 }
