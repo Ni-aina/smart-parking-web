@@ -5,7 +5,6 @@ export const translationsEn = {
         description: "Complete parking management system with vehicle tracking, subscription plans, and multi-agent support.",
         downloadFor: "Download for",
         ownerDashboard: "Dashboard Owner",
-        comingSoon: "iOS version coming soon",
         keyFeatures: "Key Features",
         vehicleManagement: "Vehicle Management",
         vehicleManagementDesc: "Register and manage multiple vehicles with dimensions, plate numbers, and maintenance schedules.",

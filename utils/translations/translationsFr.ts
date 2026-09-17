@@ -5,7 +5,6 @@ export const translationsFr = {
         description: "Système complet de gestion du stationnement avec suivi des véhicules, plans d'abonnement et support multi-agents.",
         downloadFor: "Télécharger pour",
         ownerDashboard: "Tableau de Bord Propriétaire",
-        comingSoon: "Version iOS bientôt disponible",
         keyFeatures: "Fonctionnalités Clés",
         vehicleManagement: "Gestion des Véhicules",
         vehicleManagementDesc: "Enregistrez et gérez plusieurs véhicules avec dimensions, numéros de plaque et calendriers d'entretien.",

@@ -43,12 +43,12 @@ const LandingPage = () => {
         try {
             const totalMB = await downloadFile(
                 "/api/public/apk",
-                "Smart-Parking.apk",
+                "smart-parking.apk",
                 language,
                 (receivedMB, totalMB, percent, speed, timeLeft) => {
                     toast.loading(
                         <div className="flex flex-col gap-1">
-                            <span className="font-semibold">Smart-Parking.apk - {percent}%</span>
+                            <span className="font-semibold">smart-parking.apk - {percent}%</span>
                             <span className="text-sm">{receivedMB} MB / {totalMB} MB - {speed} - {timeLeft}</span>
                         </div>,
                         {
@@ -70,8 +70,44 @@ const LandingPage = () => {
         }
     }
 
-    const handleDownloadiOS = () => {
-        toast.info(t("landing.comingSoon"))
+    const handleDownloadiOS = async () => {
+
+        if (isDownloading.current) return;
+
+        toast.loading(t("landing.downloadStarting"), {
+            id: "ios-download"
+        })
+
+        isDownloading.current = true;
+
+        try {
+            const totalMB = await downloadFile(
+                "/api/public/app",
+                "smart-parking.zip",
+                language,
+                (receivedMB, totalMB, percent, speed, timeLeft) => {
+                    toast.loading(
+                        <div className="flex flex-col gap-1">
+                            <span className="font-semibold">smart-parking.zip - {percent}%</span>
+                            <span className="text-sm">{receivedMB} MB / {totalMB} MB - {speed} - {timeLeft}</span>
+                        </div>,
+                        {
+                            id: "ios-download"
+                        }
+                    )
+                }
+            )
+
+            toast.success(t("landing.downloadComplete", { totalMB }), {
+                id: "ios-download"
+            })
+        } catch {
+            toast.error(t("landing.downloadFailed"), {
+                id: "ios-download"
+            })
+        } finally {
+            isDownloading.current = false
+        }
     }
 
     return (

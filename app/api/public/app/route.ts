@@ -8,7 +8,7 @@ export const GET = async (request: NextRequest) => {
 
         const command = new GetObjectCommand({
             Bucket: process.env.B2_BUCKET_NAME,
-            Key: "smart-parking.apk",
+            Key: "smart-parking.zip",
             Range: range
         })
 
@@ -21,8 +21,8 @@ export const GET = async (request: NextRequest) => {
         const stream = response.Body.transformToWebStream()
 
         const headers: Record<string, string> = {
-            "Content-Type": "application/vnd.android.package-archive",
-            "Content-Disposition": "attachment; filename=\"smart-parking.apk\"",
+            "Content-Type": "application/zip",
+            "Content-Disposition": "attachment; filename=\"smart-parking.zip\"",
             "Content-Length": String(response.ContentLength),
             "Accept-Ranges": "bytes"
         }
