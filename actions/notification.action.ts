@@ -7,18 +7,26 @@ import { rejectTimeout } from "@/utils/rejectTimeout";
 const EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send"
 
 export const getPushTokensByUserId = async (
-    userId: string
+    userId: string,
+    push_messages: boolean,
+    push_updates: boolean
 ): Promise<PushTokenInterface[]> => {
     try {
         if (!isUUID(userId)) return []
 
         const request = (async () => {
-            const { supabase } = await getServerAuth();
+            const { supabase } = await getServerAuth()
 
-            const { data, error } = await supabase
+            const query = supabase
                 .from("user_push_tokens")
                 .select("*")
                 .eq("user_id", userId)
+
+            if (push_messages) query.eq("enabled_messages", true)
+
+            if (push_updates) query.eq("enabled_updates", true)
+
+            const { data, error } = await query;
 
             if (error) throw new Error(error.message);
             return (data || []).map((item: any) => normalizeData(item) as PushTokenInterface);
@@ -67,7 +75,7 @@ export const sendMessagePushNotification = async ({
     try {
         if (!recipientId || !messageContent) return false;
 
-        const tokens = await getPushTokensByUserId(recipientId);
+        const tokens = await getPushTokensByUserId(recipientId, true, false);
         const validTokens = tokens
             .map(t => t.pushToken)
             .filter(token => Boolean(token && token.startsWith("ExponentPushToken[")))

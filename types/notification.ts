@@ -5,6 +5,8 @@ export interface PushTokenInterface {
     platform: string;
     createdAt: string;
     updatedAt: string;
+    enabledUpdates: boolean;
+    enabledMessages: boolean;
 }
 
 export interface PushNotificationPayload {
