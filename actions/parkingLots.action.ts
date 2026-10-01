@@ -171,22 +171,21 @@ export async function editParkingLot(parking: ParkingFormInterface, currentUrlIm
     }
 }
 
-export async function deleteParking(parkingId: string) {
+export async function deleteParking(parkingId: string): Promise<{ error: string } | undefined> {
     try {
 
         const request = (async () => {
             const { supabase } = await getServerAuth();
 
-            const { data: parking } = await supabase.from("parking_lots")
-                .select("id, url_images")
+            const { data: parking, error } = await supabase.from("parking_lots")
+                .delete()
                 .eq("id", parkingId)
-                .single()
+                .select()
+                .maybeSingle()
 
-            if (!parking) return;
+            if (!parking || error) return { error: "parkingLots.error.deleteMessage" }
 
-            const {
-                url_images
-            } = parking;
+            const { url_images } = parking;
 
             await Promise.all(url_images.map((item: string) => {
                 if (item) {
@@ -195,12 +194,6 @@ export async function deleteParking(parkingId: string) {
                 }
             }))
 
-            const { error } = await supabase.from("parking_lots")
-                .delete()
-                .eq("id", parkingId)
-                .single();
-
-            if (error) return;
             revalidatePath("/owner/parking-lots");
         })()
 

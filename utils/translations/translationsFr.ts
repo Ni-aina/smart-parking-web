@@ -340,6 +340,9 @@ export const translationsFr = {
             message: "Voulez-vous vraiment continuer ?",
             cancel: "Annuler",
             confirm: "Confirmer"
+        },
+        error: {
+            deleteMessage: "Ce parking a déjà été réservé, il ne peut donc pas être supprimé."
         }
     },
     types: {

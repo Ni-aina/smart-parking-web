@@ -11,6 +11,7 @@ import Pagination from "../ui/pagination";
 import DeleteConfirm from "../ui/deleteConfirm";
 import NoData from "../ui/noData";
 import { useTranslation } from "@/context/LanguageContext";
+import { toast } from "sonner";
 
 interface ClientParkingLotsInterface {
     parkings: ParkingInterface[];
@@ -30,7 +31,7 @@ const ClientParkingLots = ({
     const [isConfirm, setIsConfirm] = useState("");
     const router = useRouter();
 
-    const [optimisticParkings, addOptimisticParkings] = useOptimistic(
+    const [optimisticParkings, deleteOptimisticParkings] = useOptimistic(
         parkings,
         (currentParkings: ParkingInterface[], id: string) => (
             currentParkings.filter(item => item.id !== id)
@@ -43,10 +44,11 @@ const ClientParkingLots = ({
     }
 
     const handleDelete = () => {
-        if (!isConfirm) return;
-        startTransition(() => {
-            addOptimisticParkings(isConfirm);
-            deleteParking(isConfirm);
+        if (!isConfirm) return
+        startTransition(async () => {
+            deleteOptimisticParkings(isConfirm)
+            const result = await deleteParking(isConfirm)
+            if (result?.error) toast.error(t(result.error))
         })
         setIsConfirm("");
     }

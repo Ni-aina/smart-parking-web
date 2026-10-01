@@ -340,6 +340,9 @@ export const translationsEn = {
             message: "Are you sure you want to proceed?",
             cancel: "Cancel",
             confirm: "Confirm"
+        },
+        error: {
+            deleteMessage: "This parking lot has already been reserved, so it can't be deleted."
         }
     },
     types: {
