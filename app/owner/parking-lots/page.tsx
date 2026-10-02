@@ -1,4 +1,4 @@
-import { getParkingLots } from "@/actions/parkingLots.action";
+import { getParkingLots } from "@/actions/lot.action";
 import { getAgents } from "@/actions/profile.action";
 import ClientParkingLots from "@/components/Parking-lots/ClientParkingLots";
 

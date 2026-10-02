@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { checkLotByTime } from "@/actions/parkingLots.action";
+import { checkLotByTime } from "@/actions/lot.action";
 
 export async function POST(req: Request) {
   try {

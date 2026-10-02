@@ -1,6 +1,6 @@
 "use server";
 
-import { ParkingFormInterface, ParkingInterface } from "@/types/parking";
+import { LotFormInterface, LotInterface } from "@/types/lot";
 import { normalizeData } from "@/utils/normalizeData";
 import { getServerAuth } from "./authServer.action";
 import { isUUID } from "@/utils/isUUID";
@@ -11,8 +11,8 @@ import { rejectTimeout } from "@/utils/rejectTimeout";
 import { keyFilter } from "@/types/global";
 import { getFilterDates } from "@/utils/dates/DateTimeFilter";
 
-export async function createParkingLot(parking: ParkingFormInterface)
-    : Promise<ParkingInterface | null> {
+export async function createParkingLot(parking: LotFormInterface)
+    : Promise<LotInterface | null> {
     try {
         const request = (async () => {
             const {
@@ -25,7 +25,7 @@ export async function createParkingLot(parking: ParkingFormInterface)
             const {
                 name,
                 location,
-                typeId: type_id,
+                categoryId: category_id,
                 totalSpots: total_spots,
                 pricePerHour: price_per_hour,
                 images,
@@ -50,7 +50,7 @@ export async function createParkingLot(parking: ParkingFormInterface)
                 .insert([{
                     name,
                     location,
-                    type_id,
+                    category_id,
                     total_spots,
                     price_per_hour,
                     agents: agents.filter(item => item.checked).map(item => item.id),
@@ -73,7 +73,7 @@ export async function createParkingLot(parking: ParkingFormInterface)
             }
 
             const normalized = normalizeData(newParking);
-            return normalized as ParkingInterface;
+            return normalized as LotInterface;
         })()
 
         return Promise.race([
@@ -86,8 +86,8 @@ export async function createParkingLot(parking: ParkingFormInterface)
 
 }
 
-export async function editParkingLot(parking: ParkingFormInterface, currentUrlImages: string[])
-    : Promise<ParkingInterface | null> {
+export async function editParkingLot(parking: LotFormInterface, currentUrlImages: string[])
+    : Promise<LotInterface | null> {
     try {
         const request = (async () => {
 
@@ -100,7 +100,7 @@ export async function editParkingLot(parking: ParkingFormInterface, currentUrlIm
                 id,
                 name,
                 location,
-                typeId: type_id,
+                categoryId: category_id,
                 totalSpots: total_spots,
                 pricePerHour: price_per_hour,
                 images,
@@ -135,7 +135,7 @@ export async function editParkingLot(parking: ParkingFormInterface, currentUrlIm
                 .update({
                     name,
                     location,
-                    type_id,
+                    category_id,
                     total_spots,
                     price_per_hour,
                     agents: agents.filter(item => item.checked).map(item => item.id),
@@ -159,7 +159,7 @@ export async function editParkingLot(parking: ParkingFormInterface, currentUrlIm
             }
 
             const normalized = normalizeData(updatedParking);
-            return normalized as ParkingInterface;
+            return normalized as LotInterface;
         })()
 
         return Promise.race([
@@ -206,19 +206,19 @@ export async function deleteParking(parkingId: string): Promise<{ error: string 
     }
 }
 
-export async function getParkingById(parkingId: string): Promise<ParkingInterface | null> {
+export async function getParkingById(parkingId: string): Promise<LotInterface | null> {
     try {
         const request = (async () => {
             const { supabase } = await getServerAuth();
 
             const { data: parking, error } = await supabase.from("parking_lots")
-                .select("*, lotType: type_id(id, vehicle_type)")
+                .select("*")
                 .eq("id", parkingId)
                 .single();
 
             if (!parking || error) return null;
             const normalized = normalizeData(parking);
-            return normalized as ParkingInterface;
+            return normalized as LotInterface;
         })()
 
         return Promise.race([
@@ -234,7 +234,7 @@ export async function getParkingLots(
     page = 1,
     limit = 20,
     searchTerm: string
-): Promise<ParkingInterface[] & { count: number }> {
+): Promise<LotInterface[] & { count: number }> {
     try {
         const request = (async () => {
             const {
@@ -243,7 +243,7 @@ export async function getParkingLots(
             } = await getServerAuth();
 
             const { data: parkings, error } = await supabase.rpc(
-                "get_owner_parking_lots",
+                "get_owner_parking_lots_v2",
                 {
                     page,
                     limit_count: limit,
@@ -270,7 +270,7 @@ export async function getParkingLots(
 }
 
 export async function getAllParkingLotsForOwner()
-    : Promise<ParkingInterface[]> {
+    : Promise<LotInterface[]> {
     try {
         const request = (async () => {
             const { supabase, userId } = await getServerAuth();
@@ -279,14 +279,14 @@ export async function getAllParkingLotsForOwner()
 
             const { data: parkings, error } = await supabase
                 .from("parking_lots")
-                .select("*, lotType: type_id(id, vehicle_type)")
+                .select("*")
                 .eq("owner_id", userId)
                 .order("name", { ascending: true });
 
             if (!parkings || error) return [];
 
             const normalized = parkings.map((item: any) => normalizeData(item));
-            return normalized as ParkingInterface[];
+            return normalized as LotInterface[];
         })()
 
         return Promise.race([

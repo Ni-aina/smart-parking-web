@@ -1,3 +1,4 @@
+import { useTranslation } from "@/context/LanguageContext";
 import useDebounce from "@/hooks/useDebounce";
 import { SelectInterface } from "@/types/input";
 import { ChevronDown } from "lucide-react";
@@ -26,6 +27,7 @@ const InputSelect = ({
 }: InpuSelectInterface) => {
     const router = useRouter();
     const pathname = usePathname();
+    const { t } = useTranslation();
 
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -90,8 +92,8 @@ const InputSelect = ({
                     }
                     {
                         data.length === 0 ?
-                        <div className="text-center text-white/70 p-2">
-                            No data found
+                        <div className="text-center text-white/70 py-8">
+                            {t("noDataFound")}
                         </div>
                         :
                         data.map((item) => (

@@ -8,7 +8,7 @@ import { isUUID } from "@/utils/isUUID";
 import { revalidatePath } from "next/cache";
 import { keyFilter } from "@/types/global";
 import { getFilterDates } from "@/utils/dates/DateTimeFilter";
-import { checkLotByTime } from "./parkingLots.action";
+import { checkLotByTime } from "./lot.action";
 import { checkVehicleSpace } from "./type.action";
 
 export async function revalidateLotsReservations() {
@@ -125,7 +125,10 @@ export async function getReservationByIdForOwner(reservationId: string)
                     driver: driver_id(*),
                     lot: lot_id!inner(
                         *,
-                        lot_type:type_id(*)
+                        category: category_id(
+                            *,
+                            translations: vehicle_category_translations(*)
+                        )
                     ),
                     vehicle: vehicle_id(*)
                 `)

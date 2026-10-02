@@ -1,4 +1,4 @@
-import { getOccupancyLots } from "@/actions/parkingLots.action";
+import { getOccupancyLots } from "@/actions/lot.action";
 import {
     getBokingsLastWeekForOwner,
     getCancelledReservationsForOwnerByTime,

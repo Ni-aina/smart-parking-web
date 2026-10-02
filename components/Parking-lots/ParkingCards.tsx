@@ -2,13 +2,13 @@
 
 import { useEffect } from "react";
 import ParkingCard from "./ParkingCard";
-import { ParkingInterface } from "@/types/parking";
+import { LotInterface } from "@/types/lot";
 import { supabase } from "@/lib/supabase/client";
 import { useProfileContext } from "@/context/ProfileContext";
 import { revalidateLotsReservations } from "@/actions/reservations.action";
 
 interface ParkingCardsProps {
-    parkings: ParkingInterface[];
+    parkings: LotInterface[];
     agentsNamesMap: Record<string, string>;
     onEdit: (id: string) => void;
     onDelete: (id: string) => void;
@@ -29,7 +29,7 @@ const ParkingCards = ({ parkings, agentsNamesMap, onEdit, onDelete }: ParkingCar
             channel.unsubscribe();
         }
     }, [profileId])
-    
+
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5">
             {
@@ -40,11 +40,11 @@ const ParkingCards = ({ parkings, agentsNamesMap, onEdit, onDelete }: ParkingCar
                         urlImage={item.urlImages?.at(0)}
                         name={item.name}
                         location={item.location}
-                        type={item.lotType?.vehicleType || "—"}
+                        category={item.category}
                         totalSpots={String(item.totalSpots)}
                         occupiedSpots={String(item.occupiedSpots)}
                         pricePerHour={String(item.pricePerHour)}
-                        agents={(item.agents || []).map(a => agentsNamesMap[a]).filter(Boolean).join(", ")}
+                        agents={(item.agents || []).map((a: any) => agentsNamesMap[a]).filter(Boolean).join(", ")}
                         onEdit={onEdit}
                         onDelete={onDelete}
                     />

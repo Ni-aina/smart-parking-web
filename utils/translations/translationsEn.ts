@@ -1,4 +1,5 @@
 export const translationsEn = {
+    noDataFound: "No data found",
     landing: {
         title: "Smart Parking",
         subtitle: "Made Simple",
@@ -320,7 +321,7 @@ export const translationsEn = {
             selectLocationOnMap: "Select location on map",
             selectedAddress: "Selected Address",
             resolvingCurrentLocation: "Resolving current location...",
-            vehicleType: "Vehicle type *",
+            vehicleCategory: "Vehicle category *",
             totalSpots: "Total spots *",
             pricePerHour: "Price/hour *",
             images: "Images",
@@ -331,9 +332,9 @@ export const translationsEn = {
             cancel: "Cancel",
             update: "Update parking",
             add: "Add new parking",
-            maxWidth: "max width",
-            maxLength: "max length",
-            maxHeight: "max height"
+            notSpecified: "Not specified",
+            maxWeightKg: "max weight (kg)",
+            maxHeightMeters: "max height (m)"
         },
         confirm: {
             title: "This action is irreversible!",
@@ -342,7 +343,8 @@ export const translationsEn = {
             confirm: "Confirm"
         },
         error: {
-            deleteMessage: "This parking lot has already been reserved, so it can't be deleted."
+            deleteMessage: "This parking lot has already been reserved, so it can't be deleted.",
+            requiredCategory: "Please select a vehicle category"
         }
     },
     types: {

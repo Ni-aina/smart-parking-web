@@ -1,4 +1,5 @@
 export const translationsFr = {
+    noDataFound: "Aucune donnée trouvée",
     landing: {
         title: "Stationnement Intelligent",
         subtitle: "Rendu Simple",
@@ -320,7 +321,7 @@ export const translationsFr = {
             selectLocationOnMap: "Sélectionner la position sur la carte",
             selectedAddress: "Adresse sélectionnée",
             resolvingCurrentLocation: "Résolution de la position actuelle...",
-            vehicleType: "Type de véhicule *",
+            vehicleCategory: "Catégorie de véhicule *",
             totalSpots: "Places totales *",
             pricePerHour: "Prix/heure *",
             images: "Images",
@@ -331,9 +332,9 @@ export const translationsFr = {
             cancel: "Annuler",
             update: "Modifier le parking",
             add: "Ajouter un parking",
-            maxWidth: "largeur max.",
-            maxLength: "longueur max.",
-            maxHeight: "hauteur max."
+            notSpecified: "Non spécifié",
+            maxWeightKg: "poids max (kg)",
+            maxHeightMeters: "hauteur max (m)"
         },
         confirm: {
             title: "Cette action est irréversible !",
@@ -342,7 +343,8 @@ export const translationsFr = {
             confirm: "Confirmer"
         },
         error: {
-            deleteMessage: "Ce parking a déjà été réservé, il ne peut donc pas être supprimé."
+            deleteMessage: "Ce parking a déjà été réservé, il ne peut donc pas être supprimé.",
+            requiredCategory: "Veuillez sélectionner une catégorie de véhicule"
         }
     },
     types: {

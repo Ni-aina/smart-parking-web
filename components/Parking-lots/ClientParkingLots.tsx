@@ -3,10 +3,10 @@
 import { startTransition, useOptimistic, useState } from "react";
 import Navbar from "../Layouts/Navbar";
 import { useRouter } from "next/navigation";
-import { ParkingInterface } from "@/types/parking";
+import { LotInterface } from "@/types/lot";
 import ParkingCards from "./ParkingCards";
 import { ProfileInterface } from "@/types/profile";
-import { deleteParking } from "@/actions/parkingLots.action";
+import { deleteParking } from "@/actions/lot.action";
 import Pagination from "../ui/pagination";
 import DeleteConfirm from "../ui/deleteConfirm";
 import NoData from "../ui/noData";
@@ -14,7 +14,7 @@ import { useTranslation } from "@/context/LanguageContext";
 import { toast } from "sonner";
 
 interface ClientParkingLotsInterface {
-    parkings: ParkingInterface[];
+    parkings: LotInterface[];
     agents: ProfileInterface[];
     count: number;
     searchTerm: string;
@@ -33,7 +33,7 @@ const ClientParkingLots = ({
 
     const [optimisticParkings, deleteOptimisticParkings] = useOptimistic(
         parkings,
-        (currentParkings: ParkingInterface[], id: string) => (
+        (currentParkings: LotInterface[], id: string) => (
             currentParkings.filter(item => item.id !== id)
         )
     )

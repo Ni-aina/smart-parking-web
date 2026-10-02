@@ -3,14 +3,11 @@
 import { useState } from "react";
 import { customCheckStyle } from "@/lib/customChexBoxStyle";
 import { LotInterface } from "@/types/lot";
-import { ParkingInterface } from "@/types/parking";
 import { ProfileInterface } from "@/types/profile";
-import { TypeInterface } from "@/types/type";
 import {
     DollarSign,
     Loader2,
     MapPin,
-    Plus,
     PlusCircle,
     Search,
     Undo2,
@@ -23,19 +20,15 @@ import useParkingForm from "@/hooks/forms/useParkingForm";
 import InputNumber from "../ui/inputNumber";
 import InputSelect from "../ui/inputSelect";
 import { useTranslation } from "@/context/LanguageContext";
-import useType from "@/hooks/useType";
-import FormType from "../Types/FormType";
 import LocationPickerModal from "../Maps/LocationPickerModal";
 import Avatar from "../Messages/Avatar";
 
 interface FormParkingLotsInterface {
-    types: TypeInterface[];
     agents: ProfileInterface[];
-    parking: (LotInterface | ParkingInterface) | null;
+    parking: LotInterface | null;
 }
 
 const FormParkingLots = ({
-    types,
     agents,
     parking
 }: FormParkingLotsInterface) => {
@@ -43,7 +36,7 @@ const FormParkingLots = ({
     const [isMapModalOpen, setIsMapModalOpen] = useState(false)
 
     const {
-        selectTypes,
+        selectCategories,
         formData,
         handleChange,
         handleLocationSelect,
@@ -65,39 +58,16 @@ const FormParkingLots = ({
         isLocationLoading
     } = useParkingForm({
         agents,
-        parking,
-        types
+        parking
     })
 
     const {
         name,
         location,
-        typeId,
+        categoryId,
         pricePerHour,
         totalSpots
     } = formData;
-
-    const {
-        formData: formType,
-        isModalOpen,
-        setIsModalOpen,
-        isPending: isPendingType,
-        handleChange: handleChangeType,
-        handleSubmit: handleSubmitType,
-        handleOnClose,
-    } = useType({
-        types,
-        searchTerm: ""
-    })
-
-    const {
-        id,
-        vehicleType,
-        maxWidth,
-        maxLength,
-        maxHeight,
-        description
-    } = formType;
 
     return (
         <>
@@ -157,23 +127,13 @@ const FormParkingLots = ({
                     }
                 </div>
                 <div className="flex flex-col gap-2">
-                    <label htmlFor="typeId">{t("parkingLots.form.vehicleType")}</label>
-                    <div className="flex items-center gap-2">
-                        <InputSelect
-                            name="typeId"
-                            value={typeId}
-                            handleChange={handleChange}
-                            data={selectTypes}
-                        />
-                        <div
-                            className="flex justify-center items-center p-2.5 text-white bg-transparent
-                            border border-white/5 rounded-sm cursor-pointer hover:bg-white/5"
-                            onClick={() => setIsModalOpen(true)}
-                            role="button"
-                        >
-                            <Plus size={20} />
-                        </div>
-                    </div>
+                    <label htmlFor="categoryId">{t("parkingLots.form.vehicleCategory")}</label>
+                    <InputSelect
+                        name="categoryId"
+                        value={categoryId}
+                        handleChange={handleChange}
+                        data={selectCategories}
+                    />
                 </div>
                 <div className="flex flex-col gap-2">
                     <label htmlFor="total-spots">{t("parkingLots.form.totalSpots")}</label>
@@ -379,19 +339,6 @@ const FormParkingLots = ({
                     />
                 </div>
             </form>
-            <FormType
-                isModalOpen={isModalOpen}
-                handleOnClose={handleOnClose}
-                handleChange={handleChangeType}
-                handleSubmit={handleSubmitType}
-                id={id}
-                vehicleType={vehicleType}
-                maxWidth={maxWidth}
-                maxLength={maxLength}
-                maxHeight={maxHeight}
-                description={description}
-                isPending={isPendingType}
-            />
             <LocationPickerModal
                 isOpen={isMapModalOpen}
                 onClose={

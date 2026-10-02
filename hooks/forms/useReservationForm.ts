@@ -3,7 +3,7 @@
 import { createReservation } from "@/actions/reservations.action";
 import { getVehiclesByDriverId } from "@/actions/vehicle.action";
 import { SelectInterface } from "@/types/input";
-import { ParkingInterface } from "@/types/parking";
+import { LotInterface } from "@/types/lot";
 import { ProfileInterface } from "@/types/profile";
 import { VehicleInterface } from "@/types/vehicle";
 import { calculateDurationHours } from "@/utils/dates/DateTimeAction";
@@ -18,7 +18,7 @@ import {
 } from "react";
 
 interface UseReservationFormInterface {
-    parkingLots: ParkingInterface[];
+    parkingLots: LotInterface[];
     drivers: ProfileInterface[];
 }
 

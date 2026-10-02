@@ -20,15 +20,16 @@ import {
     ParkingCircle
 } from "lucide-react";
 import Image from "next/image";
-import { 
-    startTransition, 
-    useEffect, 
-    useOptimistic, 
-    useState 
+import {
+    startTransition,
+    useEffect,
+    useOptimistic,
+    useState
 } from "react";
 import { Skeleton } from "../ui/skeleton";
 import CancelConfirm from "../ui/cancelConfirm";
 import { useTranslation } from "@/context/LanguageContext";
+import { getCategoryText } from "@/utils/categories/details";
 
 interface ReservationDetailProps {
     reservation: ReservationInterface;
@@ -57,7 +58,7 @@ const ReservationDetail = ({
 }: ReservationDetailProps) => {
     const [loadingImage, setLoadingImage] = useState(true);
     const [cancellingId, setCancellingId] = useState("");
-    const { t } = useTranslation();
+    const { t, language } = useTranslation();
 
     const [optimisticReservation, setOptimisticReservation] = useOptimistic(
         reservation,
@@ -82,6 +83,8 @@ const ReservationDetail = ({
     const paymentStatusLabel = payment ? t(`reservations.status.${payment.status}`) : "";
 
     const imageSrc = lot.urlImages?.[0];
+
+    const categoryText = getCategoryText(lot.category, language, t);
 
     const handleCancel = async () => {
         if (!cancellingId) return;
@@ -162,21 +165,24 @@ const ReservationDetail = ({
                         </div>
                         <div className="flex flex-col gap-3">
                             <h3 className="text-lg font-semibold">{lot.name}</h3>
-                            <div className="flex items-center gap-2 text-sm text-white/60">
-                                <MapPin size={16} />
+                            <div className="flex gap-2 text-sm text-white/60">
+                                <span className="mt-0.5">
+                                    <MapPin size={16} />
+                                </span>
                                 <span>{lot.location}</span>
                             </div>
-                            <div className="flex items-center gap-2 text-sm text-white/60">
-                                <DollarSign size={16} />
+                            <div className="flex gap-2 text-sm text-white/60">
+                                <span className="mt-0.5">
+                                    <DollarSign size={16} />
+                                </span>
                                 <span>${lot.pricePerHour} {t("reservations.form.perHour")}</span>
                             </div>
-                            {
-                                lot.lotType?.vehicleType &&
-                                <div className="flex items-center gap-2 text-sm text-white/60">
+                            <div className="flex gap-2 text-sm text-white/60">
+                                <span className="mt-0.5">
                                     <CarFront size={16} />
-                                    <span>{lot.lotType.vehicleType}</span>
-                                </div>
-                            }
+                                </span>
+                                <span>{categoryText}</span>
+                            </div>
                         </div>
                     </div>
 

@@ -1,4 +1,4 @@
-import { getAllParkingLotsForOwner } from "@/actions/parkingLots.action";
+import { getAllParkingLotsForOwner } from "@/actions/lot.action";
 import { getDrivers } from "@/actions/profile.action";
 import ReservationForm from "@/components/Reservations/ReservationForm";
 import HeaderBack from "@/components/ui/headerBack";

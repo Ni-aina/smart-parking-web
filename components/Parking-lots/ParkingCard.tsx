@@ -10,13 +10,14 @@ import {
 import { useEffect, useState } from "react";
 import { Skeleton } from "../ui/skeleton";
 import { useTranslation } from "@/context/LanguageContext";
+import { VehicleCategoryInterface } from "@/types/category";
 
 interface ParkingCardProps {
     id: string;
     urlImage?: string;
     name: string;
     location: string;
-    type: string;
+    category: VehicleCategoryInterface | null;
     totalSpots: string;
     occupiedSpots: string;
     pricePerHour: string;
@@ -30,7 +31,7 @@ const ParkingCard = ({
     urlImage,
     name,
     location,
-    type,
+    category,
     totalSpots,
     occupiedSpots,
     pricePerHour,
@@ -38,8 +39,10 @@ const ParkingCard = ({
     onEdit,
     onDelete
 }: ParkingCardProps) => {
-    const { t } = useTranslation();
+    const { t, language } = useTranslation();
     const [loadingImage, setLoadingImage] = useState(true);
+
+    const categoryLabel = category?.translations.find(row => row.languageCode === language)?.displayLabel ?? "—";
 
     useEffect(() => {
         if (urlImage) return;
@@ -80,9 +83,9 @@ const ParkingCard = ({
                     }
                 </div>
                 <div className="flex-1 flex flex-col gap-1 overflow-hidden">
-                    <div className="grid grid-cols-[1fr_25%] items-center gap-4">
+                    <div className="grid grid-cols-[1fr_40%] items-center gap-4">
                         <h2 className="font-semibold truncate">{name}</h2>
-                        <p className="text-end text-sm text-white truncate">{type}</p>
+                        <p className="text-end text-sm text-white truncate">{categoryLabel}</p>
                     </div>
                     <p className="text-sm text-white/60 truncate">{location}</p>
                     <div className="text-md">{t("parkingLots.card.agents")}</div>

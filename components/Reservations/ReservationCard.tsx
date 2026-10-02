@@ -1,7 +1,7 @@
 "use client";
 
-import Image from 'next/image';
-import Link from 'next/link';
+import Image from "next/image";
+import Link from "next/link";
 import {
   Calendar,
   User,
@@ -10,12 +10,12 @@ import {
   Clock,
   CarFront,
   ParkingCircle
-} from 'lucide-react';
-import { ReservationInterface } from '@/types/reservation';
-import { useEffect, useState } from 'react';
-import { Skeleton } from '../ui/skeleton';
-import { getDateFormat, getTimeFormat } from '@/utils/dates/DateTimeAction';
-import { useTranslation } from '@/context/LanguageContext';
+} from "lucide-react";
+import { ReservationInterface } from "@/types/reservation";
+import { useEffect, useState } from "react";
+import { Skeleton } from "../ui/skeleton";
+import { getDateFormat, getTimeFormat } from "@/utils/dates/DateTimeAction";
+import { useTranslation } from "@/context/LanguageContext";
 
 interface ReservationCardProps {
   reservation: ReservationInterface;
@@ -37,7 +37,7 @@ const ReservationCard = ({
   handleCancel
 }: ReservationCardProps) => {
   const [loadingImage, setLoadingImage] = useState(true);
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
 
   const {
     id,
@@ -46,9 +46,7 @@ const ReservationCard = ({
       location,
       pricePerHour,
       urlImages,
-      lotType: {
-        vehicleType = ""
-      }
+      category
     },
     vehicle: {
       plateNumber
@@ -66,6 +64,8 @@ const ReservationCard = ({
 
   const imageSrc = urlImages?.[0];
   const statusLabel = t(`reservations.status.${status}`);
+
+  const categoryLabel = category?.translations.find(row => row.languageCode === language)?.displayLabel ?? "—";
 
   useEffect(() => {
     if (imageSrc) return;
@@ -151,7 +151,7 @@ const ReservationCard = ({
             {location || '—'}
           </p>
           <span className="text-sm text-white/70">
-            {vehicleType || '—'}
+            {categoryLabel}
           </span>
         </div>
       </div>

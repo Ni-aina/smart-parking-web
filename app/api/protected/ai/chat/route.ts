@@ -6,7 +6,6 @@ import type {
     ChatCompletionMessageToolCall
 } from "groq-sdk/resources/chat/completions";
 import { tools } from "@/utils/tools";
-import { getParkingLots } from "@/actions/lots.action";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import parseUserTime from "@/utils/dates/DateConverstion";
 import { denormalizeData, normalizeData } from "@/utils/normalizeData";
@@ -58,27 +57,12 @@ async function groqCreate(messages: ChatCompletionMessageParam[], model = PRIMAR
     }
 }
 
-async function executeGetParkingLots(args: Parameters<typeof getParkingLots>[0], lat: number, lng: number) {
+async function executeGetParkingLots(args: any, lat: number, lng: number) {
     const rawTerm = args?.searchTerm?.trim();
     const searchTerm = rawTerm?.includes(" ") ? rawTerm.split(" ")[0] : rawTerm;
 
-    const result = await getParkingLots(
-        {
-            location: { latitude: lat, longitude: lng },
-            ...args,
-            searchTerm
-        })
-
     return {
-        ...result,
-        data: result.data.map((lot: LotInterface) => ({
-            lotId: lot.id,
-            name: lot.name,
-            location: lot.location,
-            totalSpots: lot.totalSpots,
-            pricePerHour: lot.pricePerHour,
-            typeId: lot.typeId
-        }))
+       
     }
 }
 

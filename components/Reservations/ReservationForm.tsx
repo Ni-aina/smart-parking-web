@@ -1,6 +1,6 @@
 "use client";
 
-import { ParkingInterface } from "@/types/parking";
+import { LotInterface } from "@/types/lot";
 import { ProfileInterface } from "@/types/profile";
 import {
     DollarSign,
@@ -17,7 +17,7 @@ import { useTranslation } from "@/context/LanguageContext";
 import { isUUID } from "@/utils/isUUID";
 
 interface ReservationFormInterface {
-    parkingLots: ParkingInterface[];
+    parkingLots: LotInterface[];
     drivers: ProfileInterface[];
 }
 

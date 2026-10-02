@@ -1,11 +1,9 @@
 "use client";
 
-import { createParkingLot, editParkingLot } from "@/actions/parkingLots.action";
+import { createParkingLot, editParkingLot } from "@/actions/lot.action";
 import { SelectInterface } from "@/types/input";
 import { LotInterface } from "@/types/lot";
-import { ParkingInterface } from "@/types/parking";
 import { ProfileInterface } from "@/types/profile";
-import { TypeInterface } from "@/types/type";
 import { urlToFile } from "@/utils/urlToFile";
 import { useTranslation } from "@/context/LanguageContext";
 import { useRouter } from "next/navigation";
@@ -17,31 +15,33 @@ import {
     useEffect,
     useState
 } from "react";
+import { VehicleCategoryInterface } from "@/types/category";
+import { getVehicleCategories } from "@/actions/category.action";
+import { toast } from "sonner";
 
 interface FormParkingLotsInterface {
-    types: TypeInterface[];
     agents: ProfileInterface[];
-    parking: (LotInterface | ParkingInterface) | null;
+    parking: LotInterface | null;
 }
 
 const allowedTypes = ["image/png", "image/jpeg", "image/jpg"]
 
 const useParkingForm = ({
-    types,
     agents,
     parking
 }: FormParkingLotsInterface) => {
 
     const router = useRouter();
-    const { t } = useTranslation();
-    const selectTypes = types.map(item => ({
+    const { t, language } = useTranslation();
+
+    const [categories, setCategories] = useState<VehicleCategoryInterface[]>([])
+
+    const selectCategories = categories.map(item => ({
         id: item.id,
         value: `
-            ${item.vehicleType},
-            ${t("parkingLots.form.maxWidth")}: ${item.maxWidth}, 
-            ${t("parkingLots.form.maxLength")}: ${item.maxLength}
-            ${t("parkingLots.form.maxHeight")}: ${item.maxHeight}
-            ${item.description.trim() && `(${item.description})`}
+            ${item.displayLabel},
+            ${t("parkingLots.form.maxWeightKg")}: ${item.maxWeightKg ?? t("parkingLots.form.notSpecified")}
+            ${t("parkingLots.form.maxHeightMeters")}: ${item.maxHeightMeters ?? t("parkingLots.form.notSpecified")}
         `
     }))
 
@@ -55,7 +55,7 @@ const useParkingForm = ({
         location: string;
         locationLat: number | null;
         locationLng: number | null;
-        typeId: string;
+        categoryId: string;
         totalSpots: number | string;
         pricePerHour: number | string;
     }>({
@@ -64,7 +64,7 @@ const useParkingForm = ({
         location: parking?.location || "",
         locationLat: parking && "locationLat" in parking && typeof parking.locationLat === "number" ? parking.locationLat : null,
         locationLng: parking && "locationLng" in parking && typeof parking.locationLng === "number" ? parking.locationLng : null,
-        typeId: (parking && "lotType" in parking && parking.lotType?.id) || (parking && "typeId" in parking && String(parking.typeId)) || selectTypes.at(0)?.id || "",
+        categoryId: selectCategories.at(0)?.id || "",
         totalSpots: parking?.totalSpots || "",
         pricePerHour: parking?.pricePerHour || ""
     })
@@ -163,6 +163,12 @@ const useParkingForm = ({
         e.preventDefault();
         try {
             setIsPending(true);
+
+            if (!formData.categoryId) {
+                toast.error(t("parkingLots.error.requiredCategory"));
+                return;
+            }
+
             if (parking?.id) {
                 const updatedParking = await editParkingLot({
                     ...formData,
@@ -197,16 +203,6 @@ const useParkingForm = ({
     }
 
     useEffect(() => {
-        (async () => {
-            if (parking?.urlImages?.length) {
-                const files = await Promise.all(parking.urlImages.map(url => urlToFile(url)));
-                setImages(files);
-            }
-            setIsImagesPending(false);
-        })()
-    }, [parking]);
-
-    useEffect(() => {
         if (!parking?.id && typeof window !== "undefined" && "geolocation" in navigator) {
             setIsLocationLoading(true)
             navigator.geolocation.getCurrentPosition(
@@ -232,11 +228,40 @@ const useParkingForm = ({
                 }
             )
         }
-    }, [parking])
+    }, [parking?.id])
+
+    useEffect(() => {
+        (async () => {
+            const categories = await getVehicleCategories(language)
+            setCategories(categories)
+        })()
+    }, [language]);
+
+    useEffect(() => {
+        (async () => {
+            if (parking?.urlImages?.length) {
+                const files = await Promise.all(parking.urlImages.map(url => urlToFile(url)));
+                setImages(files);
+            }
+            setIsImagesPending(false);
+        })()
+    }, [parking?.urlImages]);
+
+    useEffect(()=> {
+        if (!parking) return;
+
+        setFormData(prev => ({
+            ...prev,
+            categoryId: categories.find(category => category.id === parking.categoryId)?.id || ""
+        }))
+    }, [
+        parking,
+        categories
+    ])
 
     return {
         formData,
-        selectTypes,
+        selectCategories,
         handleChange,
         handleLocationSelect,
         agentsFiltered,
