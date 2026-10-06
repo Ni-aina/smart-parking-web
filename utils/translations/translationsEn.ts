@@ -347,44 +347,6 @@ export const translationsEn = {
             requiredCategory: "Please select a vehicle category"
         }
     },
-    types: {
-        title: "Lot types",
-        listTitle: "Lot types list",
-        searchPlaceholder: "Search for lot types...",
-        addNew: "Add new lot type",
-        noData: "No vehicle type yet",
-        loadingData: "Loading data...",
-        headers: {
-            vehicle: "Vehicle",
-            maxWidth: "Max width",
-            maxLength: "Max length",
-            maxHeight: "Max height",
-            description: "Description"
-        },
-        table: {
-            all: "All lot types",
-            rowsPerPage: "Rows per page",
-            actions: "Actions"
-        },
-        form: {
-            addTitle: "Add lot type",
-            updateTitle: "Update lot type",
-            vehicleType: "Vehicle type *",
-            maxWidth: "Max width (m) *",
-            maxLength: "Max length (m) *",
-            maxHeight: "Max height (m) *",
-            description: "Description",
-            cancel: "Cancel",
-            add: "Add",
-            update: "Update"
-        },
-        confirm: {
-            title: "Delete lot type",
-            message: "Are you sure you want to delete the selected lot type?",
-            cancel: "Cancel",
-            confirm: "Confirm"
-        }
-    },
     agents: {
         title: "Agents",
         listTitle: "Agents list",

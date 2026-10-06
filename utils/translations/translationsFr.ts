@@ -347,44 +347,6 @@ export const translationsFr = {
             requiredCategory: "Veuillez sélectionner une catégorie de véhicule"
         }
     },
-    types: {
-        title: "Types de places",
-        listTitle: "Liste des types de places",
-        searchPlaceholder: "Rechercher des types de places...",
-        addNew: "Ajouter un type de place",
-        noData: "Aucun type de véhicule pour le moment",
-        loadingData: "Chargement des données...",
-        headers: {
-            vehicle: "Véhicule",
-            maxWidth: "Largeur max.",
-            maxLength: "Longueur max.",
-            maxHeight: "Hauteur max.",
-            description: "Description"
-        },
-        table: {
-            all: "Tous les types de places",
-            rowsPerPage: "Lignes par page",
-            actions: "Actions"
-        },
-        form: {
-            addTitle: "Ajouter un type de place",
-            updateTitle: "Modifier le type de place",
-            vehicleType: "Type de véhicule *",
-            maxWidth: "Largeur max. (m) *",
-            maxLength: "Longueur max. (m) *",
-            maxHeight: "Hauteur max. (m) *",
-            description: "Description",
-            cancel: "Annuler",
-            add: "Ajouter",
-            update: "Modifier"
-        },
-        confirm: {
-            title: "Supprimer le type de place",
-            message: "Voulez-vous vraiment supprimer le type de place sélectionné ?",
-            cancel: "Annuler",
-            confirm: "Confirmer"
-        }
-    },
     agents: {
         title: "Agents",
         listTitle: "Liste des agents",

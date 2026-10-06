@@ -9,7 +9,7 @@ import { revalidatePath } from "next/cache";
 import { keyFilter } from "@/types/global";
 import { getFilterDates } from "@/utils/dates/DateTimeFilter";
 import { checkLotByTime } from "./lot.action";
-import { checkVehicleSpace } from "./type.action";
+import { checkVehicleSpace } from "./vehicle.action";
 
 export async function revalidateLotsReservations() {
     revalidatePath("/owner/reservations");

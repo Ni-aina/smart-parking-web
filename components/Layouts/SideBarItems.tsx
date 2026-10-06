@@ -12,7 +12,6 @@ import {
     MessageCircle,
     Settings,
     SquareParking,
-    Truck,
     UserPen,
     UserStar
 } from "lucide-react";
@@ -153,17 +152,6 @@ export const SideBarItems = () => {
                         >
                             <UserPen />
                             <h1>{t("sidebar.agents")}</h1>
-                        </Link>
-                        <Link
-                            href="/owner/settings/types"
-                            className={`
-                                flex items-center space-x-3 px-3 py-2 rounded-sm hover:opacity-70
-                                ${pathname === "/owner/settings/types" && "bg-white/10"}
-                            `}
-                            prefetch
-                        >
-                            <Truck />
-                            <h1>{t("sidebar.types")}</h1>
                         </Link>
                         <Link
                             href="/owner/settings/account"
