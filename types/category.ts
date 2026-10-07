@@ -9,7 +9,7 @@ export interface VehicleCategoryTranslationRowInterface {
 export interface VehicleCategoryRowInterface {
     id: string;
     category_code: string;
-    max_weight_kg: number | null;
+    max_weight_tonnes: number | null;
     max_height_meters: number | null;
     created_at: string | null;
     translations: VehicleCategoryTranslationRowInterface[];
@@ -26,7 +26,7 @@ export interface VehicleCategoryTranslationInterface {
 export interface VehicleCategoryInterface {
     id: string;
     categoryCode: string;
-    maxWeightKg: number | null;
+    maxWeightTonnes: number | null;
     maxHeightMeters: number | null;
     createdAt: string | null;
     displayLabel: string;

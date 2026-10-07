@@ -15,7 +15,7 @@ const mapVehicleCategory = (item: VehicleCategoryRowInterface): VehicleCategoryI
     return {
         id: item.id,
         categoryCode: item.category_code,
-        maxWeightKg: item.max_weight_kg,
+        maxWeightTonnes: item.max_weight_tonnes,
         maxHeightMeters: item.max_height_meters,
         createdAt: item.created_at,
         displayLabel: translation?.display_label ?? item.category_code,

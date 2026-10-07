@@ -40,7 +40,7 @@ const useParkingForm = ({
         id: item.id,
         value: `
             ${item.displayLabel},
-            ${t("parkingLots.form.maxWeightKg")}: ${item.maxWeightKg ?? t("parkingLots.form.notSpecified")}
+            ${t("parkingLots.form.maxWeightTonnes")}: ${item.maxWeightTonnes ?? t("parkingLots.form.notSpecified")}
             ${t("parkingLots.form.maxHeightMeters")}: ${item.maxHeightMeters ?? t("parkingLots.form.notSpecified")}
         `
     }))

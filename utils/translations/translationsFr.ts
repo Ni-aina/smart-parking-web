@@ -333,7 +333,7 @@ export const translationsFr = {
             update: "Modifier le parking",
             add: "Ajouter un parking",
             notSpecified: "Non spécifié",
-            maxWeightKg: "poids max (kg)",
+            maxWeightTonnes: "poids max (t)",
             maxHeightMeters: "hauteur max (m)"
         },
         confirm: {

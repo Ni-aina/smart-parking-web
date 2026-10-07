@@ -333,7 +333,7 @@ export const translationsEn = {
             update: "Update parking",
             add: "Add new parking",
             notSpecified: "Not specified",
-            maxWeightKg: "max weight (kg)",
+            maxWeightTonnes: "max weight (t)",
             maxHeightMeters: "max height (m)"
         },
         confirm: {
