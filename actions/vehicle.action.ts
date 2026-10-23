@@ -47,42 +47,41 @@ export async function checkVehicleSpace(
             if (!vehicleId) throw new Error("Vehicle ID is required");
 
             const [
-                { data: types, error: typesError },
-                { data: vehicle, error: vehicleError }
+                { data: lotCategories, error: lotCategoriesError },
+                { data: vehicleCategories, error: vehicleCategoriesError }
             ] = await Promise.all([
                 supabase.from("parking_lots")
-                    .select("type:type_id(max_width, max_height, max_length)")
+                    .select("category:category_id(max_weight_tonnes, max_height_meters)")
                     .eq("id", lotId),
                 supabase.from("vehicles")
-                    .select("width, height, length")
+                    .select("category:category_id(max_weight_tonnes, max_height_meters)")
                     .eq("id", vehicleId)
             ])
 
-            if (!types || typesError) throw new Error(`Failed to check vehicle space, ${typesError?.message}`);
-            if (!vehicle || vehicleError) throw new Error(`Failed to check vehicle space, ${vehicleError?.message}`);
-            
+            if (!lotCategories || lotCategoriesError) throw new Error(`Failed to check vehicle space, ${lotCategoriesError?.message}`);
+            if (!vehicleCategories || vehicleCategoriesError) throw new Error(`Failed to check vehicle space, ${vehicleCategoriesError?.message}`);
+
             const [
                 {
-                    type: {
-                        max_width,
-                        max_height,
-                        max_length
+                    category: {
+                        max_weight_tonnes: lot_max_weight,
+                        max_height_meters: lot_max_height
                     }
                 }
-            ] = types;
+            ] = lotCategories;
 
             const [
-                { 
-                    width, 
-                    length,
-                    height
+                {
+                    category: {
+                        max_weight_tonnes: vehicle_max_weight,
+                        max_height_meters: vehicle_max_height
+                    }
                 }
-            ] = vehicle;
+            ] = vehicleCategories;
 
-            if (width > max_width) throw new Error(`Vehicle width exceeds maximum width of ${max_width}`);
-            if (length > max_length) throw new Error(`Vehicle length exceeds maximum length of ${max_length}`);
-            if (height > max_height) throw new Error(`Vehicle height exceeds maximum height of ${max_height}`);
-            
+            if (vehicle_max_weight > lot_max_weight) throw new Error(`Vehicle weight exceeds maximum weight of ${lot_max_weight} tonnes`);
+            if (vehicle_max_height > lot_max_height) throw new Error(`Vehicle height exceeds maximum height of ${lot_max_height} meters`);
+
             return true;
         })()
 

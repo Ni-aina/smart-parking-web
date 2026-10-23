@@ -75,7 +75,7 @@ export async function createReservation(reservation: ReservationFormInterface)
                     driver: driver_id(*),
                     lot: lot_id!inner(
                         *,
-                        lot_type:type_id(*)
+                        category:category_id(*)
                     ),
                     vehicle: vehicle_id(*)
                 `)
@@ -183,7 +183,7 @@ export async function cancelReservation(reservationId: string)
                     driver: driver_id(*),
                     lot: lot_id!inner(
                         *,
-                        lot_type:type_id(*)
+                        category:category_id(*)
                     ),
                     vehicle: vehicle_id(*)
                 `)
