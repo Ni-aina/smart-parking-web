@@ -5,14 +5,22 @@ export const tools: ChatCompletionTool[] = [
         type: "function",
         function: {
             name: "get_parking_lots",
-            description: "Search parking lots by name/address. Returns lotId, typeId, name, location, pricePerHour.",
+            description: "Search parking lots by name/address. Returns lotId, categoryId, name, location, pricePerHour, availableSpots, and category constraints (maxWeightTonnes, maxHeightMeters).",
             parameters: {
                 type: "object",
                 properties: {
                     searchTerm: { type: "string" },
+                    checkTime: {
+                        type: "string",
+                        description: "Time to check occupancy and spot availability for, in natural language (e.g. 'now', 'tomorrow at 2pm', 'sept 15 at 10:00')"
+                    },
                     filters: {
                         type: "object",
                         properties: {
+                            category: {
+                                type: "number",
+                                description: "Vehicle category ID to filter parking lots by"
+                            },
                             priceRange: {
                                 type: "array",
                                 items: { type: "number" },
@@ -36,7 +44,7 @@ export const tools: ChatCompletionTool[] = [
         type: "function",
         function: {
             name: "get_user_vehicles",
-            description: "Find driver's vehicles by plate, make, or model. Returns vehicleId.",
+            description: "Find driver's vehicles by plate, make, or model. Returns vehicleId, categoryId, categoryCode, maxWeightTonnes, and maxHeightMeters.",
             parameters: {
                 type: "object",
                 properties: {
@@ -51,13 +59,14 @@ export const tools: ChatCompletionTool[] = [
         type: "function",
         function: {
             name: "check_vehicle_fits_lot",
-            description: "Check if a vehicle fits a lot's size constraints. Returns fits (bool) and reason.",
+            description: "Check if a vehicle fits a parking lot's vehicle category constraints using max weight (tonnes) and max height (meters). Returns fits (bool) and reason.",
             parameters: {
                 type: "object",
-                required: ["vehicleId", "typeId"],
+                required: ["vehicleId", "categoryId"],
                 properties: {
-                    vehicleId: { type: "number" },
-                    typeId: { type: "number", description: "The lot type id as returned from get_parking_lots" }
+                    vehicleId: { type: "number", description: "The vehicle ID" },
+                    categoryId: { type: "number", description: "The vehicle category ID from the parking lot (as returned from get_parking_lots)" },
+                    lotId: { type: "number", description: "Optional parking lot ID" }
                 }
             }
         }

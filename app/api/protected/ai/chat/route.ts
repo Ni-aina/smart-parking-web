@@ -9,7 +9,6 @@ import { tools } from "@/utils/tools";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import parseUserTime from "@/utils/dates/DateConverstion";
 import { denormalizeData, normalizeData } from "@/utils/normalizeData";
-import { LotInterface } from "@/types/lot";
 
 const PRIMARY_MODEL = "openai/gpt-oss-120b";
 const FALLBACK_MODEL = "qwen/qwen3.6-27b";
@@ -57,12 +56,70 @@ async function groqCreate(messages: ChatCompletionMessageParam[], model = PRIMAR
     }
 }
 
-async function executeGetParkingLots(args: any, lat: number, lng: number) {
+async function executeGetParkingLots(args: any, lat: number, lng: number, timezoneOffset: number) {
     const rawTerm = args?.searchTerm?.trim();
-    const searchTerm = rawTerm?.includes(" ") ? rawTerm.split(" ")[0] : rawTerm;
+    const searchTerm = rawTerm?.includes(" ") ? rawTerm.split(" ")[0] : (rawTerm || "");
+
+    const page = args?.pagination?.page ?? 1;
+    const limit = args?.pagination?.limit ?? 10;
+    const categoryFilter = args?.filters?.category ?? args?.filters?.categoryId ?? args?.categoryFilter ?? null;
+    const minPrice = args?.filters?.priceRange?.[0] ?? 0;
+    const maxPrice = args?.filters?.priceRange?.[1] ?? 1000000;
+
+    let checkTimeIso = new Date().toISOString();
+    const rawCheckTime = args?.checkTime || args?.check_time || args?.time;
+    if (rawCheckTime && typeof rawCheckTime === "string") {
+        try {
+            checkTimeIso = parseUserTime(rawCheckTime, timezoneOffset);
+        } catch {
+            checkTimeIso = new Date().toISOString();
+        }
+    }
+
+    const { data: parkings, error } = await supabaseAdmin.rpc("get_parking_lots", {
+        search_term: searchTerm,
+        category_filter: categoryFilter,
+        min_price: minPrice,
+        max_price: maxPrice,
+        user_lat: lat,
+        user_lng: lng,
+        page,
+        limit_count: limit,
+        check_time: checkTimeIso
+    });
+
+    if (error) throw new Error(`Failed to fetch parking lots: ${error.message}`);
+    if (!parkings || parkings.length === 0) return { lots: [], data: [], message: "No parking lots found." }
+
+    const mappedLots = parkings.map((lot: any) => {
+        const total = lot.total_spots ?? 0;
+        const occupied = lot.occupied_spots ?? 0;
+        const available = Math.max(0, total - occupied);
+        const category = lot.category;
+
+        return {
+            lotId: lot.id,
+            name: lot.name,
+            location: lot.location,
+            totalSpots: total,
+            occupiedSpots: occupied,
+            availableSpots: available,
+            pricePerHour: lot.price_per_hour,
+            categoryId: category?.id ?? null,
+            typeId: category?.id ?? null,
+            category: category ? {
+                id: category.id,
+                categoryCode: category.category_code,
+                maxWeightTonnes: category.max_weight_tonnes,
+                maxHeightMeters: category.max_height_meters
+            } : null,
+            distanceM: lot.distance_m != null ? Math.round(lot.distance_m) : null
+        }
+    })
 
     return {
-       
+        lots: mappedLots,
+        data: mappedLots
     }
 }
 
@@ -90,7 +147,7 @@ async function executeGetUserVehicles(driverId: string, args: { plateNumber?: st
 
     let query = supabaseAdmin
         .from("vehicles")
-        .select("id, plate_number, make, model, year, width, length, height")
+        .select("id, plate_number, make, model, year, category_id, category:category_id(id, category_code, max_weight_tonnes, max_height_meters)")
         .eq("driver_id", driverId);
 
     if (plate) query = query.ilike("plate_number", `%${plate}%`);
@@ -101,46 +158,127 @@ async function executeGetUserVehicles(driverId: string, args: { plateNumber?: st
 
     if (error) throw new Error(`Failed to fetch vehicles: ${error.message}`);
     if (!data || data.length === 0) return { vehicles: [], message: "No matching vehicle found." }
-    return { vehicles: data.map(item => ({ ...item, vehicleId: item.id })) }
+
+    return {
+        vehicles: data.map((item: any) => ({
+            vehicleId: item.id,
+            plateNumber: item.plate_number,
+            make: item.make,
+            model: item.model,
+            year: item.year,
+            categoryId: item.category_id,
+            categoryCode: item.category?.category_code ?? null,
+            maxWeightTonnes: item.category?.max_weight_tonnes ?? null,
+            maxHeightMeters: item.category?.max_height_meters ?? null
+        }))
+    }
 }
 
 const executeCheckVehicleFitsLot = async (
     vehicleId: number,
-    typeId: number,
-    driverId: string
+    categoryId?: number,
+    driverId?: string,
+    lotId?: number
 ) => {
-    const { data: lotType, error: lotTypeError } = await supabaseAdmin
-        .from("lot_types")
-        .select("id, vehicle_type, description, max_width, max_length, max_height")
-        .eq("id", typeId)
-        .maybeSingle();
-    if (lotTypeError || !lotType) return { fits: false, reason: "Lot type not found or could not be fetched." }
-
-    const { data: vehicle, error: vehicleError } = await supabaseAdmin
+    let vehicleQuery = supabaseAdmin
         .from("vehicles")
-        .select("width, length, height, make, model")
-        .eq("id", vehicleId)
-        .eq("driver_id", driverId)
-        .maybeSingle();
-    if (vehicleError || !vehicle) return { fits: false, reason: "Vehicle not found or access denied." }
+        .select("id, make, model, category_id, category:category_id(id, category_code, max_weight_tonnes, max_height_meters)")
+        .eq("id", vehicleId);
 
-    const widthFits = vehicle.width <= lotType.max_width;
-    const lengthFits = vehicle.length <= lotType.max_length;
-    const heightFits = vehicle.height <= lotType.max_height;
-    const fits = widthFits && lengthFits && heightFits;
+    if (driverId) {
+        vehicleQuery = vehicleQuery.eq("driver_id", driverId);
+    }
+
+    const { data: vehicle, error: vehicleError } = await vehicleQuery.maybeSingle();
+
+    if (vehicleError || !vehicle) {
+        return { fits: false, reason: "Vehicle not found or access denied." }
+    }
+
+    let targetCategoryId = categoryId;
+    if (!targetCategoryId && lotId) {
+        const { data: lot } = await supabaseAdmin
+            .from("parking_lots")
+            .select("category_id")
+            .eq("id", lotId)
+            .maybeSingle();
+        targetCategoryId = lot?.category_id;
+    }
+
+    if (!targetCategoryId) {
+        if (lotId) {
+            return {
+                fits: true,
+                vehicle: { make: vehicle.make, model: vehicle.model },
+                reason: `${vehicle.make} ${vehicle.model} fits (this parking lot has no vehicle category constraints).`
+            }
+        }
+        return { fits: false, reason: "Vehicle category ID or Lot ID is required to check fit." }
+    }
+
+    const { data: lotCategory, error: lotCategoryError } = await supabaseAdmin
+        .from("vehicle_categories")
+        .select("id, category_code, max_weight_tonnes, max_height_meters")
+        .eq("id", targetCategoryId)
+        .maybeSingle();
+
+    if (lotCategoryError || !lotCategory) {
+        return { fits: false, reason: "Lot vehicle category not found or could not be fetched." }
+    }
+
+    const rawCategory = vehicle.category;
+    const vehicleCategory = (Array.isArray(rawCategory) ? rawCategory[0] : rawCategory) as unknown as {
+        id: number;
+        category_code: string;
+        max_weight_tonnes: number | null;
+        max_height_meters: number | null;
+    } | null | undefined;
+
+    if (!vehicleCategory) {
+        return {
+            fits: false,
+            vehicle: { make: vehicle.make, model: vehicle.model },
+            reason: `${vehicle.make} ${vehicle.model} does not have an assigned vehicle category to check fit.`
+        }
+    }
+
+    const vehicleWeight = vehicleCategory.max_weight_tonnes != null ? Number(vehicleCategory.max_weight_tonnes) : null;
+    const lotMaxWeight = lotCategory.max_weight_tonnes != null ? Number(lotCategory.max_weight_tonnes) : null;
+    const vehicleHeight = vehicleCategory.max_height_meters != null ? Number(vehicleCategory.max_height_meters) : null;
+    const lotMaxHeight = lotCategory.max_height_meters != null ? Number(lotCategory.max_height_meters) : null;
+
+    const weightFits = lotMaxWeight == null || vehicleWeight == null || vehicleWeight <= lotMaxWeight;
+    const heightFits = lotMaxHeight == null || vehicleHeight == null || vehicleHeight <= lotMaxHeight;
+    const fits = weightFits && heightFits;
 
     const issues: string[] = [];
-    if (!widthFits) issues.push(`width ${vehicle.width}m exceeds max ${lotType.max_width}m`);
-    if (!lengthFits) issues.push(`length ${vehicle.length}m exceeds max ${lotType.max_length}m`);
-    if (!heightFits) issues.push(`height ${vehicle.height}m exceeds max ${lotType.max_height}m`);
+    if (!weightFits && vehicleWeight != null && lotMaxWeight != null) {
+        issues.push(`weight ${vehicleWeight} tonnes exceeds max ${lotMaxWeight} tonnes`);
+    }
+    if (!heightFits && vehicleHeight != null && lotMaxHeight != null) {
+        issues.push(`height ${vehicleHeight}m exceeds max ${lotMaxHeight}m`);
+    }
+
+    const lotLabel = lotCategory.category_code;
+    const vehLabel = vehicleCategory.category_code;
 
     return {
         fits,
-        vehicle: { make: vehicle.make, model: vehicle.model },
-        lotType: lotType.vehicle_type,
+        vehicle: {
+            make: vehicle.make,
+            model: vehicle.model,
+            category: vehLabel,
+            maxWeightTonnes: vehicleWeight,
+            maxHeightMeters: vehicleHeight
+        },
+        lotCategory: {
+            categoryCode: lotLabel,
+            maxWeightTonnes: lotMaxWeight,
+            maxHeightMeters: lotMaxHeight
+        },
         reason: fits
-            ? `${vehicle.make} ${vehicle.model} fits within the ${lotType.vehicle_type} lot constraints.`
-            : `${vehicle.make} ${vehicle.model} does not fit: ${issues.join(", ")}.`
+            ? `${vehicle.make} ${vehicle.model} (${vehLabel}) fits within the ${lotLabel} lot constraints (max weight: ${lotMaxWeight != null ? `${lotMaxWeight}t` : "no limit"}, max height: ${lotMaxHeight != null ? `${lotMaxHeight}m` : "no limit"}).`
+            : `${vehicle.make} ${vehicle.model} (${vehLabel}) does not fit: ${issues.join(", ")}.`
     }
 }
 
@@ -228,13 +366,18 @@ async function executeToolCall(
         const args = JSON.parse(call.function.arguments);
         switch (call.function.name) {
             case "get_parking_lots":
-                result = await executeGetParkingLots(args, lat, lng);
+                result = await executeGetParkingLots(args, lat, lng, timezoneOffset);
                 break;
             case "get_user_vehicles":
                 result = await executeGetUserVehicles(driverId, args);
                 break;
             case "check_vehicle_fits_lot":
-                result = await executeCheckVehicleFitsLot(args.vehicleId, args.typeId, driverId);
+                result = await executeCheckVehicleFitsLot(
+                    args.vehicleId,
+                    args.categoryId ?? args.typeId,
+                    driverId,
+                    args.lotId
+                );
                 break;
             case "check_availability":
                 result = await executeCheckAvailability(args.lotId, args.startTime, args.endTime, timezoneOffset);
@@ -302,9 +445,9 @@ export async function POST(req: NextRequest) {
                     Today is ${today}.
 
                     STEPS — follow in strict order, never skip or reorder:
-                    STEP 1 — get_parking_lots: Call if no lot is selected yet. If exactly 1 result, auto-select and proceed to step 2 immediately.
+                    STEP 1 — get_parking_lots: Call if no lot is selected yet. If the user mentioned a time (e.g. tomorrow, now, sept, next monday...), pass it in checkTime. If exactly 1 result, auto-select and proceed to step 2 immediately.
                     STEP 2 — get_user_vehicles: Call if no vehicle is selected yet. If exactly 1 result, auto-select and proceed to step 3 immediately.
-                    STEP 3 — check_vehicle_fits_lot: MANDATORY. Use vehicleId and typeId from tool results. If fits: false, stop and inform the user — do NOT continue.
+                    STEP 3 — check_vehicle_fits_lot: MANDATORY. Use vehicleId and categoryId (or lotId) from tool results. If fits: false, stop and inform the user — do NOT continue.
                     STEP 4 — Ask for start and end time: ONLY after step 3 returned fits: true. Wait for the user to provide both.
                     STEP 5 — check_availability: Call only after the user has provided both start and end time in this conversation.
                     STEP 6 — Summary and confirmation request: Show full reservation details and explicitly ask the user to confirm.
@@ -326,20 +469,20 @@ export async function POST(req: NextRequest) {
                     - NEVER call check_availability before a lot and a vehicle are both confirmed and the user has given start and end time
                     - NEVER call confirm_reservation if check_vehicle_fits_lot returned fits: false
                     - NEVER call confirm_reservation without an explicit confirmation word from the user in the immediately preceding message
-                    - If you need lotId, typeId, or vehicleId to proceed, re-call the relevant tool silently — do NOT ask the user
+                    - If you need lotId, categoryId, or vehicleId to proceed, re-call the relevant tool silently — do NOT ask the user
                     - Tool results from previous turns are not in your context; re-call tools silently when needed
                     - Never use list positions as IDs — always use the database IDs from tool results internally
-                    - Pass time strings exactly as the user wrote them — never convert to ISO yourself
+                    - Pass time strings exactly as the user wrote them (e.g. for checkTime, startTime, endTime) — never convert to ISO yourself
 
                     DISPLAY RULES — always apply:
                     - After get_parking_lots: list EVERY lot with name, location, and price/hour. Use "Here is an available parking lot:" for 1, or "Here are some available parking lots:" for multiple.
                     - After get_user_vehicles: list EVERY vehicle with make, model, and plate number. Use "Here is your vehicle:" for 1, or "Here are your vehicles:" for multiple.
-                    - After check_vehicle_fits_lot: confirm whether the vehicle fits or not with a reason.
+                    - After check_vehicle_fits_lot: confirm whether the vehicle fits or not with a reason based on vehicle category, max weight, and max height.
                     - After check_availability: show available spots, start time, and end time. Match grammar to the count.
                     - Never say "I found some options" without immediately listing them.
                     - Always use "your" when referring to the user's vehicles.
                     - Always use neutral phrasing for parking lots.
-                    - NEVER display any database ID (lotId, typeId, vehicleId, reservationId) to the user.
+                    - NEVER display any database ID (lotId, categoryId, vehicleId, reservationId) to the user.
 
                     GENERAL RULES:
                     - NEVER ask about a future step while the current step is incomplete
@@ -390,7 +533,7 @@ export async function POST(req: NextRequest) {
             }
             iterations++;
 
-            const { reasoning, reasoning_content, ...sanitizedMessage } = choice.message as typeof choice.message & { reasoning?: unknown; reasoning_content?: unknown };
+            const { reasoning, reasoning_content, ...sanitizedMessage } = choice.message as typeof choice.message & { reasoning?: unknown; reasoning_content?: unknown }
             allMessages.push(sanitizedMessage);
 
             const serialCalls = toolCalls.filter((c: ChatCompletionMessageToolCall) => SERIAL_TOOLS.has(c.function.name));
